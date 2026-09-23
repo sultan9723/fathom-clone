@@ -44,7 +44,7 @@ export function AskSidebar({ meetings }: { meetings: { id: string; title: string
   if (meetings.length === 0) return null
 
   return (
-    <aside className="hidden w-ask-sidebar shrink-0 flex-col border-l-2 border-topbar lg:flex">
+    <aside className="sticky top-[100px] hidden h-[calc(100vh-100px)] w-ask-sidebar shrink-0 flex-col overflow-y-auto border-l-2 border-topbar lg:flex">
       <div className="flex items-center gap-2 px-4 pb-3 pt-5">
         <Sparkles className="h-4 w-4 text-fg-3" aria-hidden="true" />
         <span className="text-sm font-medium text-fg-3">ASK</span>
