@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { ArrowUp, Loader2, Play, AlertTriangle } from 'lucide-react'
 import { askMeeting, AskError, type AskAnswer } from '@/lib/ask-client'
+import { renderAskMarkdown } from '@/lib/ask-markdown'
 import { formatTimecode } from '@/lib/utils'
 import { usePlayer } from './player-provider'
 
@@ -15,6 +16,7 @@ const SUGGESTIONS = [
 export function AskPanel({ meetingId }: { meetingId: string }) {
   const { seek } = usePlayer()
   const [question, setQuestion] = useState('')
+  const [askedQuestion, setAskedQuestion] = useState<string | null>(null)
   const [answer, setAnswer] = useState<AskAnswer | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -23,6 +25,10 @@ export function AskPanel({ meetingId }: { meetingId: string }) {
     const trimmed = q.trim()
     if (!trimmed || loading) return
 
+    // Clear on submit, not on response — the input is free to type the next
+    // question immediately, matching ordinary chat UX.
+    setQuestion('')
+    setAskedQuestion(trimmed)
     setLoading(true)
     setError(null)
     setAnswer(null)
@@ -73,16 +79,13 @@ export function AskPanel({ meetingId }: { meetingId: string }) {
         </div>
       </form>
 
-      {!answer && !loading && !error && (
+      {!askedQuestion && !loading && !error && (
         <div className="mx-[15px] flex flex-wrap gap-2">
           {SUGGESTIONS.map((s) => (
             <button
               key={s}
               type="button"
-              onClick={() => {
-                setQuestion(s)
-                submit(s)
-              }}
+              onClick={() => submit(s)}
               className="rounded-md border-2 border-topbar px-3 py-1 text-xs text-fg-1 transition-colors hover:border-surface-5"
             >
               {s}
@@ -91,23 +94,38 @@ export function AskPanel({ meetingId }: { meetingId: string }) {
         </div>
       )}
 
+      {askedQuestion && (
+        <div className="mx-[15px] flex justify-end">
+          <p className="max-w-[85%] rounded-md rounded-tr-none bg-surface-4 px-3 py-2 text-sm text-fg-1">
+            {askedQuestion}
+          </p>
+        </div>
+      )}
+
       {error && (
-        <p className="mx-[15px] flex items-start gap-2 rounded-md bg-error/10 px-3 py-2 text-sm text-error">
+        <p className="mx-[15px] mt-3 flex items-start gap-2 rounded-md bg-error/10 px-3 py-2 text-sm text-error">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
           {error}
         </p>
       )}
 
+      {loading && (
+        <div className="mx-[15px] mt-3 flex items-center gap-2 text-sm text-fg-3">
+          <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+          Thinking…
+        </div>
+      )}
+
       {answer && (
-        <div className="mx-[15px]" aria-live="polite">
+        <div className="mx-[15px] mt-3" aria-live="polite">
           {answer.notice && (
             <p className="mb-2 rounded-md bg-warning/10 px-3 py-2 text-xs text-warning">
               {answer.notice}
             </p>
           )}
-          <p className="whitespace-pre-wrap text-[15px] font-light leading-6 text-fg-1">
-            {answer.answer}
-          </p>
+          <div className="text-[15px] font-light leading-6 text-fg-1">
+            {renderAskMarkdown(answer.answer, seek)}
+          </div>
 
           {answer.citations.length > 0 && (
             <div className="mt-3 flex flex-wrap items-center gap-2">

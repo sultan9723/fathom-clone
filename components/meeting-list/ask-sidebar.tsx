@@ -1,10 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Sparkles, ArrowUp, Loader2, AlertTriangle } from 'lucide-react'
 import { askMeeting, type AskAnswer } from '@/lib/ask-client'
-import { formatTimecode } from '@/lib/utils'
+import { renderAskMarkdown } from '@/lib/ask-markdown'
 
 const SUGGESTIONS = [
   'What was decided?',
@@ -19,8 +19,10 @@ const SUGGESTIONS = [
  * meeting," not "search everything at once."
  */
 export function AskSidebar({ meetings }: { meetings: { id: string; title: string }[] }) {
+  const router = useRouter()
   const [meetingId, setMeetingId] = useState(meetings[0]?.id ?? '')
   const [question, setQuestion] = useState('')
+  const [askedQuestion, setAskedQuestion] = useState<string | null>(null)
   const [answer, setAnswer] = useState<AskAnswer | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -29,6 +31,8 @@ export function AskSidebar({ meetings }: { meetings: { id: string; title: string
     const trimmed = q.trim()
     if (!trimmed || loading || !meetingId) return
 
+    setQuestion('')
+    setAskedQuestion(trimmed)
     setLoading(true)
     setError(null)
     setAnswer(null)
@@ -39,6 +43,12 @@ export function AskSidebar({ meetings }: { meetings: { id: string; title: string
     } finally {
       setLoading(false)
     }
+  }
+
+  // No video is playing here — a timestamp opens the meeting at that moment
+  // instead of seeking in place.
+  function openAt(seconds: number) {
+    router.push(`/meetings/${meetingId}?t=${seconds}`)
   }
 
   if (meetings.length === 0) return null
@@ -52,21 +62,26 @@ export function AskSidebar({ meetings }: { meetings: { id: string; title: string
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-4">
-        {!answer && !loading && !error && (
+        {!askedQuestion && !loading && !error && (
           <div className="flex flex-wrap justify-end gap-2 py-2">
             {SUGGESTIONS.map((s) => (
               <button
                 key={s}
                 type="button"
-                onClick={() => {
-                  setQuestion(s)
-                  submit(s)
-                }}
+                onClick={() => submit(s)}
                 className="h-8 rounded-md border-2 border-topbar px-3 text-sm font-medium text-fg-1 transition-colors hover:border-surface-5"
               >
                 {s}
               </button>
             ))}
+          </div>
+        )}
+
+        {askedQuestion && (
+          <div className="flex justify-end py-2">
+            <p className="max-w-[85%] rounded-md rounded-tr-none bg-surface-4 px-3 py-2 text-sm text-fg-1">
+              {askedQuestion}
+            </p>
           </div>
         )}
 
@@ -91,19 +106,9 @@ export function AskSidebar({ meetings }: { meetings: { id: string; title: string
                 {answer.notice}
               </p>
             )}
-            <p className="whitespace-pre-wrap text-[15px] font-light leading-6 text-fg-1">
-              {answer.answer}
-            </p>
-            {answer.citations.length > 0 && (
-              <div className="mt-3 flex flex-wrap gap-2">
-                <Link
-                  href={`/meetings/${meetingId}?t=${answer.citations[0]}`}
-                  className="rounded bg-brand/10 px-2 py-1 text-xs font-medium text-brand hover:bg-brand hover:text-surface-2"
-                >
-                  Open at {formatTimecode(answer.citations[0]!)}
-                </Link>
-              </div>
-            )}
+            <div className="text-[15px] font-light leading-6 text-fg-1">
+              {renderAskMarkdown(answer.answer, openAt)}
+            </div>
           </div>
         )}
       </div>
