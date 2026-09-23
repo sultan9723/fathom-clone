@@ -112,8 +112,13 @@ export function ShareModal({
               >
                 <span
                   className={cn(
-                    'absolute top-1/2 h-[14px] w-[14px] -translate-y-1/2 rounded-full bg-white transition-transform',
-                    withTimestamp ? 'translate-x-[16px]' : 'translate-x-[2px]'
+                    // Anchored explicitly at left-[2px] rather than left
+                    // unset — the browser's "static position" fallback for
+                    // an absolutely-positioned lone child doesn't reliably
+                    // resolve to 0 here, which was pushing the thumb a full
+                    // track-width past its track when translated.
+                    'absolute left-[2px] top-1/2 h-[14px] w-[14px] -translate-y-1/2 rounded-full bg-white transition-transform',
+                    withTimestamp ? 'translate-x-[14px]' : 'translate-x-0'
                   )}
                 />
               </button>
