@@ -10,6 +10,10 @@ import { colors, typography, components } from './lib/design-tokens'
  *   border / borderFaint   -> border-line  border-line-faint
  *   text1..4               -> text-fg-1 .. text-fg-4
  *   brand, status, accents -> text-brand, bg-error, text-accent-1, ...
+ *   searchPill             -> bg-search-pill
+ *
+ * Radius is NOT customized: SPEC's 4/6/8/9999px scale maps exactly onto
+ * Tailwind's built-in rounded/rounded-md/rounded-lg/rounded-full.
  */
 const config: Config = {
   content: [
@@ -39,6 +43,7 @@ const config: Config = {
           4: colors.text4,
         },
         brand: colors.brand,
+        'brand-hover': '#20c5ff',
         error: colors.error,
         danger: colors.danger,
         warning: colors.warning,
@@ -50,6 +55,7 @@ const config: Config = {
           3: colors.accent3,
           4: colors.accent4,
         },
+        'search-pill': colors.searchPill,
       },
 
       fontFamily: {
@@ -73,8 +79,36 @@ const config: Config = {
         'btn-sm': components.buttonSm.height,
         'btn-sm-x': components.buttonSm.paddingX,
       },
+
+      // Element-specific one-off dimensions live here, not in `spacing`
+      // (which also drives padding/margin/gap and shouldn't carry these).
+      minHeight: {
+        video: components.videoMinHeight,
+      },
+      width: {
+        'ask-sidebar': components.askSidebarWidth,
+        'notes-col': components.notesColumnWidth,
+        'transcript-search': components.transcriptSearchPill.width,
+        'resume-pill': components.resumeScrollPill.width,
+        'share-modal': components.shareModalWidth,
+        toggle: components.toggle.width,
+        'send-circle': components.sendButtonCircle,
+        'ask-send': components.askSendButton.width,
+      },
+      height: {
+        'sub-nav': components.subNavHeight,
+        'tab-bar': components.tabBarHeight,
+        'transcript-search': components.transcriptSearchPill.height,
+        'resume-pill': components.resumeScrollPill.height,
+        toggle: components.toggle.height,
+        'ask-composer': components.askComposerHeight,
+        'send-circle': components.sendButtonCircle,
+        'ask-send': components.askSendButton.height,
+        'share-copy': components.shareCopyButtonHeight,
+        'action-checkbox': components.actionCheckbox,
+      },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/container-queries')],
 }
 export default config
