@@ -62,10 +62,14 @@ export default function RootLayout({
                 <HelpCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
                 <span className="hidden sm:inline">Help</span>
               </span>
+              {/* Static placeholder — no auth/user model exists, so these
+                  are fixed initials rather than a real logged-in identity. */}
               <span
                 aria-hidden="true"
-                className="ml-2 h-avatar w-avatar shrink-0 rounded-full bg-line"
-              />
+                className="ml-2 grid h-avatar w-avatar shrink-0 place-items-center rounded-full bg-surface-5 text-sm font-semibold text-fg-1"
+              >
+                SQ
+              </span>
             </div>
           </div>
         </header>
