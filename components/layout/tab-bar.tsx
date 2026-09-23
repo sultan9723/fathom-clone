@@ -28,7 +28,9 @@ export function TabBar() {
       aria-label="Primary"
       className="h-tab-bar overflow-hidden border-t-[0.67px] border-page bg-topbar"
     >
-      <div className="mx-auto flex h-full w-full max-w-6xl items-center gap-6 overflow-x-auto px-4 sm:px-6">
+      {/* No max-w cap — matches the header and page content below, which
+          also run edge-to-edge. */}
+      <div className="flex h-full w-full items-center gap-6 overflow-x-auto px-4 sm:px-6">
         {TABS.map((tab) => {
           const active =
             tab.label === 'My Calls'

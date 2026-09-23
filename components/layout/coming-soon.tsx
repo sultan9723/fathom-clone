@@ -16,7 +16,7 @@ export function ComingSoon({
   description: string
 }) {
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-col items-center justify-center px-6 py-24 text-center">
+    <main className="flex w-full flex-col items-center justify-center px-6 py-24 text-center">
       <span className="grid h-12 w-12 place-items-center rounded-full bg-surface-4 text-fg-3">
         <Icon className="h-6 w-6" aria-hidden="true" />
       </span>

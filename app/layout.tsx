@@ -26,7 +26,10 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} max-w-full overflow-x-hidden`}>
       <body className="min-h-screen max-w-full overflow-x-hidden bg-page font-sans text-base text-fg-1 antialiased">
         <header className="sticky top-0 z-30 min-w-0 overflow-hidden bg-topbar">
-          <div className="mx-auto flex h-topbar w-full max-w-6xl min-w-0 items-center gap-2 overflow-hidden px-4 sm:gap-4 sm:px-6">
+          {/* No max-w cap: the meeting list/detail pages below run edge-to-
+              edge, so a constrained header would drift out of alignment
+              with them on wide viewports. */}
+          <div className="flex h-topbar w-full min-w-0 items-center gap-2 overflow-hidden px-4 sm:gap-4 sm:px-6">
             <Link
               href="/meetings"
               className="flex h-5 w-[140px] shrink-0 items-center rounded-md text-lg font-semibold text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
