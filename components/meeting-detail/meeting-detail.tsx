@@ -1,19 +1,16 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Clock, Calendar } from 'lucide-react'
+import { ChevronLeft } from 'lucide-react'
 import type { Meeting } from '@/lib/types'
 import { PlayerProvider } from './player-provider'
 import { VideoPlayer } from './video-player'
+import { SubNavTabs, type DetailTab } from './sub-nav-tabs'
+import { SummaryTab } from './summary-tab'
 import { TranscriptPanel } from './transcript-panel'
-import { SummaryPanel } from './summary-panel'
-import { ActionItems } from './action-items'
-import { Highlights } from './highlights'
-import { Participants } from './participants'
 import { AskPanel } from './ask-panel'
-import { PlatformBadge } from '@/components/meeting-list/platform-badge'
-import { ShareModal } from '@/components/share/share-modal'
-import { formatDuration, formatMeetingDate, formatMeetingTime } from '@/lib/utils'
+import { NotesColumn } from './notes-column'
 
 /**
  * Client shell for the detail view. The page itself stays a Server Component
@@ -27,67 +24,41 @@ export function MeetingDetail({
   meeting: Meeting
   initialTime?: number
 }) {
+  const [activeTab, setActiveTab] = useState<DetailTab>('summary')
+
   return (
     <PlayerProvider durationSec={meeting.durationSec} initialTime={initialTime}>
-      <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
-        <Link
-          href="/meetings"
-          className="inline-flex items-center gap-1.5 rounded text-sm text-slate-500 transition hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-        >
-          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-          All meetings
-        </Link>
+      <div className="flex w-full items-start">
+        <div className="min-w-0 flex-grow">
+          <Link
+            href="/meetings"
+            className="mt-2 inline-flex items-center gap-0.5 px-4 text-xs text-fg-meta transition hover:text-fg-2 sm:px-6"
+          >
+            <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
+            My Calls
+          </Link>
 
-        <header className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0">
-            <h1 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
-              {meeting.title}
-            </h1>
-            <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-slate-500">
-              <PlatformBadge platform={meeting.platform} />
-              <span className="inline-flex items-center gap-1">
-                <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
-                {formatMeetingDate(meeting.date)} · {formatMeetingTime(meeting.date)}
-              </span>
-              <span className="inline-flex items-center gap-1">
-                <Clock className="h-3.5 w-3.5" aria-hidden="true" />
-                {formatDuration(meeting.durationSec)}
-              </span>
-            </div>
-          </div>
-          <div className="shrink-0">
-            <ShareModal meetingId={meeting.id} title={meeting.title} />
-          </div>
-        </header>
-
-        <div className="mt-6 grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
-          <div className="space-y-6 lg:col-span-2">
+          <div className="px-4 sm:px-6">
             <VideoPlayer
               src={meeting.videoUrl}
               poster={meeting.thumbnailUrl}
               title={meeting.title}
+              date={meeting.date}
               highlights={meeting.highlights}
             />
-            <AskPanel meetingId={meeting.id} />
-            <SummaryPanel summary={meeting.summary} />
-            <ActionItems items={meeting.actionItems} participants={meeting.participants} />
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              <Highlights highlights={meeting.highlights} />
-              <Participants
-                participants={meeting.participants}
-                transcript={meeting.transcript}
-              />
-            </div>
           </div>
 
-          <div className="lg:sticky lg:top-20">
-            <TranscriptPanel
-              transcript={meeting.transcript}
-              participants={meeting.participants}
-            />
-          </div>
+          <SubNavTabs active={activeTab} onChange={setActiveTab} meeting={meeting} />
+
+          {activeTab === 'summary' && <SummaryTab meeting={meeting} />}
+          {activeTab === 'transcript' && (
+            <TranscriptPanel transcript={meeting.transcript} participants={meeting.participants} />
+          )}
+          {activeTab === 'ask' && <AskPanel meetingId={meeting.id} />}
         </div>
-      </main>
+
+        <NotesColumn meeting={meeting} />
+      </div>
     </PlayerProvider>
   )
 }

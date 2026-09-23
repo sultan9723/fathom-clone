@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { Share2, Copy, Check, X } from 'lucide-react'
-import { formatTimecode } from '@/lib/utils'
+import { cn, formatTimecode } from '@/lib/utils'
 import { usePlayer } from '@/components/meeting-detail/player-provider'
 
 /**
@@ -10,7 +10,16 @@ import { usePlayer } from '@/components/meeting-detail/player-provider'
  * and handed to the PlayerProvider as its initial seek, so a shared link opens
  * at the moment the sender was looking at.
  */
-export function ShareModal({ meetingId, title }: { meetingId: string; title: string }) {
+export function ShareModal({
+  meetingId,
+  title,
+  triggerClassName,
+}: {
+  meetingId: string
+  title: string
+  /** Lets callers (e.g. the Notes column) fit the trigger to their own layout. */
+  triggerClassName?: string
+}) {
   const { currentTime } = usePlayer()
   const [open, setOpen] = useState(false)
   const [withTimestamp, setWithTimestamp] = useState(true)
@@ -50,7 +59,10 @@ export function ShareModal({ meetingId, title }: { meetingId: string; title: str
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+        className={cn(
+          'inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500',
+          triggerClassName
+        )}
       >
         <Share2 className="h-4 w-4" aria-hidden="true" />
         Share

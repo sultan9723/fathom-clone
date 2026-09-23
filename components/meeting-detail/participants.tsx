@@ -20,33 +20,28 @@ export function Participants({
   }
 
   return (
-    <section
-      aria-labelledby="participants-heading"
-      className="rounded-xl border border-slate-200 bg-white p-5"
-    >
-      <h2
+    <section aria-labelledby="participants-heading" className="mt-6">
+      <h3
         id="participants-heading"
-        className="flex items-center gap-2 text-sm font-semibold text-slate-900"
+        className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-fg-3"
       >
-        <Users className="h-4 w-4 text-indigo-600" aria-hidden="true" />
+        <Users className="h-3.5 w-3.5" aria-hidden="true" />
         Participants
-        <span className="font-normal text-slate-400">({participants.length})</span>
-      </h2>
+        <span className="font-normal normal-case text-fg-4">({participants.length})</span>
+      </h3>
 
-      <ul className="mt-3 space-y-3">
+      <ul className="mt-2 space-y-3">
         {participants.map((p) => {
           const share = total > 0 ? ((spoken.get(p.id) ?? 0) / total) * 100 : 0
           return (
             <li key={p.id} className="flex items-center gap-3">
               <Avatar participant={p} size="lg" className="ring-0" />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-slate-900">{p.name}</p>
-                {p.email && (
-                  <p className="truncate text-xs text-slate-500">{p.email}</p>
-                )}
+                <p className="truncate text-sm font-medium text-fg-1">{p.name}</p>
+                {p.email && <p className="truncate text-xs text-fg-3">{p.email}</p>}
                 <div className="mt-1.5 flex items-center gap-2">
                   <div
-                    className="h-1 flex-1 overflow-hidden rounded-full bg-slate-100"
+                    className="h-1 flex-1 overflow-hidden rounded-full bg-surface-4"
                     role="img"
                     aria-label={`${p.name} spoke for ${Math.round(share)}% of the meeting`}
                   >
@@ -55,7 +50,7 @@ export function Participants({
                       style={{ width: `${share}%`, backgroundColor: p.color }}
                     />
                   </div>
-                  <span className="w-8 shrink-0 text-right font-mono text-[11px] tabular-nums text-slate-400">
+                  <span className="w-8 shrink-0 text-right font-mono text-[11px] tabular-nums text-fg-3">
                     {Math.round(share)}%
                   </span>
                 </div>

@@ -1,9 +1,9 @@
 'use client'
 
 import { useCallback, useRef, useState } from 'react'
-import { Play, Pause, RotateCcw, RotateCw, Gauge } from 'lucide-react'
+import { Play, Volume2, VolumeX, LayoutGrid } from 'lucide-react'
 import { usePlayer } from './player-provider'
-import { cn, formatTimecode } from '@/lib/utils'
+import { cn, formatMeetingDate, formatTimecode } from '@/lib/utils'
 import type { Highlight } from '@/lib/types'
 
 const RATES = [0.75, 1, 1.25, 1.5, 2] as const
@@ -12,11 +12,13 @@ export function VideoPlayer({
   src,
   poster,
   title,
+  date,
   highlights = [],
 }: {
   src: string
   poster?: string
   title: string
+  date: string
   highlights?: Highlight[]
 }) {
   const {
@@ -37,6 +39,7 @@ export function VideoPlayer({
   const trackRef = useRef<HTMLDivElement | null>(null)
   const [scrubTime, setScrubTime] = useState<number | null>(null)
   const [isScrubbing, setIsScrubbing] = useState(false)
+  const [muted, setMuted] = useState(false)
 
   const displayTime = scrubTime ?? currentTime
   const progress = duration > 0 ? (displayTime / duration) * 100 : 0
@@ -106,9 +109,18 @@ export function VideoPlayer({
     setPlaybackRate(next)
   }, [playbackRate, setPlaybackRate])
 
+  const toggleMute = useCallback(() => {
+    const video = videoRef.current
+    setMuted((prev) => {
+      const next = !prev
+      if (video) video.muted = next
+      return next
+    })
+  }, [videoRef])
+
   return (
-    <section className="overflow-hidden rounded-xl border border-slate-200 bg-slate-900 shadow-sm">
-      <div className="relative aspect-video w-full bg-black">
+    <section className="mt-4 overflow-hidden rounded-t-lg bg-black">
+      <div className="relative aspect-video min-h-video w-full">
         <video
           ref={videoRef}
           src={src}
@@ -120,119 +132,112 @@ export function VideoPlayer({
           onClick={togglePlay}
           className="h-full w-full cursor-pointer object-contain"
         />
+
+        <div className="pointer-events-none absolute left-4 top-3">
+          <p className="text-base font-semibold text-white">{title}</p>
+          <p className="text-xs font-normal text-white/90" suppressHydrationWarning>
+            {formatMeetingDate(date)}
+          </p>
+        </div>
+
         {!isPlaying && (
           <button
             type="button"
             onClick={togglePlay}
             aria-label="Play"
-            className="absolute inset-0 grid place-items-center bg-black/20 transition hover:bg-black/30"
+            className="absolute inset-0 grid place-items-center bg-black/75"
           >
-            <span className="grid h-16 w-16 place-items-center rounded-full bg-white/95 shadow-lg transition group-hover:scale-105">
-              <Play className="ml-1 h-7 w-7 text-slate-900" fill="currentColor" aria-hidden="true" />
-            </span>
+            <Play className="h-20 w-20 text-white opacity-25" fill="currentColor" aria-hidden="true" />
           </button>
         )}
-      </div>
 
-      <div className="space-y-3 bg-slate-900 px-4 py-3">
-        {/* Scrub track. Highlights are marked so the interesting moments are findable. */}
-        <div
-          ref={trackRef}
-          role="slider"
-          tabIndex={0}
-          aria-label="Seek"
-          aria-valuemin={0}
-          aria-valuemax={Math.round(duration)}
-          aria-valuenow={Math.round(displayTime)}
-          aria-valuetext={`${formatTimecode(displayTime)} of ${formatTimecode(duration)}`}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onKeyDown={handleKeyDown}
-          className="group relative h-6 cursor-pointer touch-none select-none rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
-        >
-          <div className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 overflow-hidden rounded-full bg-white/20">
-            <div
-              className="h-full rounded-full bg-indigo-500"
-              style={{ width: `${progress}%` }}
+        {/* Control bar floats over the video, 34px up from the bottom edge. */}
+        <div className="absolute inset-x-0 bottom-[34px] flex items-center gap-3 px-4">
+          <button
+            type="button"
+            onClick={toggleMute}
+            aria-label={muted ? 'Unmute' : 'Mute'}
+            className="shrink-0 text-white transition hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+          >
+            {muted ? (
+              <VolumeX className="h-5 w-5" aria-hidden="true" />
+            ) : (
+              <Volume2 className="h-5 w-5" aria-hidden="true" />
+            )}
+          </button>
+
+          <span className="shrink-0 font-mono text-[13px] font-semibold tabular-nums text-white">
+            {formatTimecode(displayTime)}
+          </span>
+
+          <div
+            ref={trackRef}
+            role="slider"
+            tabIndex={0}
+            aria-label="Seek"
+            aria-valuemin={0}
+            aria-valuemax={Math.round(duration)}
+            aria-valuenow={Math.round(displayTime)}
+            aria-valuetext={`${formatTimecode(displayTime)} of ${formatTimecode(duration)}`}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onKeyDown={handleKeyDown}
+            className="group relative h-[10px] flex-1 cursor-pointer touch-none select-none rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+          >
+            <div className="absolute inset-x-0 top-1/2 h-full -translate-y-1/2 overflow-hidden rounded-full bg-[rgba(97,97,98,0.75)]">
+              <div className="h-full rounded-full bg-brand" style={{ width: `${progress}%` }} />
+            </div>
+
+            {highlights.map((h) => (
+              <span
+                key={h.id}
+                title={h.title}
+                className="pointer-events-none absolute top-1/2 h-[10px] -translate-y-1/2 rounded-full bg-warning/70"
+                style={{
+                  left: `${(h.start / duration) * 100}%`,
+                  width: `${Math.max(((h.end - h.start) / duration) * 100, 0.6)}%`,
+                }}
+              />
+            ))}
+
+            {/* Playhead: 3x22px vertical bar */}
+            <span
+              className={cn(
+                'pointer-events-none absolute top-1/2 h-[22px] w-[3px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand shadow transition-transform',
+                isScrubbing ? 'scale-110' : 'group-hover:scale-105'
+              )}
+              style={{ left: `${progress}%` }}
             />
           </div>
-
-          {highlights.map((h) => (
-            <span
-              key={h.id}
-              title={h.title}
-              className="pointer-events-none absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-amber-400/80"
-              style={{
-                left: `${(h.start / duration) * 100}%`,
-                width: `${Math.max(((h.end - h.start) / duration) * 100, 0.6)}%`,
-              }}
-            />
-          ))}
-
-          <span
-            className={cn(
-              'pointer-events-none absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow transition-transform',
-              isScrubbing ? 'scale-125' : 'scale-0 group-hover:scale-100'
-            )}
-            style={{ left: `${progress}%` }}
-          />
-        </div>
-
-        <div className="flex items-center gap-2 text-slate-200">
-          <button
-            type="button"
-            onClick={togglePlay}
-            aria-label={isPlaying ? 'Pause' : 'Play'}
-            className="grid h-9 w-9 place-items-center rounded-full bg-white text-slate-900 transition hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
-          >
-            {isPlaying ? (
-              <Pause className="h-4 w-4" fill="currentColor" aria-hidden="true" />
-            ) : (
-              <Play className="ml-0.5 h-4 w-4" fill="currentColor" aria-hidden="true" />
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => seekBy(-10)}
-            aria-label="Back 10 seconds"
-            className="grid h-8 w-8 place-items-center rounded-full transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
-          >
-            <RotateCcw className="h-4 w-4" aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            onClick={() => seekBy(10)}
-            aria-label="Forward 10 seconds"
-            className="grid h-8 w-8 place-items-center rounded-full transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
-          >
-            <RotateCw className="h-4 w-4" aria-hidden="true" />
-          </button>
-
-          <span className="ml-1 font-mono text-xs tabular-nums text-slate-300">
-            {formatTimecode(displayTime)} / {formatTimecode(duration)}
-          </span>
 
           <button
             type="button"
             onClick={cycleRate}
             aria-label={`Playback speed ${playbackRate}x`}
-            className="ml-auto inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
+            className="shrink-0 text-[13px] font-semibold text-white transition hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
           >
-            <Gauge className="h-3.5 w-3.5" aria-hidden="true" />
             {playbackRate}×
           </button>
-        </div>
 
-        {isScaled && isReady && (
-          <p className="text-[11px] leading-relaxed text-slate-400">
-            Demo clip is shorter than the meeting, so playback time is mapped onto the
-            full {formatTimecode(duration)} transcript. Seeking and sync work exactly as
-            they would against a real recording.
-          </p>
-        )}
+          {/* No described function beyond presence — inert. */}
+          <span
+            aria-hidden="true"
+            className="shrink-0 cursor-default text-white/70"
+            title="Layout"
+          >
+            <LayoutGrid className="h-5 w-5" />
+          </span>
+        </div>
       </div>
+
+      {isScaled && isReady && (
+        <p className="bg-black px-4 py-2 text-[11px] leading-relaxed text-fg-3">
+          Demo clip is shorter than the meeting, so playback time is mapped onto the
+          full {formatTimecode(duration)} transcript. Seeking and sync work exactly as
+          they would against a real recording.
+        </p>
+      )}
     </section>
   )
 }

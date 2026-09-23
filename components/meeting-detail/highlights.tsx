@@ -11,19 +11,16 @@ export function Highlights({ highlights }: { highlights: Highlight[] }) {
   if (highlights.length === 0) return null
 
   return (
-    <section
-      aria-labelledby="highlights-heading"
-      className="rounded-xl border border-slate-200 bg-white p-5"
-    >
-      <h2
+    <section aria-labelledby="highlights-heading" className="mt-6">
+      <h3
         id="highlights-heading"
-        className="flex items-center gap-2 text-sm font-semibold text-slate-900"
+        className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-fg-3"
       >
-        <Sparkles className="h-4 w-4 text-amber-500" aria-hidden="true" />
+        <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
         Highlights
-      </h2>
+      </h3>
 
-      <ul className="mt-3 space-y-1">
+      <ul className="mt-2 space-y-1">
         {highlights.map((h) => {
           const isCurrent = currentTime >= h.start && currentTime < h.end
           return (
@@ -33,22 +30,22 @@ export function Highlights({ highlights }: { highlights: Highlight[] }) {
                 onClick={() => seek(h.start)}
                 aria-current={isCurrent ? 'true' : undefined}
                 className={cn(
-                  'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500',
-                  isCurrent ? 'bg-amber-50 ring-1 ring-amber-200' : 'hover:bg-slate-50'
+                  'flex w-full items-center gap-3 rounded-md px-2 py-2 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand',
+                  isCurrent ? 'bg-brand/15' : 'hover:bg-surface-4'
                 )}
               >
                 <span
                   className={cn(
                     'grid h-7 w-7 shrink-0 place-items-center rounded-full transition',
-                    isCurrent ? 'bg-amber-400 text-white' : 'bg-slate-100 text-slate-500'
+                    isCurrent ? 'bg-brand text-surface-2' : 'bg-surface-5 text-fg-2'
                   )}
                   aria-hidden="true"
                 >
                   <Play className="ml-0.5 h-3 w-3" fill="currentColor" />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm text-slate-700">{h.title}</span>
-                  <span className="font-mono text-[11px] tabular-nums text-slate-400">
+                  <span className="block truncate text-sm font-light text-fg-1">{h.title}</span>
+                  <span className="font-mono text-[11px] tabular-nums text-fg-3">
                     {formatTimecode(h.start)} · {formatDuration(h.end - h.start)}
                   </span>
                 </span>

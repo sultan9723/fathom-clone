@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ListChecks, Play } from 'lucide-react'
+import { Play } from 'lucide-react'
 import type { ActionItem, Participant } from '@/lib/types'
 import { Avatar } from '@/components/ui/avatar'
 import { cn, formatTimecode } from '@/lib/utils'
@@ -22,78 +22,71 @@ export function ActionItems({
   )
 
   const byId = new Map(participants.map((p) => [p.id, p]))
-  const openCount = items.filter((i) => !done[i.id]).length
 
   return (
-    <section
-      aria-labelledby="actions-heading"
-      className="rounded-xl border border-slate-200 bg-white p-5"
-    >
-      <div className="flex items-center justify-between gap-2">
-        <h2
-          id="actions-heading"
-          className="flex items-center gap-2 text-sm font-semibold text-slate-900"
-        >
-          <ListChecks className="h-4 w-4 text-indigo-600" aria-hidden="true" />
-          Action items
-        </h2>
-        <span className="text-xs text-slate-500">
-          {openCount} of {items.length} open
-        </span>
-      </div>
+    <section aria-labelledby="actions-heading">
+      <h3
+        id="actions-heading"
+        className="text-[15px] font-bold uppercase tracking-[0.375px] text-line-faint"
+      >
+        Action Items
+      </h3>
 
-      <ul className="mt-3 space-y-1">
-        {items.map((item) => {
-          const assignee = item.assigneeId ? byId.get(item.assigneeId) : undefined
-          const isDone = done[item.id] ?? false
-          return (
-            <li
-              key={item.id}
-              className="group flex items-start gap-3 rounded-lg px-2 py-2 transition hover:bg-slate-50"
-            >
-              <input
-                id={`action-${item.id}`}
-                type="checkbox"
-                checked={isDone}
-                onChange={(e) =>
-                  setDone((prev) => ({ ...prev, [item.id]: e.target.checked }))
-                }
-                className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-              />
-              <div className="min-w-0 flex-1">
-                <label
-                  htmlFor={`action-${item.id}`}
-                  className={cn(
-                    'cursor-pointer text-sm leading-relaxed',
-                    isDone ? 'text-slate-400 line-through' : 'text-slate-700'
-                  )}
-                >
-                  {item.text}
-                </label>
-                <div className="mt-1 flex flex-wrap items-center gap-2">
-                  {assignee && (
-                    <span className="inline-flex items-center gap-1.5 text-xs text-slate-500">
-                      <Avatar participant={assignee} size="sm" />
-                      {assignee.name}
-                    </span>
-                  )}
-                  {item.timestamp !== undefined && (
-                    <button
-                      type="button"
-                      onClick={() => seek(item.timestamp!)}
-                      className="inline-flex items-center gap-1 rounded font-mono text-[11px] tabular-nums text-slate-400 transition hover:text-indigo-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-                      aria-label={`Jump to ${formatTimecode(item.timestamp)} where this was discussed`}
-                    >
-                      <Play className="h-2.5 w-2.5" fill="currentColor" aria-hidden="true" />
-                      {formatTimecode(item.timestamp)}
-                    </button>
-                  )}
+      {items.length === 0 ? (
+        <p className="mt-3 rounded-md bg-topbar px-[27px] py-4 text-base italic font-normal text-fg-3">
+          No action items for this call.
+        </p>
+      ) : (
+        <ul className="mt-2 space-y-1">
+          {items.map((item) => {
+            const assignee = item.assigneeId ? byId.get(item.assigneeId) : undefined
+            const isDone = done[item.id] ?? false
+            return (
+              <li key={item.id} className="flex items-start gap-3 py-1.5">
+                <input
+                  id={`action-${item.id}`}
+                  type="checkbox"
+                  checked={isDone}
+                  onChange={(e) =>
+                    setDone((prev) => ({ ...prev, [item.id]: e.target.checked }))
+                  }
+                  className="mt-1 h-action-checkbox w-action-checkbox shrink-0 rounded border-line bg-transparent text-brand accent-brand focus:ring-brand"
+                />
+                <div className="min-w-0 flex-1">
+                  <label
+                    htmlFor={`action-${item.id}`}
+                    className={cn(
+                      'cursor-pointer text-[15px] font-light leading-6',
+                      isDone ? 'text-fg-3 line-through' : 'text-fg-1'
+                    )}
+                  >
+                    {item.text}
+                  </label>
+                  <div className="mt-0.5 flex flex-wrap items-center gap-2">
+                    {assignee && (
+                      <span className="inline-flex items-center gap-1.5 text-xs text-fg-3">
+                        <Avatar participant={assignee} size="sm" />
+                        {assignee.name}
+                      </span>
+                    )}
+                    {item.timestamp !== undefined && (
+                      <button
+                        type="button"
+                        onClick={() => seek(item.timestamp!)}
+                        className="inline-flex items-center gap-1 rounded font-mono text-[11px] tabular-nums text-brand transition hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+                        aria-label={`Jump to ${formatTimecode(item.timestamp)} where this was discussed`}
+                      >
+                        <Play className="h-2.5 w-2.5" fill="currentColor" aria-hidden="true" />
+                        {formatTimecode(item.timestamp)}
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </li>
-          )
-        })}
-      </ul>
+              </li>
+            )
+          })}
+        </ul>
+      )}
     </section>
   )
 }
