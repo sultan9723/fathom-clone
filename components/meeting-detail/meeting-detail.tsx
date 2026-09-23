@@ -11,6 +11,7 @@ import { SummaryTab } from './summary-tab'
 import { TranscriptPanel } from './transcript-panel'
 import { AskPanel } from './ask-panel'
 import { NotesColumn } from './notes-column'
+import { NotesContent } from './notes-content'
 
 /**
  * Client shell for the detail view. The page itself stays a Server Component
@@ -55,6 +56,14 @@ export function MeetingDetail({
             <TranscriptPanel transcript={meeting.transcript} participants={meeting.participants} />
           )}
           {activeTab === 'ask' && <AskPanel meetingId={meeting.id} />}
+          {activeTab === 'details' && (
+            // Same content as the persistent NotesColumn (lg+); this pane
+            // is how mobile reaches it, so it disappears once that column
+            // is visible instead of duplicating it on wide screens.
+            <div className="bg-black px-4 py-5 lg:hidden">
+              <NotesContent meeting={meeting} />
+            </div>
+          )}
         </div>
 
         <NotesColumn meeting={meeting} />

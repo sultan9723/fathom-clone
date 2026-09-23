@@ -5,12 +5,16 @@ import { Copy, Check } from 'lucide-react'
 import { cn, formatTimecode } from '@/lib/utils'
 import type { Meeting } from '@/lib/types'
 
-export type DetailTab = 'summary' | 'transcript' | 'ask'
+export type DetailTab = 'summary' | 'transcript' | 'ask' | 'details'
 
-const TABS: { id: DetailTab; label: string }[] = [
+const TABS: { id: DetailTab; label: string; mobileOnly?: boolean }[] = [
   { id: 'summary', label: 'SUMMARY' },
   { id: 'transcript', label: 'TRANSCRIPT' },
   { id: 'ask', label: 'ASK' },
+  // The right-hand Notes column (title/share/action items) is hidden below
+  // lg — this tab is the only way to reach that content on mobile, so it
+  // has no reason to exist once the persistent column is visible.
+  { id: 'details', label: 'DETAILS', mobileOnly: true },
 ]
 
 /**
@@ -47,8 +51,8 @@ export function SubNavTabs({
   }
 
   return (
-    <div className="flex h-sub-nav items-center justify-between bg-black px-[10px]">
-      <div className="flex h-full items-center">
+    <div className="flex h-sub-nav min-w-0 items-center justify-between bg-black px-[10px]">
+      <div className="flex h-full min-w-0 items-center overflow-x-auto">
         {TABS.map((tab) => {
           const isActive = active === tab.id
           return (
@@ -58,7 +62,8 @@ export function SubNavTabs({
               onClick={() => onChange(tab.id)}
               aria-current={isActive ? 'true' : undefined}
               className={cn(
-                'mr-[15px] border-b-2 py-[15px] text-[15px] font-semibold uppercase tracking-wide transition-colors',
+                'mr-[15px] shrink-0 border-b-2 py-[15px] text-[15px] font-semibold uppercase tracking-wide transition-colors',
+                tab.mobileOnly && 'lg:hidden',
                 isActive
                   ? 'border-brand text-brand'
                   : 'border-[#1b1b20] text-fg-meta hover:text-fg-2'
