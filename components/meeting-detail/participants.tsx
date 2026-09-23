@@ -35,7 +35,7 @@ export function Participants({
           const share = total > 0 ? ((spoken.get(p.id) ?? 0) / total) * 100 : 0
           return (
             <li key={p.id} className="flex items-center gap-3">
-              <Avatar participant={p} size="lg" className="ring-0" />
+              <Avatar participant={p} size="lg" />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-fg-1">{p.name}</p>
                 {p.email && <p className="truncate text-xs text-fg-3">{p.email}</p>}

@@ -20,7 +20,8 @@ export async function generateMetadata({
   const meeting = await getMeetingRepository().getById(id)
   if (!meeting) return { title: 'Meeting not found' }
   return {
-    title: `${meeting.title} · Fathom Clone`,
+    // Root layout's title.template appends "· NoteAI".
+    title: meeting.title,
     description: meeting.summary.overview.slice(0, 160),
   }
 }
