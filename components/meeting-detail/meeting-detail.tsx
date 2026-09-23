@@ -10,6 +10,7 @@ import { SummaryPanel } from './summary-panel'
 import { ActionItems } from './action-items'
 import { Highlights } from './highlights'
 import { Participants } from './participants'
+import { AskPanel } from './ask-panel'
 import { PlatformBadge } from '@/components/meeting-list/platform-badge'
 import { ShareModal } from '@/components/share/share-modal'
 import { formatDuration, formatMeetingDate, formatMeetingTime } from '@/lib/utils'
@@ -67,6 +68,7 @@ export function MeetingDetail({
               title={meeting.title}
               highlights={meeting.highlights}
             />
+            <AskPanel meetingId={meeting.id} />
             <SummaryPanel summary={meeting.summary} />
             <ActionItems items={meeting.actionItems} participants={meeting.participants} />
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">

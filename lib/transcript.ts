@@ -61,6 +61,10 @@ export interface ScoredLine {
  * the answer anchored to real quotes. TF-IDF over ~40 lines is plenty here and
  * costs nothing; a real corpus would want embeddings.
  */
+/** BM25 term-saturation and length-normalisation constants. */
+const K1 = 1.2
+const B = 0.75
+
 export class TranscriptIndex {
   private readonly lines: TranscriptLine[]
   private readonly speakers: Map<string, Participant>
@@ -68,35 +72,50 @@ export class TranscriptIndex {
   private readonly docFreq: Map<string, number>
   /** per-line token counts */
   private readonly termFreqs: Map<string, number>[]
+  private readonly lineLengths: number[]
+  private readonly avgLength: number
 
   constructor(meeting: Pick<Meeting, 'transcript' | 'participants'>) {
     this.lines = meeting.transcript
     this.speakers = new Map(meeting.participants.map((p) => [p.id, p]))
     this.docFreq = new Map()
     this.termFreqs = []
+    this.lineLengths = []
 
     for (const line of this.lines) {
       const counts = new Map<string, number>()
       // Speaker name is indexed with the line so "what did Marcus say about X"
       // can match on the name as well as the content.
       const speakerName = this.speakers.get(line.speakerId)?.name ?? ''
-      for (const token of tokenize(`${speakerName} ${line.text}`)) {
+      const tokens = tokenize(`${speakerName} ${line.text}`)
+      for (const token of tokens) {
         counts.set(token, (counts.get(token) ?? 0) + 1)
       }
       this.termFreqs.push(counts)
+      this.lineLengths.push(tokens.length)
       for (const token of counts.keys()) {
         this.docFreq.set(token, (this.docFreq.get(token) ?? 0) + 1)
       }
     }
+
+    const total = this.lineLengths.reduce((a, b) => a + b, 0)
+    this.avgLength = this.lines.length > 0 ? total / this.lines.length : 0
   }
 
   private idf(token: string): number {
     const df = this.docFreq.get(token) ?? 0
     if (df === 0) return 0
-    return Math.log(1 + this.lines.length / df)
+    return Math.log(1 + (this.lines.length - df + 0.5) / (df + 0.5))
   }
 
-  /** Highest-scoring lines for `query`, best first. Empty if nothing matches. */
+  /**
+   * Highest-scoring lines for `query`, best first. Empty if nothing matches.
+   *
+   * Scored with BM25 rather than plain TF-IDF specifically for the length
+   * normalisation: transcripts are full of three-word interjections ("The
+   * export feature.") that match every query term and would otherwise
+   * outrank the substantive line that actually answers the question.
+   */
   search(query: string, limit = 8): ScoredLine[] {
     const terms = tokenize(query)
     if (terms.length === 0) return []
@@ -104,10 +123,12 @@ export class TranscriptIndex {
     const scored: ScoredLine[] = []
     for (let i = 0; i < this.lines.length; i++) {
       const counts = this.termFreqs[i]!
+      const norm =
+        this.avgLength > 0 ? 1 - B + (B * this.lineLengths[i]!) / this.avgLength : 1
       let score = 0
       for (const term of terms) {
         const tf = counts.get(term)
-        if (tf) score += this.idf(term) * (1 + Math.log(tf))
+        if (tf) score += this.idf(term) * ((tf * (K1 + 1)) / (tf + K1 * norm))
       }
       if (score > 0) {
         const line = this.lines[i]!
@@ -144,6 +165,23 @@ export class TranscriptIndex {
         return `[${formatSeconds(line.start)}] ${name}: ${line.text}`
       })
       .join('\n')
+  }
+
+  /**
+   * The line following `line`, if any.
+   *
+   * A short hit is usually a question or an interjection ("The export
+   * feature.") whose answer is in the next turn, and that next turn often
+   * shares no vocabulary with the query — so retrieval alone cannot reach it.
+   */
+  lineAfter(line: TranscriptLine): TranscriptLine | undefined {
+    const idx = this.lines.indexOf(line)
+    return idx === -1 ? undefined : this.lines[idx + 1]
+  }
+
+  /** Resolves a line's speaker. */
+  speakerOf(line: TranscriptLine): Participant | undefined {
+    return this.speakers.get(line.speakerId)
   }
 
   /** Whole transcript, labelled — fallback when a query matches nothing. */
