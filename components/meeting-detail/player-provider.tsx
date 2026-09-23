@@ -80,6 +80,12 @@ export function PlayerProvider({
   const [playbackRate, setRate] = useState(1)
   const lastUpdate = useRef(0)
   const pendingSeek = useRef<number | null>(initialTime > 0 ? initialTime : null)
+  /**
+   * The position the user actually asked for, held until playback moves past
+   * it. See `reconcile` — without this, clicking a transcript line highlights
+   * the line before it.
+   */
+  const seekTarget = useRef<number | null>(initialTime > 0 ? initialTime : null)
 
   const isReady = mediaDuration > 0
 
@@ -100,12 +106,40 @@ export function PlayerProvider({
     [scale]
   )
 
+  /**
+   * Converts a media position back to meeting time, but lets an explicit seek
+   * win until playback has genuinely moved past it.
+   *
+   * When the clip is much shorter than the meeting, one media frame is worth
+   * many meeting seconds. The media element snaps a seek to the nearest frame,
+   * so the position it echoes back can map to a moment *before* the line the
+   * user clicked — which would highlight the previous line and make
+   * click-to-seek look broken.
+   */
+  const reconcile = useCallback(
+    (mediaSeconds: number) => {
+      const mapped = clamp(toMeeting(mediaSeconds), 0, durationSec)
+      const target = seekTarget.current
+      if (target === null) return mapped
+
+      // One media frame, expressed in meeting seconds.
+      const tolerance = scale > 0 ? Math.max(1, 1 / 24 / scale) : 1
+      if (mapped > target + tolerance) {
+        seekTarget.current = null
+        return mapped
+      }
+      return target
+    },
+    [durationSec, scale, toMeeting]
+  )
+
   const seek = useCallback(
     (meetingSeconds: number) => {
       const target = clamp(meetingSeconds, 0, durationSec)
       // Update state first so clicking a transcript line feels instant even
       // before the media element reports the new position.
       setCurrentTime(target)
+      seekTarget.current = target
       lastUpdate.current = Date.now()
 
       const video = videoRef.current
@@ -157,6 +191,9 @@ export function PlayerProvider({
     const target = pendingSeek.current
     if (target === null) return
     pendingSeek.current = null
+    // Same reconciliation as an explicit seek — a ?t= link must land on the
+    // second it names, not a frame-snap away from it.
+    seekTarget.current = target
     const video = videoRef.current
     if (video) video.currentTime = toMedia(target)
   }, [isReady, toMedia])
@@ -170,17 +207,18 @@ export function PlayerProvider({
       const now = Date.now()
       if (now - lastUpdate.current < UPDATE_INTERVAL_MS) return
       lastUpdate.current = now
-      setCurrentTime(clamp(toMeeting(video.currentTime), 0, durationSec))
+      setCurrentTime(reconcile(video.currentTime))
     }
     const onPlay = () => setIsPlaying(true)
     const onPause = () => setIsPlaying(false)
     const onEnded = () => {
       setIsPlaying(false)
+      seekTarget.current = null
       setCurrentTime(durationSec)
     }
     const onSeeked = () => {
       lastUpdate.current = Date.now()
-      setCurrentTime(clamp(toMeeting(video.currentTime), 0, durationSec))
+      setCurrentTime(reconcile(video.currentTime))
     }
 
     video.addEventListener('timeupdate', onTimeUpdate)
@@ -195,7 +233,7 @@ export function PlayerProvider({
       video.removeEventListener('ended', onEnded)
       video.removeEventListener('seeked', onSeeked)
     }
-  }, [durationSec, toMeeting])
+  }, [durationSec, reconcile])
 
   const value = useMemo<PlayerContextValue>(
     () => ({

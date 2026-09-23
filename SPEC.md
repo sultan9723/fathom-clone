@@ -68,7 +68,10 @@ deployed web app in one day for 8x startup take-home assessment.
 - 20-60 min duration
 - Full transcripts (30+ lines)
 - Real-looking names, topics, action items
-- videoUrl: https://www.w3schools.com/html/mov_bbb.mp4
+- videoUrl: a public sample MP4 that permits hotlinking.
+  Currently test-videos.co.uk (Big Buck Bunny, 720p/10s).
+  Not w3schools — that host 403s requests without a browser
+  User-Agent and did not load reliably in testing.
 
 ## Folder Structure
 app/
