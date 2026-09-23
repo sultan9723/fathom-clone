@@ -29,6 +29,7 @@
     ".next/",
     "out/",
     "public/",
+    "next-env.d.ts",
     "*.config.js",
     "*.config.mjs",
     "*.config.ts"

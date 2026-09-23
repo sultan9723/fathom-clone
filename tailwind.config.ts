@@ -41,6 +41,7 @@ const config: Config = {
           2: colors.text2,
           3: colors.text3,
           4: colors.text4,
+          meta: colors.textMeta,
         },
         brand: colors.brand,
         'brand-hover': '#20c5ff',

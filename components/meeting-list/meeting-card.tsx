@@ -1,61 +1,62 @@
 import Link from 'next/link'
-import { Clock, CheckSquare, Sparkles } from 'lucide-react'
+import { Play } from 'lucide-react'
 import type { MeetingListItem } from '@/lib/repository'
-import { AvatarStack } from '@/components/ui/avatar'
 import { PlatformBadge } from './platform-badge'
-import { formatDuration, formatMeetingDate, formatMeetingTime } from '@/lib/utils'
+import { formatDuration, formatMeetingDate } from '@/lib/utils'
+
+/**
+ * Seed data has no thumbnailUrl (the field is genuinely absent, not just
+ * empty) — a diagonal gradient from the first two participants' colors gives
+ * each card a distinct, deterministic fill without a broken <img>. Swaps to
+ * a real image with one conditional if thumbnailUrl is ever populated.
+ */
+function thumbnailStyle(meeting: MeetingListItem): React.CSSProperties {
+  const [a, b] = meeting.participants
+  const colorA = a?.color ?? '#343435'
+  const colorB = b?.color ?? colorA
+  return { background: `linear-gradient(135deg, ${colorA}, ${colorB})` }
+}
 
 export function MeetingCard({ meeting }: { meeting: MeetingListItem }) {
   return (
     <Link
       href={`/meetings/${meeting.id}`}
-      className="group flex w-full flex-col rounded-xl border border-slate-200 bg-white p-5 transition hover:border-indigo-300 hover:shadow-lg hover:shadow-slate-200/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+      className="group relative flex w-full flex-col rounded-md transition-transform duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] hover:z-10 hover:scale-110 hover:shadow-lg focus:outline-none focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-brand"
     >
-      <div className="flex items-start justify-between gap-3">
-        <PlatformBadge platform={meeting.platform} />
-        <time
-          dateTime={meeting.date}
-          className="shrink-0 text-xs text-slate-500"
-          suppressHydrationWarning
-        >
-          {formatMeetingDate(meeting.date)}
-        </time>
-      </div>
-
-      <h2 className="mt-3 text-base font-semibold leading-snug text-slate-900 group-hover:text-indigo-700">
-        {meeting.title}
-      </h2>
-
-      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500">
-        <span className="inline-flex items-center gap-1">
-          <Clock className="h-3.5 w-3.5" aria-hidden="true" />
+      {/* Thumbnail — 16:9 via padding-top, per SPEC. */}
+      <div
+        className="relative w-full overflow-hidden rounded-t-md border border-[#26252a]"
+        style={{ paddingTop: '56.25%' }}
+      >
+        <div
+          className="absolute inset-0 opacity-50 transition-transform duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:scale-115"
+          style={thumbnailStyle(meeting)}
+        />
+        {/* Bottom vignette */}
+        <div className="pointer-events-none absolute inset-0 shadow-[inset_0_-40px_40px_-20px_rgba(0,0,0,0.8)]" />
+        {/* Play overlay, hidden until hover */}
+        <div className="pointer-events-none absolute inset-0 grid place-items-center opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+          <Play className="h-20 w-20 text-white/90" fill="currentColor" aria-hidden="true" />
+        </div>
+        {/* Duration badge */}
+        <span className="absolute bottom-1.5 right-1.5 rounded bg-black/50 px-1 py-px text-xs font-semibold text-fg-1">
           {formatDuration(meeting.durationSec)}
         </span>
-        <span aria-hidden="true">·</span>
-        <span>{formatMeetingTime(meeting.date)}</span>
       </div>
 
-      <div className="mt-auto flex items-end justify-between gap-3 pt-5">
-        <AvatarStack participants={meeting.participants} size="md" />
-        <div className="flex items-center gap-3 text-xs text-slate-500">
-          {meeting.openActionItemCount > 0 && (
-            <span
-              className="inline-flex items-center gap-1"
-              title={`${meeting.openActionItemCount} open of ${meeting.actionItemCount} action items`}
-            >
-              <CheckSquare className="h-3.5 w-3.5" aria-hidden="true" />
-              {meeting.openActionItemCount}
-            </span>
-          )}
-          {meeting.highlightCount > 0 && (
-            <span
-              className="inline-flex items-center gap-1"
-              title={`${meeting.highlightCount} highlights`}
-            >
-              <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
-              {meeting.highlightCount}
-            </span>
-          )}
+      {/* Caption */}
+      <div className="rounded-b-md px-2 py-3 transition-colors duration-200 group-hover:bg-surface-3">
+        <h2 className="truncate text-lg font-semibold text-fg-1">{meeting.title}</h2>
+        <div className="mt-1 flex items-center gap-1.5 text-xs text-fg-meta">
+          <time dateTime={meeting.date} suppressHydrationWarning>
+            {formatMeetingDate(meeting.date)}
+          </time>
+          <span aria-hidden="true">·</span>
+          <PlatformBadge platform={meeting.platform} />
+          <span aria-hidden="true">·</span>
+          <span>
+            {meeting.participants.length} participant{meeting.participants.length === 1 ? '' : 's'}
+          </span>
         </div>
       </div>
     </Link>

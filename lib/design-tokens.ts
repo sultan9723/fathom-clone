@@ -25,6 +25,9 @@ export const colors = {
   text2: '#c2c2c2',
   text3: '#969696',
   text4: '#505050',
+  // Recurs across card meta rows, inactive sub-nav tabs, and the detail-page
+  // date line — distinct from text3, not one of the four numbered text tones.
+  textMeta: '#818181',
 
   // Brand
   brand: '#00beff',
