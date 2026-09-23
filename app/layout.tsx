@@ -23,10 +23,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body className="min-h-screen bg-page font-sans text-base text-fg-1 antialiased">
-        <header className="sticky top-0 z-30 bg-topbar">
-          <div className="mx-auto flex h-topbar w-full max-w-6xl items-center gap-4 px-4 sm:px-6">
+    <html lang="en" className={`${inter.variable} max-w-full overflow-x-hidden`}>
+      <body className="min-h-screen max-w-full overflow-x-hidden bg-page font-sans text-base text-fg-1 antialiased">
+        <header className="sticky top-0 z-30 min-w-0 overflow-hidden bg-topbar">
+          <div className="mx-auto flex h-topbar w-full max-w-6xl min-w-0 items-center gap-2 overflow-hidden px-4 sm:gap-4 sm:px-6">
             <Link
               href="/meetings"
               className="flex h-5 w-[140px] shrink-0 items-center rounded-md text-lg font-semibold text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
@@ -34,7 +34,7 @@ export default function RootLayout({
               NoteAI
             </Link>
 
-            <div className="flex flex-1 justify-center">
+            <div className="flex min-w-0 flex-1 justify-center overflow-hidden">
               <Suspense fallback={<div className="h-pill-h w-pill-w max-w-full rounded-md bg-search-pill" />}>
                 <HeaderSearch />
               </Suspense>
@@ -42,20 +42,22 @@ export default function RootLayout({
 
             <div className="flex shrink-0 items-center gap-1">
               {/* No settings/help pages exist yet — inert, styled per SPEC's
-                  nav-link states, not routed anywhere. */}
+                  nav-link states, not routed anywhere. Text collapses to
+                  icon-only below sm so the header never forces horizontal
+                  scroll on narrow phones. */}
               <span
                 aria-disabled="true"
                 className="flex cursor-default select-none items-center gap-1.5 rounded-md px-2 py-1.5 text-sm font-semibold text-fg-2"
               >
-                <Settings className="h-4 w-4" aria-hidden="true" />
-                Settings
+                <Settings className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <span className="hidden sm:inline">Settings</span>
               </span>
               <span
                 aria-disabled="true"
                 className="flex cursor-default select-none items-center gap-1.5 rounded-md px-2 py-1.5 text-sm font-semibold text-fg-2"
               >
-                <HelpCircle className="h-4 w-4" aria-hidden="true" />
-                Help
+                <HelpCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <span className="hidden sm:inline">Help</span>
               </span>
               <span
                 aria-hidden="true"

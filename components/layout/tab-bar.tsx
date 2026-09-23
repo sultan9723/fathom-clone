@@ -25,9 +25,9 @@ export function TabBar() {
   return (
     <nav
       aria-label="Primary"
-      className="h-tab-bar border-t-[0.67px] border-page bg-topbar"
+      className="h-tab-bar overflow-hidden border-t-[0.67px] border-page bg-topbar"
     >
-      <div className="mx-auto flex h-full w-full max-w-6xl items-center gap-6 px-4 sm:px-6">
+      <div className="mx-auto flex h-full w-full max-w-6xl items-center gap-6 overflow-x-auto px-4 sm:px-6">
         {TABS.map((tab) => {
           if (!tab.href) {
             return (
