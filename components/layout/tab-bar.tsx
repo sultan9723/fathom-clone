@@ -1,26 +1,27 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
 /**
- * Only "My Calls" routes anywhere in this app. The rest — Team Calls,
- * Playlists, Alerts, Deals — have no corresponding page, so they render as
- * inert, non-navigating tabs rather than dead links to nonexistent routes.
- * Same "deliberately stubbed" treatment this project already documents for
- * out-of-scope features.
+ * Every tab is a real, clickable link now. Team Calls/Playlists/Alerts/
+ * Deals have no feature behind them yet, so they land on an honest
+ * "coming soon" empty state instead of a dead-end href="#" or an inert
+ * span that looks broken.
  */
-const TABS: { label: string; href?: string }[] = [
+const TABS = [
   { label: 'My Calls', href: '/meetings' },
-  { label: 'Team Calls' },
-  { label: 'Playlists' },
-  { label: 'Alerts' },
-  { label: 'Deals' },
-]
+  { label: 'Team Calls', href: '/meetings?tab=team' },
+  { label: 'Playlists', href: '/playlists' },
+  { label: 'Alerts', href: '/alerts' },
+  { label: 'Deals', href: '/deals' },
+] as const
 
 export function TabBar() {
   const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const isTeamCalls = pathname === '/meetings' && searchParams.get('tab') === 'team'
 
   return (
     <nav
@@ -29,25 +30,20 @@ export function TabBar() {
     >
       <div className="mx-auto flex h-full w-full max-w-6xl items-center gap-6 overflow-x-auto px-4 sm:px-6">
         {TABS.map((tab) => {
-          if (!tab.href) {
-            return (
-              <span
-                key={tab.label}
-                aria-disabled="true"
-                className="cursor-default select-none text-sm font-normal text-fg-1/60"
-              >
-                {tab.label}
-              </span>
-            )
-          }
+          const active =
+            tab.label === 'My Calls'
+              ? pathname === '/meetings' && !isTeamCalls
+              : tab.label === 'Team Calls'
+                ? isTeamCalls
+                : pathname === tab.href
 
-          const active = pathname === tab.href || pathname.startsWith(`${tab.href}/`)
           return (
             <Link
               key={tab.label}
               href={tab.href}
+              aria-current={active ? 'true' : undefined}
               className={cn(
-                'border-b-2 py-[15px] text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand',
+                'shrink-0 border-b-2 py-[15px] text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand',
                 active
                   ? 'border-brand font-semibold text-brand'
                   : 'border-transparent font-normal text-fg-1 hover:text-brand'

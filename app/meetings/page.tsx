@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
-import { SearchX } from 'lucide-react'
+import { SearchX, Users } from 'lucide-react'
 import { getMeetingRepository } from '@/lib/repository'
 import { MeetingCard } from '@/components/meeting-list/meeting-card'
 import { AskSidebar } from '@/components/meeting-list/ask-sidebar'
+import { ComingSoon } from '@/components/layout/coming-soon'
 
 export const metadata: Metadata = {
   title: 'Meetings',
@@ -12,9 +13,23 @@ export const metadata: Metadata = {
 export default async function MeetingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>
+  searchParams: Promise<{ q?: string; tab?: string }>
 }) {
-  const { q = '' } = await searchParams
+  const { q = '', tab } = await searchParams
+
+  // The tab bar's "Team Calls" item links here with ?tab=team — there is no
+  // team feature yet, so this branch is its empty state rather than a
+  // second route with its own layout to keep in sync.
+  if (tab === 'team') {
+    return (
+      <ComingSoon
+        icon={Users}
+        title="Team Calls"
+        description="Team calls coming soon. See every recording your team makes, not just your own."
+      />
+    )
+  }
+
   const repo = getMeetingRepository()
   // Filtering lives in the repository so it moves to a WHERE clause unchanged.
   const [meetings, allMeetings] = await Promise.all([

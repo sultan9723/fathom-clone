@@ -66,7 +66,9 @@ export default function RootLayout({
             </div>
           </div>
         </header>
-        <TabBar />
+        <Suspense fallback={<div className="h-tab-bar border-t-[0.67px] border-page bg-topbar" />}>
+          <TabBar />
+        </Suspense>
         {children}
       </body>
     </html>
