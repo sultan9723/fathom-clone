@@ -93,7 +93,10 @@ export function TranscriptPanel({
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search transcript"
             aria-label="Search transcript"
-            className="h-full w-full rounded-full border-[0.67px] border-line-faint bg-surface-2 pl-8 pr-8 text-xs text-fg-1 placeholder:text-line-faint focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+            // text-lg = 16px in this project's remapped type scale (text-base
+            // is 13px here, per lib/design-tokens.ts) — 16px is the actual
+            // floor iOS Safari needs to not zoom the page on focus.
+            className="h-full w-full rounded-full border-[0.67px] border-line-faint bg-surface-2 pl-8 pr-8 text-lg text-fg-1 placeholder:text-line-faint focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
           />
           {query && (
             <button

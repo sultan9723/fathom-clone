@@ -58,7 +58,9 @@ export function HeaderSearch() {
         onKeyDown={handleKeyDown}
         placeholder="Search Call Recordings"
         aria-label="Search call recordings"
-        className="h-pill-h w-full rounded-md border-none bg-search-pill py-0 pl-8 pr-7 text-xs text-fg-1 placeholder:text-fg-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+        // text-lg = 16px here (text-base is 13px in this project's remapped
+        // scale) — the floor iOS needs to not zoom the page on focus.
+        className="h-pill-h w-full rounded-md border-none bg-search-pill py-0 pl-8 pr-7 text-lg text-fg-1 placeholder:text-fg-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
       />
       <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
         {isPending ? (

@@ -131,7 +131,10 @@ export function ShareModal({
                 value={url}
                 onFocus={(e) => e.currentTarget.select()}
                 aria-label="Share link"
-                className="min-w-0 flex-1 rounded-md border border-surface-5 bg-surface-2 px-3 py-2 font-mono text-xs text-fg-2 focus:outline-none focus:ring-2 focus:ring-brand"
+                // text-lg = 16px here (text-base is 13px in this project's
+                // remapped scale) — readOnly, but still a focusable text
+                // field, so it's still subject to iOS Safari's zoom-on-focus.
+                className="min-w-0 flex-1 rounded-md border border-surface-5 bg-surface-2 px-3 py-2 font-mono text-lg text-fg-2 focus:outline-none focus:ring-2 focus:ring-brand"
               />
               <button
                 type="button"

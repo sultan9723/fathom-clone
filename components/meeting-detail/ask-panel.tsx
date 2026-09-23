@@ -62,7 +62,9 @@ export function AskPanel({ meetingId }: { meetingId: string }) {
             aria-label="Ask a question about this meeting"
             maxLength={500}
             disabled={loading}
-            className="h-[41px] w-full rounded-md border-[0.67px] border-line-faint bg-transparent pl-3 pr-14 text-sm text-fg-1 placeholder:text-line focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-60"
+            // text-lg = 16px here (text-base is 13px in this project's
+            // remapped scale) — the floor iOS needs to not zoom on focus.
+            className="h-[41px] w-full rounded-md border-[0.67px] border-line-faint bg-transparent pl-3 pr-14 text-lg text-fg-1 placeholder:text-line focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-60"
           />
           <button
             type="submit"

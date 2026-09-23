@@ -126,7 +126,9 @@ export function AskSidebar({ meetings }: { meetings: { id: string; title: string
           placeholder="Ask anything…"
           aria-label="Ask a question about a call"
           rows={2}
-          className="w-full resize-none bg-transparent text-[15px] font-normal text-fg-1 placeholder:text-line focus:outline-none"
+          // 16px (this project's text-lg) rather than the previous 15px —
+          // the floor iOS needs to not zoom the page on focus.
+          className="w-full resize-none bg-transparent text-lg font-normal text-fg-1 placeholder:text-line focus:outline-none"
         />
         <div className="flex items-center justify-between gap-2">
           <select
