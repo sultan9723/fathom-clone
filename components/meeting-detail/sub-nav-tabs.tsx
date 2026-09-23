@@ -51,7 +51,9 @@ export function SubNavTabs({
   }
 
   return (
-    <div className="flex h-sub-nav min-w-0 items-center justify-between bg-black px-[10px]">
+    // Matches the video wrapper's own px-4 sm:px-6 exactly (not a flat px-6)
+    // so the tabs line up with the video at every breakpoint, not just desktop.
+    <div className="flex h-sub-nav min-w-0 items-center justify-between bg-black px-4 sm:px-6">
       <div className="flex h-full min-w-0 items-center overflow-x-auto">
         {TABS.map((tab) => {
           const isActive = active === tab.id
