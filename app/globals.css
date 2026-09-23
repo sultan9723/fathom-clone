@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Dark surfaces throughout — keeps native scrollbars, form controls and the
+   pre-hydration canvas from flashing light against the #1a1a1a page. */
+:root {
+  color-scheme: dark;
+}
