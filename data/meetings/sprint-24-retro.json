@@ -1,0 +1,449 @@
+{
+  "id": "sprint-24-retro",
+  "title": "Sprint 24 Retrospective",
+  "date": "2026-09-19T14:00:00.000Z",
+  "durationSec": 2640,
+  "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4",
+  "platform": "teams",
+  "participants": [
+    {
+      "id": "p1",
+      "name": "Marcus Webb",
+      "email": "marcus@northstar.io",
+      "color": "#0ea5e9"
+    },
+    {
+      "id": "p2",
+      "name": "Ana Beltrán",
+      "email": "ana@northstar.io",
+      "color": "#ef4444"
+    },
+    {
+      "id": "p3",
+      "name": "Kwame Osei",
+      "email": "kwame@northstar.io",
+      "color": "#14b8a6"
+    },
+    {
+      "id": "p4",
+      "name": "Sofia Duarte",
+      "email": "sofia@northstar.io",
+      "color": "#a855f7"
+    },
+    {
+      "id": "p5",
+      "name": "Ben Ortiz",
+      "email": "ben@northstar.io",
+      "color": "#f97316"
+    }
+  ],
+  "summary": {
+    "overview": "Sprint 24 shipped eleven of sixteen committed points, with the miss concentrated in the export feature that took three days longer than estimated because of an undocumented rate limit in a third-party API. The larger theme was the Thursday production incident: a config change went out without review, and the discussion traced it to a deploy process that allows single-approver merges to main outside of business hours. The team agreed to require two approvals for production config changes and to stop estimating work that has an unvalidated external dependency until someone has actually hit the API.",
+    "keyPoints": [
+      "Shipped 11 of 16 points; the entire miss traces to one underestimated task.",
+      "Export feature blew its estimate on an undocumented third-party rate limit nobody had tested against.",
+      "Thursday's incident came from a single-approver config change deployed at 7pm.",
+      "Code review latency has crept up to a median of nine hours, which is pushing merges toward the end of day.",
+      "Pairing on the migration work was unanimously the best thing in the sprint and nobody had planned it.",
+      "The on-call rotation is unbalanced — two people covered five of the last eight weeks."
+    ],
+    "decisions": [
+      "Require two approvals for any production config change, no exceptions for off-hours.",
+      "Do not estimate tasks with unvalidated external dependencies — spike first, estimate after.",
+      "Schedule deliberate pairing sessions for the two hardest items each sprint.",
+      "Rebuild the on-call rotation so no one covers more than one week in four."
+    ]
+  },
+  "transcript": [
+    {
+      "id": "t1",
+      "speakerId": "p1",
+      "start": 5,
+      "end": 33,
+      "text": "Okay, Sprint 24 retro. Same format as always — what went well, what didn't, what we change. I'd like to spend most of the time on the third one. We've been good at listing problems and less good at actually changing anything."
+    },
+    {
+      "id": "t2",
+      "speakerId": "p2",
+      "start": 69,
+      "end": 86,
+      "text": "Can we start with numbers so we're all looking at the same thing?"
+    },
+    {
+      "id": "t3",
+      "speakerId": "p1",
+      "start": 104,
+      "end": 133,
+      "text": "Sure. We committed sixteen points, we shipped eleven. And before anyone feels bad about that, the entire gap is one task. Everything else landed."
+    },
+    {
+      "id": "t4",
+      "speakerId": "p4",
+      "start": 169,
+      "end": 181,
+      "text": "The export feature."
+    },
+    {
+      "id": "t5",
+      "speakerId": "p1",
+      "start": 199,
+      "end": 210,
+      "text": "The export feature. Sofia, do you want to walk through what happened?"
+    },
+    {
+      "id": "t6",
+      "speakerId": "p4",
+      "start": 246,
+      "end": 294,
+      "text": "I estimated it at three points because functionally it's simple — pull the records, format them, hand back a file. What I didn't account for is that the provider rate-limits at a level that isn't in their documentation. I found it by hitting it. Then I had to rewrite the whole thing as a batched job with retry logic."
+    },
+    {
+      "id": "t7",
+      "speakerId": "p3",
+      "start": 330,
+      "end": 349,
+      "text": "Is the limit documented anywhere at all? Even in a support article?"
+    },
+    {
+      "id": "t8",
+      "speakerId": "p4",
+      "start": 385,
+      "end": 411,
+      "text": "No. I opened a ticket with them and their answer was essentially 'yes, that limit exists, we should probably document it.' So that's three days I'm not getting back."
+    },
+    {
+      "id": "t9",
+      "speakerId": "p5",
+      "start": 447,
+      "end": 478,
+      "text": "I want to push on the process there rather than the task. We estimated a piece of work whose main risk was an external system none of us had ever called. The estimate was never going to be right. It was a guess wearing a number."
+    },
+    {
+      "id": "t10",
+      "speakerId": "p2",
+      "start": 514,
+      "end": 538,
+      "text": "Agreed, and this is the third time this has happened this year. The Stripe webhook thing, the calendar sync, and now this. Same shape every time."
+    },
+    {
+      "id": "t11",
+      "speakerId": "p1",
+      "start": 574,
+      "end": 592,
+      "text": "So what's the rule? I don't want a principle, I want something we actually do in planning."
+    },
+    {
+      "id": "t12",
+      "speakerId": "p5",
+      "start": 628,
+      "end": 670,
+      "text": "If a task depends on an external API we haven't called before, it doesn't get an estimate. It gets a timeboxed spike — half a day, someone actually makes the calls — and then we estimate it in the next planning session with real information."
+    },
+    {
+      "id": "t13",
+      "speakerId": "p3",
+      "start": 706,
+      "end": 722,
+      "text": "That does mean some work slips a sprint before it starts."
+    },
+    {
+      "id": "t14",
+      "speakerId": "p5",
+      "start": 758,
+      "end": 776,
+      "text": "It slips a sprint either way. This way it slips visibly at the start instead of invisibly at the end."
+    },
+    {
+      "id": "t15",
+      "speakerId": "p4",
+      "start": 812,
+      "end": 824,
+      "text": "I'd have much preferred that to what actually happened."
+    },
+    {
+      "id": "t16",
+      "speakerId": "p1",
+      "start": 860,
+      "end": 875,
+      "text": "Then that's a rule. Spike first, estimate after. I'll add it to the planning checklist so it isn't just something we said once in a retro."
+    },
+    {
+      "id": "t17",
+      "speakerId": "p2",
+      "start": 911,
+      "end": 938,
+      "text": "Can we talk about Thursday? Because I think that's the bigger item and we're forty minutes from the end."
+    },
+    {
+      "id": "t18",
+      "speakerId": "p1",
+      "start": 974,
+      "end": 990,
+      "text": "Yes. Let's do it properly and without blame — Kwame, you were closest to it."
+    },
+    {
+      "id": "t19",
+      "speakerId": "p3",
+      "start": 1026,
+      "end": 1074,
+      "text": "I pushed a config change around seven in the evening. It changed a connection pool setting. I had one approval, which is what our rules require, and it was approved in about four minutes by someone who was also trying to go home. It took production down for nineteen minutes."
+    },
+    {
+      "id": "t20",
+      "speakerId": "p3",
+      "start": 1110,
+      "end": 1136,
+      "text": "I want to be clear that I don't think the reviewer did anything wrong either. A four-minute review of a config diff at seven pm is what our process invites."
+    },
+    {
+      "id": "t21",
+      "speakerId": "p5",
+      "start": 1172,
+      "end": 1198,
+      "text": "That's the right framing. The question isn't why Kwame pushed it, it's why our process treats a connection pool config the same as a copy change."
+    },
+    {
+      "id": "t22",
+      "speakerId": "p2",
+      "start": 1234,
+      "end": 1263,
+      "text": "Because it's all just a diff to the tooling. Nothing distinguishes 'this changes text on a page' from 'this changes how many database connections exist.'"
+    },
+    {
+      "id": "t23",
+      "speakerId": "p1",
+      "start": 1299,
+      "end": 1318,
+      "text": "So the fix is to distinguish them. What's the lightest version of that which actually works?"
+    },
+    {
+      "id": "t24",
+      "speakerId": "p3",
+      "start": 1354,
+      "end": 1390,
+      "text": "Two approvals on anything touching production config. The config directory is well defined, so it's a path rule, not a judgment call. And I'd say no exception for off-hours — that's precisely when you want the second pair of eyes."
+    },
+    {
+      "id": "t25",
+      "speakerId": "p4",
+      "start": 1426,
+      "end": 1448,
+      "text": "Does that block urgent fixes? If something's actively broken at midnight I don't want to be hunting for a second approver."
+    },
+    {
+      "id": "t26",
+      "speakerId": "p3",
+      "start": 1484,
+      "end": 1514,
+      "text": "There's a break-glass path for incidents that pages on-call and gets reviewed after. That already exists, we just never use it because normal pushes are easy enough that nobody needs to."
+    },
+    {
+      "id": "t27",
+      "speakerId": "p1",
+      "start": 1550,
+      "end": 1568,
+      "text": "Good. Two approvals on config paths, break-glass stays for genuine incidents. Kwame, can you set up the branch protection rule this week?"
+    },
+    {
+      "id": "t28",
+      "speakerId": "p3",
+      "start": 1604,
+      "end": 1614,
+      "text": "I'll do it tomorrow morning."
+    },
+    {
+      "id": "t29",
+      "speakerId": "p2",
+      "start": 1650,
+      "end": 1690,
+      "text": "Related, and I think it's the underlying cause — our review latency has gotten bad. Median time to first review is about nine hours. When a review takes nine hours, you stop opening PRs in the morning and you start batching them up for the end of the day."
+    },
+    {
+      "id": "t30",
+      "speakerId": "p5",
+      "start": 1726,
+      "end": 1746,
+      "text": "Which is how you end up deploying config at seven pm. It's all the same problem."
+    },
+    {
+      "id": "t31",
+      "speakerId": "p2",
+      "start": 1782,
+      "end": 1812,
+      "text": "Exactly. I don't have a clean fix for it. But I'd like us to at least look at the number each sprint instead of discovering it during a post-mortem."
+    },
+    {
+      "id": "t32",
+      "speakerId": "p1",
+      "start": 1848,
+      "end": 1868,
+      "text": "I'll add review latency to the sprint metrics we look at. Ana, can you pull the last three sprints so we have a baseline rather than one data point?"
+    },
+    {
+      "id": "t33",
+      "speakerId": "p2",
+      "start": 1904,
+      "end": 1916,
+      "text": "Yes, I'll have it for next planning."
+    },
+    {
+      "id": "t34",
+      "speakerId": "p1",
+      "start": 1952,
+      "end": 1968,
+      "text": "Let's do the good stuff, because there was some and we're about to run out of time. What went well?"
+    },
+    {
+      "id": "t35",
+      "speakerId": "p4",
+      "start": 2004,
+      "end": 2042,
+      "text": "Pairing with Ben on the migration. That was genuinely the best two days of the sprint. We caught two bugs while writing it that would have been miserable to find afterwards, and I now understand that part of the system instead of being scared of it."
+    },
+    {
+      "id": "t36",
+      "speakerId": "p5",
+      "start": 2078,
+      "end": 2104,
+      "text": "Same from my side. And notably nobody planned that — we did it because the work was hard and we happened to both be free. It wasn't in the sprint plan anywhere."
+    },
+    {
+      "id": "t37",
+      "speakerId": "p3",
+      "start": 2140,
+      "end": 2160,
+      "text": "Then maybe it should be. The two hardest items each sprint get paired deliberately rather than by luck."
+    },
+    {
+      "id": "t38",
+      "speakerId": "p1",
+      "start": 2196,
+      "end": 2216,
+      "text": "I like that. We'll pick two at planning and assign pairs. If it doesn't help we drop it after three sprints."
+    },
+    {
+      "id": "t39",
+      "speakerId": "p2",
+      "start": 2252,
+      "end": 2286,
+      "text": "One more thing before we close, and it's been bothering me. The on-call rotation is lopsided. Kwame and I have covered five of the last eight weeks between us. That's not sustainable and it's not anyone's fault, the rotation just drifted."
+    },
+    {
+      "id": "t40",
+      "speakerId": "p1",
+      "start": 2322,
+      "end": 2346,
+      "text": "That's on me, I've been approving swaps without looking at the totals. I'll rebuild the rotation so nobody does more than one week in four, and I'll publish it through the end of the quarter."
+    },
+    {
+      "id": "t41",
+      "speakerId": "p3",
+      "start": 2382,
+      "end": 2394,
+      "text": "Appreciated. Genuinely."
+    },
+    {
+      "id": "t42",
+      "speakerId": "p1",
+      "start": 2430,
+      "end": 2464,
+      "text": "Let me read back the changes: spike before estimating external dependencies, two approvals on production config, review latency in sprint metrics, deliberate pairing on the two hardest items, rebuilt on-call rotation. Five things, all of them concrete."
+    },
+    {
+      "id": "t43",
+      "speakerId": "p5",
+      "start": 2500,
+      "end": 2516,
+      "text": "That's more than we usually walk out with. Let's see how many survive to Sprint 25."
+    },
+    {
+      "id": "t44",
+      "speakerId": "p1",
+      "start": 2552,
+      "end": 2568,
+      "text": "I'll bring this list to the next retro and we'll check. Thanks everyone, good sprint despite the numbers."
+    }
+  ],
+  "actionItems": [
+    {
+      "id": "a1",
+      "text": "Set up branch protection requiring two approvals on production config paths",
+      "assigneeId": "p3",
+      "timestamp": 1550,
+      "done": true
+    },
+    {
+      "id": "a2",
+      "text": "Add 'spike before estimating unvalidated external dependencies' to the planning checklist",
+      "assigneeId": "p1",
+      "timestamp": 860,
+      "done": true
+    },
+    {
+      "id": "a3",
+      "text": "Pull review latency for the last three sprints as a baseline, ready for next planning",
+      "assigneeId": "p2",
+      "timestamp": 1848,
+      "done": false
+    },
+    {
+      "id": "a4",
+      "text": "Pick two hardest items at planning and assign deliberate pairs",
+      "assigneeId": "p1",
+      "timestamp": 2196,
+      "done": false
+    },
+    {
+      "id": "a5",
+      "text": "Rebuild on-call rotation to max one week in four and publish through end of quarter",
+      "assigneeId": "p1",
+      "timestamp": 2322,
+      "done": false
+    },
+    {
+      "id": "a6",
+      "text": "Bring this change list back to the Sprint 25 retro to check what stuck",
+      "assigneeId": "p1",
+      "timestamp": 2552,
+      "done": false
+    }
+  ],
+  "highlights": [
+    {
+      "id": "h1",
+      "title": "Export estimate broken by an undocumented rate limit",
+      "start": 246,
+      "end": 411
+    },
+    {
+      "id": "h2",
+      "title": "\"An estimate wearing a number\" — the spike-first rule",
+      "start": 447,
+      "end": 776
+    },
+    {
+      "id": "h3",
+      "title": "Thursday incident walkthrough, blameless",
+      "start": 1026,
+      "end": 1198
+    },
+    {
+      "id": "h4",
+      "title": "Nine-hour review latency drives end-of-day deploys",
+      "start": 1650,
+      "end": 1746
+    },
+    {
+      "id": "h5",
+      "title": "Unplanned pairing was the best part of the sprint",
+      "start": 2004,
+      "end": 2216
+    },
+    {
+      "id": "h6",
+      "title": "On-call rotation is lopsided — 5 of 8 weeks on two people",
+      "start": 2252,
+      "end": 2346
+    }
+  ]
+}

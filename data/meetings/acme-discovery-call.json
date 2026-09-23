@@ -1,0 +1,393 @@
+{
+  "id": "acme-discovery-call",
+  "title": "Acme Corp — Discovery Call",
+  "date": "2026-09-17T17:30:00.000Z",
+  "durationSec": 1860,
+  "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4",
+  "platform": "meet",
+  "participants": [
+    {
+      "id": "p1",
+      "name": "Dana Kowalski",
+      "email": "dana@northstar.io",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "p2",
+      "name": "Elena Fischer",
+      "email": "elena.fischer@acmecorp.com",
+      "color": "#ec4899"
+    },
+    {
+      "id": "p3",
+      "name": "Raj Patel",
+      "email": "r.patel@acmecorp.com",
+      "color": "#8b5cf6"
+    },
+    {
+      "id": "p4",
+      "name": "Tobias Lin",
+      "email": "tobias@northstar.io",
+      "color": "#10b981"
+    }
+  ],
+  "summary": {
+    "overview": "First discovery call with Acme Corp's revenue operations team. Elena described a reporting process where three analysts spend roughly two days a week manually reconciling data across Salesforce, their warehouse, and a set of spreadsheets that have become load-bearing. The real driver is a board reporting deadline in November that they do not believe they can hit with the current process. Raj raised security review as the gating factor on their side — it typically takes six weeks and has to start before any contract conversation. Next step is a technical deep dive with their data team in the first week of October.",
+    "keyPoints": [
+      "Three analysts spend ~2 days/week on manual reconciliation — roughly 0.6 FTE of pure rework.",
+      "Board reporting deadline in November is the forcing function driving urgency.",
+      "Data lives across Salesforce, a Snowflake warehouse, and spreadsheets that are effectively production systems.",
+      "Security review takes about six weeks and must run in parallel with, not after, evaluation.",
+      "Elena is the economic buyer; Raj owns the technical and security approval.",
+      "They evaluated a competitor eighteen months ago and rejected it on warehouse sync limitations."
+    ],
+    "decisions": [
+      "Schedule a technical deep dive with Acme's data team in the first week of October.",
+      "Start the security questionnaire immediately rather than waiting for commercial alignment."
+    ]
+  },
+  "transcript": [
+    {
+      "id": "t1",
+      "speakerId": "p1",
+      "start": 6,
+      "end": 29,
+      "text": "Elena, Raj, thanks for making the time. I know a discovery call is mostly us asking questions, so I'll try to keep it useful for you too. Tobias is here from our solutions side to catch anything technical I get wrong."
+    },
+    {
+      "id": "t2",
+      "speakerId": "p2",
+      "start": 50,
+      "end": 71,
+      "text": "Happy to. I'll be upfront — we're evaluating a few options and we're on a clock, so the more direct we can be the better."
+    },
+    {
+      "id": "t3",
+      "speakerId": "p1",
+      "start": 81,
+      "end": 96,
+      "text": "That works for me. What's the clock?"
+    },
+    {
+      "id": "t4",
+      "speakerId": "p2",
+      "start": 117,
+      "end": 155,
+      "text": "Board reporting in November. Our CFO committed to a new revenue reporting package and right now I genuinely do not think we can produce it with the process we have. That's the honest version. It's not a nice-to-have project."
+    },
+    {
+      "id": "t5",
+      "speakerId": "p1",
+      "start": 176,
+      "end": 192,
+      "text": "Walk me through what the process looks like today. Who touches it and where does the time go?"
+    },
+    {
+      "id": "t6",
+      "speakerId": "p2",
+      "start": 213,
+      "end": 257,
+      "text": "Three analysts on my team. Every week they pull from Salesforce, pull from the warehouse, and then reconcile the two against a set of spreadsheets that have been around longer than I have. Between them it's about two days a week each, just on reconciliation. Not analysis — reconciliation."
+    },
+    {
+      "id": "t7",
+      "speakerId": "p4",
+      "start": 278,
+      "end": 295,
+      "text": "When you say reconcile — is that because the numbers disagree, or because they live in different shapes and have to be joined by hand?"
+    },
+    {
+      "id": "t8",
+      "speakerId": "p2",
+      "start": 316,
+      "end": 351,
+      "text": "Both, and the first one is the part that scares me. Salesforce and the warehouse disagree often enough that someone has to decide which one is right. That decision lives in an analyst's head and in a spreadsheet comment."
+    },
+    {
+      "id": "t9",
+      "speakerId": "p3",
+      "start": 372,
+      "end": 410,
+      "text": "I'd add that some of those spreadsheets are effectively production systems at this point. There are downstream things that break if a tab gets renamed. We know it's bad. It's on my list and it has been on my list for a while."
+    },
+    {
+      "id": "t10",
+      "speakerId": "p1",
+      "start": 431,
+      "end": 449,
+      "text": "That's more common than you'd think, and it's usually a symptom of the tooling not fitting rather than the team doing something wrong."
+    },
+    {
+      "id": "t11",
+      "speakerId": "p4",
+      "start": 470,
+      "end": 498,
+      "text": "Raj, what's the warehouse? And is the Salesforce data landing there already, or is that one of the manual steps?"
+    },
+    {
+      "id": "t12",
+      "speakerId": "p3",
+      "start": 519,
+      "end": 555,
+      "text": "Snowflake. Salesforce syncs in nightly through Fivetran, so that part's automated. The gap is everything after — the transformations and the reconciliation logic live outside the warehouse, in spreadsheets and in a few Python scripts one analyst maintains."
+    },
+    {
+      "id": "t13",
+      "speakerId": "p4",
+      "start": 576,
+      "end": 595,
+      "text": "One analyst maintains them. Is that person documented anywhere, or is that a single point of failure?"
+    },
+    {
+      "id": "t14",
+      "speakerId": "p3",
+      "start": 616,
+      "end": 629,
+      "text": "It's a single point of failure. You can say it out loud, we all know."
+    },
+    {
+      "id": "t15",
+      "speakerId": "p2",
+      "start": 650,
+      "end": 675,
+      "text": "She's excellent and she's also taking three weeks off in December, which is part of why November matters so much to me."
+    },
+    {
+      "id": "t16",
+      "speakerId": "p1",
+      "start": 696,
+      "end": 722,
+      "text": "Understood. Let me ask a different question — have you looked at tools for this before? I'd rather know what didn't work than pitch you something you've already rejected."
+    },
+    {
+      "id": "t17",
+      "speakerId": "p3",
+      "start": 743,
+      "end": 786,
+      "text": "We did an evaluation about eighteen months ago. I won't name them, but the blocker was warehouse sync. It wanted to be the source of truth and pull everything into its own store, and we weren't going to duplicate the warehouse into someone else's system. That was a hard no from security as well as from me."
+    },
+    {
+      "id": "t18",
+      "speakerId": "p4",
+      "start": 807,
+      "end": 846,
+      "text": "That's useful, and it's a real difference. We read from the warehouse, we don't copy it. The models run against your Snowflake instance with a read-only role you provision and can revoke. Nothing gets duplicated into our storage."
+    },
+    {
+      "id": "t19",
+      "speakerId": "p3",
+      "start": 867,
+      "end": 888,
+      "text": "That's the answer I was hoping for. I'll still need to verify it properly, but that removes the thing that killed the last evaluation."
+    },
+    {
+      "id": "t20",
+      "speakerId": "p1",
+      "start": 909,
+      "end": 929,
+      "text": "Raj, since you raised security — what does that process actually look like on your side, and how long does it take?"
+    },
+    {
+      "id": "t21",
+      "speakerId": "p3",
+      "start": 950,
+      "end": 995,
+      "text": "Six weeks, realistically. There's a questionnaire, a SOC 2 review, and then a call with our security team. The mistake people make is waiting until they've agreed on price to start it. If you do that, you've added six weeks to the end of the process and November is gone."
+    },
+    {
+      "id": "t22",
+      "speakerId": "p2",
+      "start": 1016,
+      "end": 1030,
+      "text": "Which is exactly what happened last time and why the last evaluation died."
+    },
+    {
+      "id": "t23",
+      "speakerId": "p1",
+      "start": 1051,
+      "end": 1079,
+      "text": "Then let's not repeat it. I can have the questionnaire and our SOC 2 report to you this week, before we've talked about commercials at all. If it fails your review, we've both saved a month."
+    },
+    {
+      "id": "t24",
+      "speakerId": "p3",
+      "start": 1100,
+      "end": 1113,
+      "text": "I'd appreciate that. Send it to me directly."
+    },
+    {
+      "id": "t25",
+      "speakerId": "p2",
+      "start": 1134,
+      "end": 1168,
+      "text": "Can I ask about the output side? Because the part I care most about isn't the pipeline, it's whether my analysts can build the board package without engineering involvement every time the board asks for a cut we didn't anticipate."
+    },
+    {
+      "id": "t26",
+      "speakerId": "p4",
+      "start": 1189,
+      "end": 1231,
+      "text": "That's the core of it. Once the models are defined, your analysts work in the reporting layer directly — new filters, new groupings, new time comparisons, without touching SQL. The engineering involvement is front-loaded into modeling, not spread across every request."
+    },
+    {
+      "id": "t27",
+      "speakerId": "p2",
+      "start": 1252,
+      "end": 1273,
+      "text": "How front-loaded? If modeling takes a quarter, November doesn't happen and this conversation is academic."
+    },
+    {
+      "id": "t28",
+      "speakerId": "p4",
+      "start": 1294,
+      "end": 1337,
+      "text": "For the scope you've described — revenue reporting off Salesforce plus warehouse — typical is two to three weeks of modeling with one of your people and one of ours. The long pole is usually agreeing on definitions internally, not the technical work."
+    },
+    {
+      "id": "t29",
+      "speakerId": "p3",
+      "start": 1358,
+      "end": 1380,
+      "text": "That's true of everything we do. We have four definitions of bookings and at least two of them are wrong."
+    },
+    {
+      "id": "t30",
+      "speakerId": "p2",
+      "start": 1401,
+      "end": 1419,
+      "text": "Three of them are wrong, Raj."
+    },
+    {
+      "id": "t31",
+      "speakerId": "p1",
+      "start": 1440,
+      "end": 1472,
+      "text": "That's actually worth naming as a risk. The projects that go badly are the ones where the definitions get decided during implementation. If you can get alignment on those before the technical work starts, the timeline holds."
+    },
+    {
+      "id": "t32",
+      "speakerId": "p2",
+      "start": 1493,
+      "end": 1517,
+      "text": "I can own that. I'd rather have that fight in October with a whiteboard than in November with a board deck."
+    },
+    {
+      "id": "t33",
+      "speakerId": "p1",
+      "start": 1538,
+      "end": 1566,
+      "text": "Then here's what I'd propose as next steps. Technical deep dive with your data team — Raj, whoever actually touches Snowflake — first week of October. Security questionnaire goes out this week in parallel."
+    },
+    {
+      "id": "t34",
+      "speakerId": "p3",
+      "start": 1587,
+      "end": 1613,
+      "text": "First week of October works. I'll bring our analytics engineer, she'll ask harder questions than I will."
+    },
+    {
+      "id": "t35",
+      "speakerId": "p4",
+      "start": 1634,
+      "end": 1654,
+      "text": "Good. Ask her to bring a real reporting request that's been painful — we'll work through that one rather than a demo dataset."
+    },
+    {
+      "id": "t36",
+      "speakerId": "p2",
+      "start": 1675,
+      "end": 1696,
+      "text": "She'll enjoy that. And I'd like to see pricing at some point before that call, even rough, so I'm not surprised later."
+    },
+    {
+      "id": "t37",
+      "speakerId": "p1",
+      "start": 1717,
+      "end": 1742,
+      "text": "I'll send a range with the security docs this week. Not a formal quote, but enough that nobody's time gets wasted if we're in a different universe."
+    },
+    {
+      "id": "t38",
+      "speakerId": "p2",
+      "start": 1763,
+      "end": 1777,
+      "text": "That's all I need. Thanks both, this was more useful than I expected."
+    },
+    {
+      "id": "t39",
+      "speakerId": "p1",
+      "start": 1798,
+      "end": 1814,
+      "text": "Appreciate the directness. I'll follow up today. Talk in October."
+    }
+  ],
+  "actionItems": [
+    {
+      "id": "a1",
+      "text": "Send security questionnaire and SOC 2 report to Raj this week, ahead of commercial discussion",
+      "assigneeId": "p1",
+      "timestamp": 1051,
+      "done": false
+    },
+    {
+      "id": "a2",
+      "text": "Send indicative pricing range alongside the security docs",
+      "assigneeId": "p1",
+      "timestamp": 1717,
+      "done": false
+    },
+    {
+      "id": "a3",
+      "text": "Schedule technical deep dive with Acme data team for first week of October",
+      "assigneeId": "p4",
+      "timestamp": 1538,
+      "done": false
+    },
+    {
+      "id": "a4",
+      "text": "Bring analytics engineer and one painful real reporting request to the deep dive",
+      "assigneeId": "p3",
+      "timestamp": 1587,
+      "done": false
+    },
+    {
+      "id": "a5",
+      "text": "Drive internal alignment on bookings and revenue definitions before implementation starts",
+      "assigneeId": "p2",
+      "timestamp": 1493,
+      "done": false
+    }
+  ],
+  "highlights": [
+    {
+      "id": "h1",
+      "title": "November board deadline is the forcing function",
+      "start": 117,
+      "end": 192
+    },
+    {
+      "id": "h2",
+      "title": "Three analysts, two days a week each, on reconciliation alone",
+      "start": 213,
+      "end": 351
+    },
+    {
+      "id": "h3",
+      "title": "Why the last evaluation failed: warehouse duplication",
+      "start": 743,
+      "end": 888
+    },
+    {
+      "id": "h4",
+      "title": "Security review takes six weeks and must run in parallel",
+      "start": 950,
+      "end": 1113
+    },
+    {
+      "id": "h5",
+      "title": "Real risk is definition alignment, not technical work",
+      "start": 1358,
+      "end": 1517
+    }
+  ]
+}

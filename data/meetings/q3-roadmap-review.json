@@ -1,0 +1,400 @@
+{
+  "id": "q3-roadmap-review",
+  "title": "Q3 Product Roadmap Review",
+  "date": "2026-09-15T15:00:00.000Z",
+  "durationSec": 2280,
+  "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4",
+  "platform": "zoom",
+  "participants": [
+    {
+      "id": "p1",
+      "name": "Priya Raman",
+      "email": "priya@northstar.io",
+      "color": "#6366f1"
+    },
+    {
+      "id": "p2",
+      "name": "Marcus Webb",
+      "email": "marcus@northstar.io",
+      "color": "#0ea5e9"
+    },
+    {
+      "id": "p3",
+      "name": "Dana Kowalski",
+      "email": "dana@northstar.io",
+      "color": "#f59e0b"
+    },
+    {
+      "id": "p4",
+      "name": "Tobias Lin",
+      "email": "tobias@northstar.io",
+      "color": "#10b981"
+    }
+  ],
+  "summary": {
+    "overview": "The product and engineering leads walked through the Q3 roadmap with two weeks left in planning. The headline decision was to cut the mobile app rewrite from Q3 and reinvest that capacity into onboarding and the reporting rebuild, both of which show up directly in churn and expansion numbers. Marcus flagged that the search infrastructure work is a hard dependency for reporting, so it moves ahead of everything else in the sequence. The team closed by agreeing on a checkpoint at the end of week six rather than waiting for the quarter to end.",
+    "keyPoints": [
+      "Onboarding revamp is the single biggest lever on 30-day retention — 41% of churned accounts never completed setup.",
+      "Reporting rebuild depends on the new search index shipping first; sequencing matters more than headcount here.",
+      "Mobile rewrite is deferred to Q4 — current mobile web traffic is 8% and mostly read-only.",
+      "Enterprise SSO is the only committed customer promise in the quarter and cannot slip.",
+      "Team is running two engineers short; the roadmap assumes no backfill lands before August."
+    ],
+    "decisions": [
+      "Cut the mobile app rewrite from Q3 and revisit in Q4 planning.",
+      "Sequence search infrastructure ahead of the reporting rebuild.",
+      "Hold a mid-quarter checkpoint at the end of week six instead of a quarter-end review."
+    ]
+  },
+  "transcript": [
+    {
+      "id": "t1",
+      "speakerId": "p1",
+      "start": 4,
+      "end": 31,
+      "text": "Alright, I think we have everyone. Let's get into it. We've got about forty minutes and I want to come out of this with a roadmap we can actually commit to, not a wish list. Marcus, Dana, Tobias — you've all seen the draft doc."
+    },
+    {
+      "id": "t2",
+      "speakerId": "p2",
+      "start": 68,
+      "end": 93,
+      "text": "I read it last night. My honest reaction is that it's about a quarter and a half of work crammed into a quarter. We're two engineers down and I don't see that reflected anywhere in the sequencing."
+    },
+    {
+      "id": "t3",
+      "speakerId": "p1",
+      "start": 111,
+      "end": 126,
+      "text": "That's fair, and that's exactly why I wanted to do this live instead of over comments. Let's assume no backfill lands before August. What comes out?"
+    },
+    {
+      "id": "t4",
+      "speakerId": "p3",
+      "start": 163,
+      "end": 199,
+      "text": "Before we start cutting, can I put the retention data on the table? Because I think it changes the ordering. We pulled every account that churned in the last two quarters and forty-one percent of them never finished setup. They signed up, they poked around, they never got to a working state."
+    },
+    {
+      "id": "t5",
+      "speakerId": "p1",
+      "start": 217,
+      "end": 225,
+      "text": "Forty-one percent never completed onboarding?"
+    },
+    {
+      "id": "t6",
+      "speakerId": "p3",
+      "start": 243,
+      "end": 270,
+      "text": "Never completed it. And the median time from signup to churn for that group is nineteen days. So whatever we do to onboarding pays back inside a month, which is not true of anything else on this list."
+    },
+    {
+      "id": "t7",
+      "speakerId": "p4",
+      "start": 307,
+      "end": 334,
+      "text": "That lines up with what support sees. The top ticket category all quarter has been people asking how to connect their first data source. It's not a bug, it's that the flow doesn't tell them what to do next."
+    },
+    {
+      "id": "t8",
+      "speakerId": "p2",
+      "start": 371,
+      "end": 396,
+      "text": "Okay. I'm not going to argue against onboarding. But if onboarding goes to the top, something else moves down, and I'd like us to say out loud what that is rather than discovering it in week seven."
+    },
+    {
+      "id": "t9",
+      "speakerId": "p1",
+      "start": 433,
+      "end": 454,
+      "text": "Agreed. Let's go through the list in order. Onboarding revamp, reporting rebuild, search infrastructure, mobile app rewrite, enterprise SSO. Marcus, give me the honest sizing on each."
+    },
+    {
+      "id": "t10",
+      "speakerId": "p2",
+      "start": 491,
+      "end": 529,
+      "text": "Onboarding is four to five weeks with two people, assuming Dana's team has the flow designed by end of month. Reporting rebuild is the big one — eight weeks minimum, and it has a dependency people keep forgetting about."
+    },
+    {
+      "id": "t11",
+      "speakerId": "p1",
+      "start": 547,
+      "end": 552,
+      "text": "The search index."
+    },
+    {
+      "id": "t12",
+      "speakerId": "p2",
+      "start": 570,
+      "end": 607,
+      "text": "The search index. The new reporting filters query across fields that aren't indexed today. If we start reporting before search lands, we build against a schema that's about to change and then we rewrite half of it. That's not a risk, that's a certainty."
+    },
+    {
+      "id": "t13",
+      "speakerId": "p4",
+      "start": 644,
+      "end": 661,
+      "text": "How long is search on its own?"
+    },
+    {
+      "id": "t14",
+      "speakerId": "p2",
+      "start": 679,
+      "end": 702,
+      "text": "Three weeks, maybe three and a half. It's well understood work, it's just unglamorous. Nobody gets excited about it in a roadmap review, which is why it keeps sliding."
+    },
+    {
+      "id": "t15",
+      "speakerId": "p1",
+      "start": 739,
+      "end": 760,
+      "text": "Then it stops sliding. Search goes ahead of reporting, and we treat it as part of the reporting line item so it doesn't look optional to anyone reading the doc."
+    },
+    {
+      "id": "t16",
+      "speakerId": "p3",
+      "start": 797,
+      "end": 825,
+      "text": "Can I ask about mobile? Because that's the one I keep getting asked about in customer calls, and I want to understand what we're actually saying if we cut it."
+    },
+    {
+      "id": "t17",
+      "speakerId": "p4",
+      "start": 862,
+      "end": 899,
+      "text": "I pulled the numbers for that. Mobile web is eight percent of sessions and it skews heavily read-only — people checking a dashboard between meetings. The rewrite would be a big investment to make a small slice of usage nicer, and it's not where churn is coming from."
+    },
+    {
+      "id": "t18",
+      "speakerId": "p3",
+      "start": 936,
+      "end": 957,
+      "text": "That's useful. I can take that to customers. The ask I hear isn't really 'rewrite the app,' it's 'let me check a number on my phone without it being painful.'"
+    },
+    {
+      "id": "t19",
+      "speakerId": "p1",
+      "start": 994,
+      "end": 1019,
+      "text": "Then mobile comes out of Q3 and we revisit it in Q4 planning with actual usage data behind it. Marcus, does that free up enough to make the rest honest?"
+    },
+    {
+      "id": "t20",
+      "speakerId": "p2",
+      "start": 1056,
+      "end": 1085,
+      "text": "It does, mostly. With mobile out, the sequence is onboarding, search, reporting, and SSO runs alongside on a separate track because it's a different part of the stack. That fits, with maybe a week of slack."
+    },
+    {
+      "id": "t21",
+      "speakerId": "p1",
+      "start": 1122,
+      "end": 1137,
+      "text": "A week of slack in a twelve-week quarter is not slack. But I'll take it over the version we walked in with."
+    },
+    {
+      "id": "t22",
+      "speakerId": "p4",
+      "start": 1174,
+      "end": 1207,
+      "text": "On SSO — I want to be careful there. We committed to Halvorsen and two other enterprise accounts that it lands this quarter. That one genuinely cannot move. It's in writing."
+    },
+    {
+      "id": "t23",
+      "speakerId": "p2",
+      "start": 1244,
+      "end": 1268,
+      "text": "Understood, and it's scoped. It's SAML plus SCIM provisioning, nothing exotic. The risk isn't the build, it's the back and forth with each customer's IT team during rollout."
+    },
+    {
+      "id": "t24",
+      "speakerId": "p3",
+      "start": 1305,
+      "end": 1328,
+      "text": "I can own that coordination. If I schedule the IT calls before the build is done rather than after, we're not sitting around waiting on their calendars."
+    },
+    {
+      "id": "t25",
+      "speakerId": "p1",
+      "start": 1365,
+      "end": 1382,
+      "text": "Yes, do that. Get those on the calendar in the next two weeks even if the exact dates move later."
+    },
+    {
+      "id": "t26",
+      "speakerId": "p2",
+      "start": 1419,
+      "end": 1456,
+      "text": "One more thing on onboarding while we're here. If we're rebuilding the flow anyway, I want to instrument it properly this time. Right now we can tell you someone dropped off but not where or what they were trying to do. That's half a week of work and it makes every future decision here cheaper."
+    },
+    {
+      "id": "t27",
+      "speakerId": "p3",
+      "start": 1493,
+      "end": 1508,
+      "text": "Strongly agree. We've been guessing at that funnel for a year."
+    },
+    {
+      "id": "t28",
+      "speakerId": "p1",
+      "start": 1545,
+      "end": 1561,
+      "text": "Approved. Build the instrumentation into the onboarding scope, don't carve it out as a separate line where it can get cut."
+    },
+    {
+      "id": "t29",
+      "speakerId": "p4",
+      "start": 1598,
+      "end": 1630,
+      "text": "Question on the reporting rebuild — are we migrating existing saved reports, or is this a clean break where customers rebuild theirs? Because that's a very different support load."
+    },
+    {
+      "id": "t30",
+      "speakerId": "p2",
+      "start": 1667,
+      "end": 1702,
+      "text": "Migration. A clean break would be faster to build and much worse for everyone downstream. Some of these accounts have sixty or seventy saved reports and they are not going to rebuild those by hand."
+    },
+    {
+      "id": "t31",
+      "speakerId": "p1",
+      "start": 1739,
+      "end": 1754,
+      "text": "Migration it is. Tobias, can you get a count of saved reports per account so we know the actual shape of that problem?"
+    },
+    {
+      "id": "t32",
+      "speakerId": "p4",
+      "start": 1791,
+      "end": 1803,
+      "text": "I'll have that by Thursday."
+    },
+    {
+      "id": "t33",
+      "speakerId": "p3",
+      "start": 1840,
+      "end": 1874,
+      "text": "Last thing from me. I'd like to not wait until the end of the quarter to find out whether this plan was realistic. Can we put a real checkpoint somewhere in the middle where we're allowed to change it?"
+    },
+    {
+      "id": "t34",
+      "speakerId": "p1",
+      "start": 1911,
+      "end": 1945,
+      "text": "End of week six. And I mean a real one — if onboarding is late by then, we cut scope on reporting rather than pretending the back half of the quarter will go faster than the front half. It never does."
+    },
+    {
+      "id": "t35",
+      "speakerId": "p2",
+      "start": 1982,
+      "end": 2000,
+      "text": "That's the most useful thing in this meeting, honestly. Put it on the calendar now so it doesn't become optional."
+    },
+    {
+      "id": "t36",
+      "speakerId": "p1",
+      "start": 2037,
+      "end": 2069,
+      "text": "Doing it today. Let me read back what I have: mobile is cut to Q4, search goes before reporting and is scoped as one line item, onboarding is first and includes instrumentation, SSO is committed and Dana owns the IT coordination, checkpoint end of week six."
+    },
+    {
+      "id": "t37",
+      "speakerId": "p4",
+      "start": 2106,
+      "end": 2118,
+      "text": "That matches what I wrote down."
+    },
+    {
+      "id": "t38",
+      "speakerId": "p3",
+      "start": 2155,
+      "end": 2170,
+      "text": "Same. I'll have the onboarding flow designs to Marcus by the thirtieth."
+    },
+    {
+      "id": "t39",
+      "speakerId": "p1",
+      "start": 2207,
+      "end": 2226,
+      "text": "Then we're done. I'll update the doc this afternoon and send it around before I share it wider. Thanks, everyone."
+    }
+  ],
+  "actionItems": [
+    {
+      "id": "a1",
+      "text": "Update the Q3 roadmap doc with the revised sequencing and circulate before sharing wider",
+      "assigneeId": "p1",
+      "timestamp": 2207,
+      "done": true
+    },
+    {
+      "id": "a2",
+      "text": "Deliver onboarding flow designs to engineering by the 30th",
+      "assigneeId": "p3",
+      "timestamp": 2155,
+      "done": false
+    },
+    {
+      "id": "a3",
+      "text": "Schedule enterprise IT calls for SSO rollout in the next two weeks",
+      "assigneeId": "p3",
+      "timestamp": 1305,
+      "done": false
+    },
+    {
+      "id": "a4",
+      "text": "Pull count of saved reports per account by Thursday",
+      "assigneeId": "p4",
+      "timestamp": 1739,
+      "done": false
+    },
+    {
+      "id": "a5",
+      "text": "Scope search index work as part of the reporting line item, not a separate optional task",
+      "assigneeId": "p2",
+      "timestamp": 739,
+      "done": true
+    },
+    {
+      "id": "a6",
+      "text": "Put the week-six roadmap checkpoint on the calendar",
+      "assigneeId": "p1",
+      "timestamp": 1982,
+      "done": false
+    }
+  ],
+  "highlights": [
+    {
+      "id": "h1",
+      "title": "41% of churned accounts never finished onboarding",
+      "start": 163,
+      "end": 270
+    },
+    {
+      "id": "h2",
+      "title": "Search index is a hard dependency for reporting",
+      "start": 547,
+      "end": 702
+    },
+    {
+      "id": "h3",
+      "title": "Decision: mobile rewrite cut to Q4",
+      "start": 862,
+      "end": 1019
+    },
+    {
+      "id": "h4",
+      "title": "SSO is a written commitment and cannot slip",
+      "start": 1174,
+      "end": 1268
+    },
+    {
+      "id": "h5",
+      "title": "Week-six checkpoint with real authority to cut scope",
+      "start": 1840,
+      "end": 2000
+    }
+  ]
+}

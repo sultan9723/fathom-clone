@@ -1,4 +1,3 @@
-[System.IO.File]::WriteAllText("F:\fathom-clone\SPEC.md", @"
 # Fathom Clone — Spec
 
 ## Goal
@@ -100,4 +99,3 @@ tests/
 - README has live link, stack, what is stubbed and why
 - No secrets in repo
 - Clean commit history
-"@, [System.Text.UTF8Encoding]::new(`$false))

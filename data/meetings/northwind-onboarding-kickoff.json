@@ -1,0 +1,381 @@
+{
+  "id": "northwind-onboarding-kickoff",
+  "title": "Northwind — Onboarding Kickoff",
+  "date": "2026-09-22T13:00:00.000Z",
+  "durationSec": 1500,
+  "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4",
+  "platform": "meet",
+  "participants": [
+    {
+      "id": "p1",
+      "name": "Tobias Lin",
+      "email": "tobias@northstar.io",
+      "color": "#10b981"
+    },
+    {
+      "id": "p2",
+      "name": "Grace Mbeki",
+      "email": "grace.mbeki@northwind.co",
+      "color": "#d946ef"
+    },
+    {
+      "id": "p3",
+      "name": "Henrik Sørensen",
+      "email": "h.sorensen@northwind.co",
+      "color": "#3b82f6"
+    }
+  ],
+  "summary": {
+    "overview": "Kickoff for Northwind's implementation following contract signature. The plan is a four-week rollout: warehouse connection and access in week one, core revenue model in weeks two and three, and team training in week four, with a target of first live dashboards on October 20th. The main risk identified is that Northwind's finance close runs the first four business days of each month, during which Henrik's team is unavailable — this shifts the training week rather than compressing the modeling work. Grace asked to start with a narrow scope of three dashboards rather than migrating everything at once, which Tobias endorsed.",
+    "keyPoints": [
+      "Four-week rollout targeting first live dashboards on October 20th.",
+      "Week one is access and connection only — read-only Snowflake role provisioned by Henrik's team.",
+      "Scope deliberately narrowed to three dashboards for go-live; the rest follows after.",
+      "Finance close occupies the first four business days of each month and blocks Henrik's availability.",
+      "Grace will run internal definition alignment on 'qualified pipeline' before modeling starts in week two.",
+      "Weekly 30-minute check-ins on Wednesdays, with a shared channel for anything urgent between them."
+    ],
+    "decisions": [
+      "Go live with three dashboards rather than a full migration.",
+      "Move training week to avoid the finance close window.",
+      "Henrik provisions the read-only warehouse role by end of week one."
+    ]
+  },
+  "transcript": [
+    {
+      "id": "t1",
+      "speakerId": "p1",
+      "start": 5,
+      "end": 34,
+      "text": "Grace, Henrik — welcome, and congratulations on getting this signed. Today is purely about the plan: what happens in what order, who owns what, and where I think the risks are. I'd rather surface those now than discover them in week three."
+    },
+    {
+      "id": "t2",
+      "speakerId": "p2",
+      "start": 47,
+      "end": 69,
+      "text": "That's how I'd like to run it too. I've been through two of these implementations at previous companies and both of them slipped for reasons that were visible on day one."
+    },
+    {
+      "id": "t3",
+      "speakerId": "p1",
+      "start": 82,
+      "end": 108,
+      "text": "Then let's find those. Headline plan is four weeks. Week one is access and connection, weeks two and three are modeling, week four is training and handover. Target for first live dashboards is October twentieth."
+    },
+    {
+      "id": "t4",
+      "speakerId": "p3",
+      "start": 121,
+      "end": 145,
+      "text": "October twentieth is tight but not unreasonable. What exactly do you need from us in week one? I want to start the access request today if it's going to sit in a queue."
+    },
+    {
+      "id": "t5",
+      "speakerId": "p1",
+      "start": 158,
+      "end": 196,
+      "text": "A read-only role on your Snowflake instance, scoped to the schemas we're modeling against. You create it, you own it, you can revoke it. We never take write access and we don't copy data out."
+    },
+    {
+      "id": "t6",
+      "speakerId": "p3",
+      "start": 209,
+      "end": 231,
+      "text": "That's straightforward. The role itself is an hour of work. The approval to create it is the part that takes days, which is why I want to start now."
+    },
+    {
+      "id": "t7",
+      "speakerId": "p2",
+      "start": 244,
+      "end": 258,
+      "text": "Start it today. If it needs my sign-off, send it to me and I'll do it this afternoon."
+    },
+    {
+      "id": "t8",
+      "speakerId": "p1",
+      "start": 271,
+      "end": 295,
+      "text": "Good. Second question, and this is the one that usually decides whether we hit the date — what are we actually building in week one of go-live? How many dashboards?"
+    },
+    {
+      "id": "t9",
+      "speakerId": "p2",
+      "start": 308,
+      "end": 350,
+      "text": "I've thought about this. My instinct is to go narrow. Three dashboards — pipeline coverage, win rate by segment, and the weekly revenue summary that our CRO looks at every Monday. Everything else can come after."
+    },
+    {
+      "id": "t10",
+      "speakerId": "p1",
+      "start": 363,
+      "end": 397,
+      "text": "That's the right call and I'd have pushed you toward it. The implementations that go badly are the ones that try to migrate forty reports at once. Three gives you a real win in October and a pattern to extend from."
+    },
+    {
+      "id": "t11",
+      "speakerId": "p3",
+      "start": 410,
+      "end": 434,
+      "text": "Will the other teams accept that? Marketing has been asking about attribution since before the contract was signed."
+    },
+    {
+      "id": "t12",
+      "speakerId": "p2",
+      "start": 447,
+      "end": 481,
+      "text": "They'll accept it if I tell them the date they get it. What they won't accept is 'soon.' Tobias, if we go live on the twentieth with three, when could attribution realistically land?"
+    },
+    {
+      "id": "t13",
+      "speakerId": "p1",
+      "start": 494,
+      "end": 528,
+      "text": "Mid-November, if the underlying data is in the warehouse already. Attribution is usually less about the modeling and more about whether the touchpoint data is complete. Do you have it?"
+    },
+    {
+      "id": "t14",
+      "speakerId": "p3",
+      "start": 541,
+      "end": 571,
+      "text": "Partially. Web and email are in there. Events and paid social are not, and getting them in is a project of its own that nobody owns right now."
+    },
+    {
+      "id": "t15",
+      "speakerId": "p1",
+      "start": 584,
+      "end": 610,
+      "text": "Then I'd be careful about promising mid-November for attribution. The honest version is mid-November for the channels you have, and the rest depends on a pipeline project that hasn't started."
+    },
+    {
+      "id": "t16",
+      "speakerId": "p2",
+      "start": 623,
+      "end": 643,
+      "text": "That's a much better thing for me to say internally than a date I'd have to walk back. I'll frame it that way."
+    },
+    {
+      "id": "t17",
+      "speakerId": "p1",
+      "start": 656,
+      "end": 684,
+      "text": "Let's talk about week two and three, because that's where I need the most from your side. Modeling means sitting with whoever knows what the numbers mean and writing the definitions down."
+    },
+    {
+      "id": "t18",
+      "speakerId": "p2",
+      "start": 697,
+      "end": 739,
+      "text": "Here's where I know we have a problem. 'Qualified pipeline' means three different things at Northwind depending on who you ask. Sales has one definition, finance has another, and the board deck has a third that I'm fairly sure nobody can reproduce."
+    },
+    {
+      "id": "t19",
+      "speakerId": "p1",
+      "start": 752,
+      "end": 778,
+      "text": "That's extremely common and it's better that you know it now. My strong advice is to settle that before week two rather than during it. Modeling sessions turn into definition debates and then we lose a week."
+    },
+    {
+      "id": "t20",
+      "speakerId": "p2",
+      "start": 791,
+      "end": 819,
+      "text": "I'll own it. I can get sales and finance in a room next week. It's a conversation that's been overdue for a year and this gives me a reason to force it."
+    },
+    {
+      "id": "t21",
+      "speakerId": "p3",
+      "start": 832,
+      "end": 850,
+      "text": "You'll want the CRO in that room or it won't stick."
+    },
+    {
+      "id": "t22",
+      "speakerId": "p2",
+      "start": 863,
+      "end": 877,
+      "text": "Agreed. I'll get him for twenty minutes at the end to ratify whatever we land on."
+    },
+    {
+      "id": "t23",
+      "speakerId": "p1",
+      "start": 890,
+      "end": 914,
+      "text": "Now the risk I want to name, because it came up in the contract call and I don't think we resolved it. Your finance close — when is it and how much of Henrik's team does it eat?"
+    },
+    {
+      "id": "t24",
+      "speakerId": "p3",
+      "start": 927,
+      "end": 967,
+      "text": "First four business days of the month, and it eats all of us. I'm not available, my analysts aren't available, and nobody will answer a Slack message about anything that isn't close. That lands squarely on your training week."
+    },
+    {
+      "id": "t25",
+      "speakerId": "p1",
+      "start": 980,
+      "end": 1000,
+      "text": "That's what I was worried about. So training can't be the first week of November."
+    },
+    {
+      "id": "t26",
+      "speakerId": "p3",
+      "start": 1013,
+      "end": 1037,
+      "text": "It can't. And I'd rather move it than try to do both badly. Training people on a new reporting system during close is how you get people deciding they hate the new reporting system."
+    },
+    {
+      "id": "t27",
+      "speakerId": "p2",
+      "start": 1050,
+      "end": 1076,
+      "text": "Can we pull training earlier instead of pushing it later? If go-live is the twentieth, could training be the week of the twenty-seventh?"
+    },
+    {
+      "id": "t28",
+      "speakerId": "p1",
+      "start": 1089,
+      "end": 1123,
+      "text": "Yes, and that's better. It keeps the October date intact and puts training right after go-live while everything is fresh. The modeling weeks stay where they are — we're moving training, not compressing the build."
+    },
+    {
+      "id": "t29",
+      "speakerId": "p3",
+      "start": 1136,
+      "end": 1152,
+      "text": "Week of the twenty-seventh works for me. I'll block it now."
+    },
+    {
+      "id": "t30",
+      "speakerId": "p1",
+      "start": 1165,
+      "end": 1197,
+      "text": "One more thing on training — I'd like to do it in two sessions rather than one long one. A ninety-minute session for the people who'll build reports, and a thirty-minute one for people who'll only consume them."
+    },
+    {
+      "id": "t31",
+      "speakerId": "p2",
+      "start": 1210,
+      "end": 1236,
+      "text": "That's smart. The consumers are the CRO and his leadership team and they will not sit through ninety minutes. Thirty is realistic. Ninety for my analysts is fine, they'll want the detail."
+    },
+    {
+      "id": "t32",
+      "speakerId": "p1",
+      "start": 1249,
+      "end": 1275,
+      "text": "Last item — cadence. I'd suggest thirty minutes every Wednesday, and a shared channel for anything that can't wait. Most of what derails these projects is a question that sat unasked for four days."
+    },
+    {
+      "id": "t33",
+      "speakerId": "p3",
+      "start": 1288,
+      "end": 1304,
+      "text": "Wednesdays are fine. Set up the channel and add my two analysts as well as me."
+    },
+    {
+      "id": "t34",
+      "speakerId": "p2",
+      "start": 1317,
+      "end": 1337,
+      "text": "Same, add me. And if something's at risk I want to hear it in the Wednesday call, not in week four."
+    },
+    {
+      "id": "t35",
+      "speakerId": "p1",
+      "start": 1350,
+      "end": 1384,
+      "text": "You will. I'll flag risks the week I see them even when I think they'll resolve themselves. Let me summarize: Henrik starts the access request today, Grace runs the definitions session next week, training moves to the week of the twenty-seventh, go-live target holds at October twentieth with three dashboards."
+    },
+    {
+      "id": "t36",
+      "speakerId": "p2",
+      "start": 1397,
+      "end": 1415,
+      "text": "That matches my notes. This is the most organised kickoff I've been in, for what it's worth."
+    },
+    {
+      "id": "t37",
+      "speakerId": "p1",
+      "start": 1428,
+      "end": 1448,
+      "text": "I'll take that. I'll send the written plan and the channel invite within the hour. Talk Wednesday."
+    }
+  ],
+  "actionItems": [
+    {
+      "id": "a1",
+      "text": "Start the Snowflake read-only role access request today",
+      "assigneeId": "p3",
+      "timestamp": 209,
+      "done": true
+    },
+    {
+      "id": "a2",
+      "text": "Approve the access request same-day if sign-off is required",
+      "assigneeId": "p2",
+      "timestamp": 244,
+      "done": true
+    },
+    {
+      "id": "a3",
+      "text": "Run internal definitions session with sales, finance and the CRO before week two",
+      "assigneeId": "p2",
+      "timestamp": 791,
+      "done": false
+    },
+    {
+      "id": "a4",
+      "text": "Block the week of the 27th for training sessions",
+      "assigneeId": "p3",
+      "timestamp": 1136,
+      "done": false
+    },
+    {
+      "id": "a5",
+      "text": "Send written implementation plan and set up shared channel within the hour",
+      "assigneeId": "p1",
+      "timestamp": 1428,
+      "done": false
+    },
+    {
+      "id": "a6",
+      "text": "Reframe attribution timeline internally as channel-dependent rather than a fixed date",
+      "assigneeId": "p2",
+      "timestamp": 623,
+      "done": false
+    }
+  ],
+  "highlights": [
+    {
+      "id": "h1",
+      "title": "Four-week plan and the October 20th go-live target",
+      "start": 82,
+      "end": 145
+    },
+    {
+      "id": "h2",
+      "title": "Going narrow: three dashboards instead of a full migration",
+      "start": 308,
+      "end": 397
+    },
+    {
+      "id": "h3",
+      "title": "Three conflicting definitions of 'qualified pipeline'",
+      "start": 697,
+      "end": 819
+    },
+    {
+      "id": "h4",
+      "title": "Finance close blocks the original training week",
+      "start": 890,
+      "end": 1037
+    },
+    {
+      "id": "h5",
+      "title": "Split training by audience: 90 min builders, 30 min consumers",
+      "start": 1165,
+      "end": 1236
+    }
+  ]
+}

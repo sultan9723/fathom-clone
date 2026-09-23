@@ -1,0 +1,457 @@
+{
+  "id": "series-a-pitch-dry-run",
+  "title": "Series A Pitch — Dry Run",
+  "date": "2026-09-11T16:00:00.000Z",
+  "durationSec": 3180,
+  "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4",
+  "platform": "zoom",
+  "participants": [
+    {
+      "id": "p1",
+      "name": "Priya Raman",
+      "email": "priya@northstar.io",
+      "color": "#6366f1"
+    },
+    {
+      "id": "p2",
+      "name": "Jonah Feld",
+      "email": "jonah@meridianvc.com",
+      "color": "#64748b"
+    },
+    {
+      "id": "p3",
+      "name": "Marcus Webb",
+      "email": "marcus@northstar.io",
+      "color": "#0ea5e9"
+    },
+    {
+      "id": "p4",
+      "name": "Dana Kowalski",
+      "email": "dana@northstar.io",
+      "color": "#f59e0b"
+    }
+  ],
+  "summary": {
+    "overview": "Practice run of the Series A deck with Jonah, an advisor and former partner at Meridian, playing the role of a skeptical investor. His central criticism was structural: the deck spends eleven slides on product before establishing why the market is large, which means a partner forms their objection before hearing the answer. He also pushed hard on net revenue retention, arguing that 104% would be read as a product that customers use but do not expand on. The team agreed to restructure the first third of the deck and to prepare a specific, honest answer on expansion rather than hoping the question does not come up.",
+    "keyPoints": [
+      "Deck order is wrong — market sizing needs to come before the product deep dive, not after.",
+      "104% net revenue retention is the number that will get challenged; it needs a direct answer, not a deflection.",
+      "The customer concentration story (top 3 accounts = 31% of ARR) must be raised proactively.",
+      "The competitive slide currently lists features; it should instead explain why the category incumbent structurally cannot follow.",
+      "Sales efficiency is genuinely strong — CAC payback of 14 months — and is being buried on slide 19.",
+      "Jonah's advice: assume you get twelve minutes before the first hard interruption, and front-load accordingly."
+    ],
+    "decisions": [
+      "Restructure the deck so market and wedge come before the product section.",
+      "Move sales efficiency metrics into the first ten slides.",
+      "Address customer concentration proactively rather than waiting to be asked.",
+      "Rewrite the competitive slide around structural advantage instead of a feature matrix."
+    ]
+  },
+  "transcript": [
+    {
+      "id": "t1",
+      "speakerId": "p1",
+      "start": 7,
+      "end": 38,
+      "text": "Jonah, thank you for doing this. The ask is that you be harder on us than a real partner would be. We have three first meetings next week and I would much rather hear the bad news from you today."
+    },
+    {
+      "id": "t2",
+      "speakerId": "p2",
+      "start": 78,
+      "end": 104,
+      "text": "That's the right instinct and it's rarer than you'd think. Most founders want a rehearsal where everyone claps. Run it as you would on the day, I'll interrupt like a partner would, which is to say rudely."
+    },
+    {
+      "id": "t3",
+      "speakerId": "p1",
+      "start": 144,
+      "end": 180,
+      "text": "Understood. So — Northstar. We help revenue teams understand what's actually happening in their pipeline. Today that work is done by analysts reconciling spreadsheets, and it takes days, and by the time it's done it's out of date."
+    },
+    {
+      "id": "t4",
+      "speakerId": "p2",
+      "start": 220,
+      "end": 238,
+      "text": "Stop there. How big is the market? You're four sentences in and I don't know whether this is a hundred million dollar business or a billion."
+    },
+    {
+      "id": "t5",
+      "speakerId": "p1",
+      "start": 278,
+      "end": 293,
+      "text": "That's slide twelve. I was going to get there after the product section."
+    },
+    {
+      "id": "t6",
+      "speakerId": "p2",
+      "start": 333,
+      "end": 378,
+      "text": "That's the single biggest problem with this deck and we've found it in under two minutes. If market is on slide twelve, every partner in that room spends the first eleven slides silently deciding this is a small business. By the time you get to your number, they've already formed the objection and they're just waiting to voice it."
+    },
+    {
+      "id": "t7",
+      "speakerId": "p3",
+      "start": 418,
+      "end": 436,
+      "text": "Our thinking was that the product is differentiated and the market is more obvious, so we led with the part that's harder to explain."
+    },
+    {
+      "id": "t8",
+      "speakerId": "p2",
+      "start": 476,
+      "end": 518,
+      "text": "I understand the logic and it's backwards for this audience. A partner isn't trying to understand your product in the first ten minutes. They're trying to decide whether to keep listening. Market size is the gate. Product is what you spend the middle on once you're through it."
+    },
+    {
+      "id": "t9",
+      "speakerId": "p1",
+      "start": 558,
+      "end": 576,
+      "text": "So market, wedge, then product. And product gets shorter."
+    },
+    {
+      "id": "t10",
+      "speakerId": "p2",
+      "start": 616,
+      "end": 642,
+      "text": "Product gets shorter, yes. Eleven slides of product in a first meeting is a demo, not a pitch. Three slides and an offer to go deeper in the follow-up."
+    },
+    {
+      "id": "t11",
+      "speakerId": "p4",
+      "start": 682,
+      "end": 702,
+      "text": "That's going to hurt, but I think he's right. We've been showing this deck to customers and to investors and it's really a customer deck."
+    },
+    {
+      "id": "t12",
+      "speakerId": "p2",
+      "start": 742,
+      "end": 758,
+      "text": "That's exactly what it is. It's a very good customer deck. Keep it for customers. Now keep going, I'll let you run further this time."
+    },
+    {
+      "id": "t13",
+      "speakerId": "p1",
+      "start": 798,
+      "end": 840,
+      "text": "Market. Revenue operations tooling is roughly a four billion dollar category today, growing at about twenty percent, and the part we're attacking — the analytics layer specifically — is around nine hundred million and growing faster because it's where the manual work concentrated."
+    },
+    {
+      "id": "t14",
+      "speakerId": "p2",
+      "start": 880,
+      "end": 904,
+      "text": "Better. Where did the nine hundred million come from? And be careful, because if the answer is a Gartner report I'm going to discount it heavily."
+    },
+    {
+      "id": "t15",
+      "speakerId": "p1",
+      "start": 944,
+      "end": 982,
+      "text": "It's bottom-up. Number of companies above two hundred employees with a revenue ops function, times what we observe them spending across tools in that layer. The top-down number from the analysts is larger and I deliberately didn't use it."
+    },
+    {
+      "id": "t16",
+      "speakerId": "p2",
+      "start": 1022,
+      "end": 1042,
+      "text": "Good. Say that out loud in the meeting — 'this is bottom-up and here's the top-down number I'm not using.' That buys you credibility for the rest of the deck."
+    },
+    {
+      "id": "t17",
+      "speakerId": "p3",
+      "start": 1082,
+      "end": 1108,
+      "text": "Should we put the top-down number on the slide at all, or just have it ready if asked?"
+    },
+    {
+      "id": "t18",
+      "speakerId": "p2",
+      "start": 1148,
+      "end": 1168,
+      "text": "Have it ready. Don't put it on the slide. The slide should show the number you're willing to defend."
+    },
+    {
+      "id": "t19",
+      "speakerId": "p1",
+      "start": 1208,
+      "end": 1242,
+      "text": "Moving to traction. We're at two point one million ARR, up from seven hundred thousand a year ago. Sixty-two customers. Net revenue retention is a hundred and four percent."
+    },
+    {
+      "id": "t20",
+      "speakerId": "p2",
+      "start": 1282,
+      "end": 1300,
+      "text": "There it is. A hundred and four. Tell me why that isn't a problem."
+    },
+    {
+      "id": "t21",
+      "speakerId": "p1",
+      "start": 1340,
+      "end": 1356,
+      "text": "It's lower than we want. Gross retention is ninety-six, so we're not losing customers — we're not expanding within them."
+    },
+    {
+      "id": "t22",
+      "speakerId": "p2",
+      "start": 1396,
+      "end": 1446,
+      "text": "And that's the read a partner will land on: customers like this enough to keep it, not enough to buy more of it. In this category they'll expect a hundred and twenty plus. You need a real answer, and 'we're working on it' is not one."
+    },
+    {
+      "id": "t23",
+      "speakerId": "p4",
+      "start": 1486,
+      "end": 1536,
+      "text": "The real answer is that we've only had a second product to expand into since March. Before that there was nothing to expand to — you bought the analytics product and that was the entire catalogue. Of the customers who've had access to the second product, expansion is running at about thirty percent."
+    },
+    {
+      "id": "t24",
+      "speakerId": "p2",
+      "start": 1576,
+      "end": 1614,
+      "text": "Then that is your slide. Not 'NRR is 104.' It's 'NRR is 104 blended, here's the cohort with something to expand into, and it's at 130.' That's a completely different story and it's the true one."
+    },
+    {
+      "id": "t25",
+      "speakerId": "p1",
+      "start": 1654,
+      "end": 1672,
+      "text": "We have that data. We didn't include it because the cohort is small — about eighteen customers."
+    },
+    {
+      "id": "t26",
+      "speakerId": "p2",
+      "start": 1712,
+      "end": 1744,
+      "text": "Eighteen is small and you say so. 'Early cohort, eighteen accounts, directionally this is what expansion looks like once there's something to expand into.' Investors don't punish small samples that are labelled. They punish blended numbers that hide the story."
+    },
+    {
+      "id": "t27",
+      "speakerId": "p3",
+      "start": 1784,
+      "end": 1802,
+      "text": "That's a useful principle. We've been rounding toward caution and it's reading as weakness."
+    },
+    {
+      "id": "t28",
+      "speakerId": "p2",
+      "start": 1842,
+      "end": 1858,
+      "text": "Precisely that. Keep going — what's on the next slide?"
+    },
+    {
+      "id": "t29",
+      "speakerId": "p1",
+      "start": 1898,
+      "end": 1920,
+      "text": "Customer logos and then the competitive landscape."
+    },
+    {
+      "id": "t30",
+      "speakerId": "p2",
+      "start": 1960,
+      "end": 1998,
+      "text": "Before logos — your top three accounts. What percentage of ARR? Because I looked at the data room you sent and I can do the arithmetic, so someone else will too."
+    },
+    {
+      "id": "t31",
+      "speakerId": "p1",
+      "start": 2038,
+      "end": 2052,
+      "text": "Thirty-one percent."
+    },
+    {
+      "id": "t32",
+      "speakerId": "p2",
+      "start": 2092,
+      "end": 2130,
+      "text": "Thirty-one percent is high but it's normal at your stage. The mistake would be waiting to be asked. Put it on the slide yourself with the trend line showing it coming down. Raising it first turns a weakness into evidence that you know your own business."
+    },
+    {
+      "id": "t33",
+      "speakerId": "p4",
+      "start": 2170,
+      "end": 2192,
+      "text": "It has been coming down — it was forty-four percent a year ago. We just never framed it as a trend."
+    },
+    {
+      "id": "t34",
+      "speakerId": "p2",
+      "start": 2232,
+      "end": 2250,
+      "text": "Forty-four to thirty-one is a good slide. You've been sitting on a good slide because you thought it was a bad number."
+    },
+    {
+      "id": "t35",
+      "speakerId": "p1",
+      "start": 2290,
+      "end": 2308,
+      "text": "Noted. Competitive landscape — we have the standard matrix, us versus three others, features down the side."
+    },
+    {
+      "id": "t36",
+      "speakerId": "p2",
+      "start": 2348,
+      "end": 2398,
+      "text": "Cut it. Every deck has that matrix and every founder's matrix shows them winning. It carries no information. What a partner actually wants to know is why the incumbent can't just build this, and the answer is almost never a feature."
+    },
+    {
+      "id": "t37",
+      "speakerId": "p3",
+      "start": 2438,
+      "end": 2486,
+      "text": "For us the honest answer is architectural. They pull data into their own store, and their entire pricing model is built on that. Reading from the customer's warehouse instead would undercut how they charge. It's not that they can't build it — it's that it breaks their business model."
+    },
+    {
+      "id": "t38",
+      "speakerId": "p2",
+      "start": 2526,
+      "end": 2554,
+      "text": "That is your competitive slide. One sentence, exactly as you just said it. That's the most compelling thing anyone has said in the last hour."
+    },
+    {
+      "id": "t39",
+      "speakerId": "p1",
+      "start": 2594,
+      "end": 2610,
+      "text": "Marcus, can you write that up properly? That was better than anything on the current slide."
+    },
+    {
+      "id": "t40",
+      "speakerId": "p3",
+      "start": 2650,
+      "end": 2660,
+      "text": "I'll draft it tonight."
+    },
+    {
+      "id": "t41",
+      "speakerId": "p2",
+      "start": 2700,
+      "end": 2744,
+      "text": "One more thing, and then I'll let you go. Your CAC payback is fourteen months, which is genuinely strong for this category, and it's on slide nineteen. Nobody is awake at slide nineteen. Move it into the first ten."
+    },
+    {
+      "id": "t42",
+      "speakerId": "p4",
+      "start": 2784,
+      "end": 2802,
+      "text": "We buried our best number and led with our longest section. That's a fair summary of the whole deck."
+    },
+    {
+      "id": "t43",
+      "speakerId": "p2",
+      "start": 2842,
+      "end": 2882,
+      "text": "It is, and it's fixable in an afternoon. Assume you get about twelve minutes before the first real interruption. Everything that has to land, lands in those twelve minutes. Structure backwards from that."
+    },
+    {
+      "id": "t44",
+      "speakerId": "p1",
+      "start": 2922,
+      "end": 2954,
+      "text": "That's the framing I needed. Let me confirm the changes: market and wedge move to the front, product shrinks to three slides, NRR gets the cohort breakout, concentration goes on the slide with the trend, competitive becomes the architecture argument, CAC payback moves up."
+    },
+    {
+      "id": "t45",
+      "speakerId": "p2",
+      "start": 2994,
+      "end": 3016,
+      "text": "That's the list. Send me the revised version Monday and I'll do one more pass before your first meeting."
+    },
+    {
+      "id": "t46",
+      "speakerId": "p1",
+      "start": 3056,
+      "end": 3072,
+      "text": "We will. This was genuinely invaluable — thank you, Jonah."
+    }
+  ],
+  "actionItems": [
+    {
+      "id": "a1",
+      "text": "Restructure deck: market and wedge before product; cut product to three slides",
+      "assigneeId": "p1",
+      "timestamp": 558,
+      "done": false
+    },
+    {
+      "id": "a2",
+      "text": "Rebuild NRR slide with the 18-account cohort breakout, clearly labelled as an early cohort",
+      "assigneeId": "p4",
+      "timestamp": 1576,
+      "done": false
+    },
+    {
+      "id": "a3",
+      "text": "Add customer concentration slide showing 44% → 31% trend",
+      "assigneeId": "p4",
+      "timestamp": 2092,
+      "done": false
+    },
+    {
+      "id": "a4",
+      "text": "Draft the architectural competitive argument to replace the feature matrix",
+      "assigneeId": "p3",
+      "timestamp": 2594,
+      "done": false
+    },
+    {
+      "id": "a5",
+      "text": "Move CAC payback metric into the first ten slides",
+      "assigneeId": "p1",
+      "timestamp": 2700,
+      "done": false
+    },
+    {
+      "id": "a6",
+      "text": "Send revised deck to Jonah by Monday for a second pass",
+      "assigneeId": "p1",
+      "timestamp": 2994,
+      "done": false
+    }
+  ],
+  "highlights": [
+    {
+      "id": "h1",
+      "title": "\"Market size is the gate\" — why slide 12 is too late",
+      "start": 220,
+      "end": 642
+    },
+    {
+      "id": "h2",
+      "title": "Defend a bottom-up number, keep top-down in your pocket",
+      "start": 880,
+      "end": 1168
+    },
+    {
+      "id": "h3",
+      "title": "The NRR challenge and the cohort answer",
+      "start": 1282,
+      "end": 1744
+    },
+    {
+      "id": "h4",
+      "title": "Raise customer concentration before you're asked",
+      "start": 1960,
+      "end": 2250
+    },
+    {
+      "id": "h5",
+      "title": "The real competitive moat is architectural, not features",
+      "start": 2348,
+      "end": 2554
+    },
+    {
+      "id": "h6",
+      "title": "You get twelve minutes — structure backwards from that",
+      "start": 2700,
+      "end": 2882
+    }
+  ]
+}
