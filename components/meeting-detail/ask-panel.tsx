@@ -1,16 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Sparkles, CornerDownLeft, Loader2, Play, AlertTriangle } from 'lucide-react'
+import { ArrowUp, Loader2, Play, AlertTriangle } from 'lucide-react'
+import { askMeeting, AskError, type AskAnswer } from '@/lib/ask-client'
 import { formatTimecode } from '@/lib/utils'
 import { usePlayer } from './player-provider'
-
-interface Answer {
-  answer: string
-  citations: number[]
-  provider: 'claude' | 'openai' | 'mock'
-  notice?: string
-}
 
 const SUGGESTIONS = [
   'What was decided?',
@@ -21,7 +15,7 @@ const SUGGESTIONS = [
 export function AskPanel({ meetingId }: { meetingId: string }) {
   const { seek } = usePlayer()
   const [question, setQuestion] = useState('')
-  const [answer, setAnswer] = useState<Answer | null>(null)
+  const [answer, setAnswer] = useState<AskAnswer | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -32,33 +26,18 @@ export function AskPanel({ meetingId }: { meetingId: string }) {
     setLoading(true)
     setError(null)
     setAnswer(null)
-
     try {
-      const res = await fetch('/api/ask', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ meetingId, question: trimmed }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error ?? 'Request failed.')
-      setAnswer(data as Answer)
+      setAnswer(await askMeeting(meetingId, trimmed))
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong.')
+      setError(err instanceof AskError || err instanceof Error ? err.message : 'Something went wrong.')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <section
-      aria-labelledby="ask-heading"
-      className="rounded-xl border border-slate-200 bg-white p-5"
-    >
-      <h2
-        id="ask-heading"
-        className="flex items-center gap-2 text-sm font-semibold text-slate-900"
-      >
-        <Sparkles className="h-4 w-4 text-indigo-600" aria-hidden="true" />
+    <section aria-labelledby="ask-heading" className="bg-black">
+      <h2 id="ask-heading" className="sr-only">
         Ask about this meeting
       </h2>
 
@@ -67,35 +46,35 @@ export function AskPanel({ meetingId }: { meetingId: string }) {
           e.preventDefault()
           submit(question)
         }}
-        className="mt-3"
+        className="mx-[15px] my-5"
       >
         <div className="relative">
           <input
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
-            placeholder="e.g. Why was the mobile rewrite cut?"
+            placeholder="Ask NoteAI…"
             aria-label="Ask a question about this meeting"
             maxLength={500}
             disabled={loading}
-            className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-3 pr-10 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-100 disabled:opacity-60"
+            className="h-[41px] w-full rounded-md border-[0.67px] border-line-faint bg-transparent pl-3 pr-14 text-sm text-fg-1 placeholder:text-line focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-60"
           />
           <button
             type="submit"
             disabled={loading || !question.trim()}
             aria-label="Ask"
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-slate-400 transition hover:text-indigo-600 disabled:opacity-40"
+            className="absolute right-1.5 top-1/2 grid h-[30px] w-ask-send -translate-y-1/2 place-items-center rounded-[5px] bg-brand text-black transition hover:bg-brand-hover disabled:opacity-50"
           >
             {loading ? (
               <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
             ) : (
-              <CornerDownLeft className="h-4 w-4" aria-hidden="true" />
+              <ArrowUp className="h-4 w-4" aria-hidden="true" />
             )}
           </button>
         </div>
       </form>
 
       {!answer && !loading && !error && (
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mx-[15px] flex flex-wrap gap-2">
           {SUGGESTIONS.map((s) => (
             <button
               key={s}
@@ -104,7 +83,7 @@ export function AskPanel({ meetingId }: { meetingId: string }) {
                 setQuestion(s)
                 submit(s)
               }}
-              className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600 transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700"
+              className="rounded-md border-2 border-topbar px-3 py-1 text-xs text-fg-1 transition-colors hover:border-surface-5"
             >
               {s}
             </button>
@@ -113,32 +92,32 @@ export function AskPanel({ meetingId }: { meetingId: string }) {
       )}
 
       {error && (
-        <p className="mt-3 flex items-start gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p className="mx-[15px] flex items-start gap-2 rounded-md bg-error/10 px-3 py-2 text-sm text-error">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
           {error}
         </p>
       )}
 
       {answer && (
-        <div className="mt-4" aria-live="polite">
+        <div className="mx-[15px]" aria-live="polite">
           {answer.notice && (
-            <p className="mb-2 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-800">
+            <p className="mb-2 rounded-md bg-warning/10 px-3 py-2 text-xs text-warning">
               {answer.notice}
             </p>
           )}
-          <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700">
+          <p className="whitespace-pre-wrap text-[15px] font-light leading-6 text-fg-1">
             {answer.answer}
           </p>
 
           {answer.citations.length > 0 && (
             <div className="mt-3 flex flex-wrap items-center gap-2">
-              <span className="text-xs text-slate-500">Jump to:</span>
+              <span className="text-xs text-fg-3">Jump to:</span>
               {answer.citations.map((c) => (
                 <button
                   key={c}
                   type="button"
                   onClick={() => seek(c)}
-                  className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-1 font-mono text-[11px] tabular-nums text-slate-600 transition hover:bg-indigo-100 hover:text-indigo-700"
+                  className="inline-flex items-center gap-1 rounded bg-brand/10 px-2 py-1 font-mono text-[11px] tabular-nums text-brand transition hover:bg-brand hover:text-surface-2"
                 >
                   <Play className="h-2.5 w-2.5" fill="currentColor" aria-hidden="true" />
                   {formatTimecode(c)}
@@ -147,7 +126,7 @@ export function AskPanel({ meetingId }: { meetingId: string }) {
             </div>
           )}
 
-          <p className="mt-3 text-[11px] text-slate-400">
+          <p className="mt-3 text-[11px] text-fg-3">
             {answer.provider === 'mock'
               ? 'Transcript search — no AI provider configured.'
               : `Answered by ${answer.provider}. Grounded in the transcript; verify before relying on it.`}
