@@ -60,7 +60,7 @@ export function ShareModal({
         type="button"
         onClick={() => setOpen(true)}
         className={cn(
-          'inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500',
+          'inline-flex items-center gap-1.5 rounded-md bg-brand/10 px-3 py-1.5 text-sm font-semibold text-brand transition-colors hover:bg-brand hover:text-surface-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand',
           triggerClassName
         )}
       >
@@ -70,7 +70,7 @@ export function ShareModal({
 
       {open && (
         <div
-          className="fixed inset-0 z-50 grid place-items-center bg-slate-900/40 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4"
           onClick={(e) => {
             if (e.target === e.currentTarget) setOpen(false)
           }}
@@ -79,48 +79,59 @@ export function ShareModal({
             role="dialog"
             aria-modal="true"
             aria-labelledby="share-title"
-            className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-5 shadow-xl"
+            className="w-share-modal max-w-full rounded-lg bg-topbar p-6 shadow-xl"
           >
             <div className="flex items-start justify-between gap-3">
-              <div>
-                <h2 id="share-title" className="text-sm font-semibold text-slate-900">
+              <div className="min-w-0">
+                <h2 id="share-title" className="text-xl font-semibold text-fg-1">
                   Share meeting
                 </h2>
-                <p className="mt-0.5 truncate text-xs text-slate-500">{title}</p>
+                <p className="mt-0.5 truncate text-xs text-fg-3">{title}</p>
               </div>
               <button
                 ref={closeRef}
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Close"
-                className="rounded p-1 text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                className="shrink-0 rounded p-1 text-fg-3 transition hover:text-fg-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
               >
-                <X className="h-4 w-4" />
+                <X className="h-6 w-6" />
               </button>
             </div>
 
-            <label className="mt-4 flex items-center gap-2 text-sm text-slate-700">
-              <input
-                type="checkbox"
-                checked={withTimestamp}
-                onChange={(e) => setWithTimestamp(e.target.checked)}
-                className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
-              />
-              Start at {formatTimecode(seconds)}
-            </label>
+            <div className="mt-4 flex items-center gap-2.5">
+              <button
+                type="button"
+                role="switch"
+                aria-checked={withTimestamp}
+                onClick={() => setWithTimestamp((v) => !v)}
+                className={cn(
+                  'relative h-toggle w-toggle shrink-0 rounded-full transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-topbar',
+                  withTimestamp ? 'bg-brand' : 'bg-line'
+                )}
+              >
+                <span
+                  className={cn(
+                    'absolute top-1/2 h-[14px] w-[14px] -translate-y-1/2 rounded-full bg-white transition-transform',
+                    withTimestamp ? 'translate-x-[16px]' : 'translate-x-[2px]'
+                  )}
+                />
+              </button>
+              <span className="text-sm text-fg-2">Start at {formatTimecode(seconds)}</span>
+            </div>
 
-            <div className="mt-3 flex gap-2">
+            <div className="mt-4 flex gap-2">
               <input
                 readOnly
                 value={url}
                 onFocus={(e) => e.currentTarget.select()}
                 aria-label="Share link"
-                className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 font-mono text-xs text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                className="min-w-0 flex-1 rounded-md border border-surface-5 bg-surface-2 px-3 py-2 font-mono text-xs text-fg-2 focus:outline-none focus:ring-2 focus:ring-brand"
               />
               <button
                 type="button"
                 onClick={copy}
-                className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                className="inline-flex h-share-copy shrink-0 items-center gap-1.5 rounded-md bg-brand px-3 text-sm font-semibold text-surface-2 transition hover:bg-brand-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-topbar"
               >
                 {copied ? (
                   <>
