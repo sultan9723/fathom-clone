@@ -9,7 +9,7 @@
 export interface AskAnswer {
   answer: string
   citations: number[]
-  provider: 'claude' | 'openai' | 'mock'
+  provider: 'claude' | 'openai' | 'gemini' | 'mock'
   notice?: string
 }
 

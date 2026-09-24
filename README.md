@@ -61,6 +61,12 @@ its dropdown.
 lines bearing on a question via BM25 and sends only those to the model. The API key stays
 server-side: the browser posts a meeting id and a question, and the route loads the
 transcript itself rather than trusting anything the client sends about its contents.
+Providers: Claude, OpenAI, Gemini, or Mock (no key configured) — picked by `AI_PROVIDER`.
+
+- **Cross-meeting search** (`lib/search.ts`, `/search`) — search across all meetings
+  instantly, jump to exact moments (Fathom doesn't have this). The global header search
+  (and a hint on the meetings list) lead here; results are grouped by meeting with a
+  highlighted snippet per hit, and every result seeks straight to that line's timestamp.
 
 ### Two decisions worth calling out
 

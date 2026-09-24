@@ -4,6 +4,7 @@ import { getMeetingRepository } from '@/lib/repository'
 import { MeetingCard } from '@/components/meeting-list/meeting-card'
 import { AskSidebar } from '@/components/meeting-list/ask-sidebar'
 import { ComingSoon } from '@/components/layout/coming-soon'
+import { SearchHint } from '@/components/meeting-list/search-hint'
 
 export const metadata: Metadata = {
   title: 'Meetings',
@@ -44,7 +45,10 @@ export default async function MeetingsPage({
     <div className="flex min-h-[calc(100vh-100px)] w-full">
       <main className="flex-1 overflow-y-auto px-6 pb-10">
         <header className="flex flex-col gap-2 pt-8">
-          <h1 className="text-3xl font-semibold text-fg-1">Meetings</h1>
+          <div className="flex items-center justify-between gap-4">
+            <h1 className="text-3xl font-semibold text-fg-1">Meetings</h1>
+            {!q && <SearchHint />}
+          </div>
           <p className="text-sm text-fg-meta">
             {q
               ? `${meetings.length} ${meetings.length === 1 ? 'result' : 'results'} for "${q}"`

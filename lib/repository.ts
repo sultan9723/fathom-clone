@@ -30,6 +30,13 @@ export interface MeetingRepository {
   getById(id: string): Promise<Meeting | null>
   /** Ids only — used by `generateStaticParams`. */
   listIds(): Promise<string[]>
+  /**
+   * Every meeting, full transcripts included. Used by cross-meeting search —
+   * a real DB-backed implementation would push the query down instead of
+   * scanning in memory, but this is the JSON store's natural equivalent of
+   * `SELECT *`, and it's what `list()` already loads internally.
+   */
+  getAll(): Promise<Meeting[]>
 }
 
 const DATA_DIR = path.join(process.cwd(), 'data', 'meetings')
@@ -143,6 +150,10 @@ export class JsonMeetingRepository implements MeetingRepository {
 
   async listIds(): Promise<string[]> {
     return (await this.loadAll()).map((m) => m.id)
+  }
+
+  async getAll(): Promise<Meeting[]> {
+    return this.loadAll()
   }
 }
 

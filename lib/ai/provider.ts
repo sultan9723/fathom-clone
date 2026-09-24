@@ -17,7 +17,7 @@ export interface AskResponse {
   /** Transcript seconds the answer draws on, so the UI can offer jump links. */
   citations: number[]
   /** Which provider actually answered — surfaced in the UI, never guessed at. */
-  provider: 'claude' | 'openai' | 'mock'
+  provider: 'claude' | 'openai' | 'gemini' | 'mock'
 }
 
 export interface AIProvider {
@@ -247,6 +247,44 @@ export class OpenAIProvider implements AIProvider {
 }
 
 /**
+ * Uses raw fetch, same as OpenAIProvider — no official Gemini SDK dependency
+ * for one endpoint.
+ */
+export class GeminiProvider implements AIProvider {
+  readonly name = 'gemini' as const
+
+  constructor(private readonly apiKey: string) {}
+
+  async ask({ question, meeting }: AskRequest): Promise<AskResponse> {
+    const prompt = `${SYSTEM_PROMPT}\n\n${buildUserPrompt(meeting, question, contextFor(meeting, question))}`
+
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${this.apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+      }
+    )
+
+    if (!res.ok) {
+      throw new Error(`Gemini request failed with ${res.status}`)
+    }
+
+    const data = (await res.json()) as {
+      candidates?: { content?: { parts?: { text?: string }[] } }[]
+    }
+    const answer = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? ''
+
+    return {
+      answer: answer || 'The model returned an empty response.',
+      citations: extractCitations(answer, meeting.durationSec),
+      provider: this.name,
+    }
+  }
+}
+
+/**
  * Picks a provider from `AI_PROVIDER`, falling back to the mock whenever the
  * chosen provider has no key. Requesting a provider whose key is missing is a
  * misconfiguration worth a server log, but it must not break the page.
@@ -264,6 +302,12 @@ export function getAIProvider(): AIProvider {
     const key = process.env.OPENAI_API_KEY
     if (key) return new OpenAIProvider(key)
     console.warn('AI_PROVIDER=openai but OPENAI_API_KEY is unset; using MockProvider.')
+  }
+
+  if (choice === 'gemini') {
+    const key = process.env.GEMINI_API_KEY
+    if (key) return new GeminiProvider(key)
+    console.warn('AI_PROVIDER=gemini but GEMINI_API_KEY is unset; using MockProvider.')
   }
 
   return new MockProvider()
