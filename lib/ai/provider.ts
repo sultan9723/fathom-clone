@@ -260,7 +260,7 @@ export class GroqProvider implements AIProvider {
         Authorization: `Bearer ${this.apiKey}`,
       },
       body: JSON.stringify({
-        model: 'llama-3.1-8b-instant',
+        model: 'openai/gpt-oss-120b',
         temperature: 0.7,
         max_tokens: 1024,
         messages: [
