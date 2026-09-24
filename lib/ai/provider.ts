@@ -259,11 +259,18 @@ export class GeminiProvider implements AIProvider {
     const prompt = `${SYSTEM_PROMPT}\n\n${buildUserPrompt(meeting, question, contextFor(meeting, question))}`
 
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${this.apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${this.apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          // 2.5-flash thinks by default even for plain generateContent calls;
+          // this route is latency-sensitive extractive Q&A, not reasoning.
+          generationConfig: {
+            thinkingConfig: { thinkingBudget: 0 },
+          },
+        }),
       }
     )
 
