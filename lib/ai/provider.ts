@@ -259,7 +259,7 @@ export class GeminiProvider implements AIProvider {
     const prompt = `${SYSTEM_PROMPT}\n\n${buildUserPrompt(meeting, question, contextFor(meeting, question))}`
 
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${this.apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${this.apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
