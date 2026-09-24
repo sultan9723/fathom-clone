@@ -15,7 +15,7 @@ export interface AskRequest {
 export interface AskResponse {
   answer: string
   citations: number[]
-  provider: 'claude' | 'openai' | 'gemini' | 'mock'
+  provider: 'claude' | 'openai' | 'gemini' | 'groq' | 'mock'
 }
 
 export interface AIProvider {
@@ -247,6 +247,50 @@ export class GeminiProvider implements AIProvider {
   }
 }
 
+export class GroqProvider implements AIProvider {
+  readonly name = 'groq' as const
+
+  constructor(private readonly apiKey: string) {}
+
+  async ask({ question, meeting }: AskRequest): Promise<AskResponse> {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${this.apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        max_tokens: 1024,
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          {
+            role: 'user',
+            content: buildUserPrompt(meeting, question, contextFor(meeting, question)),
+          },
+        ],
+      }),
+    })
+
+    if (!res.ok) {
+      const errText = await res.text()
+      console.error('[groq] error:', errText)
+      throw new Error(`Groq request failed with ${res.status}`)
+    }
+
+    const data = (await res.json()) as {
+      choices?: { message?: { content?: string } }[]
+    }
+    const answer = data.choices?.[0]?.message?.content?.trim() ?? ''
+
+    return {
+      answer: answer || 'The model returned an empty response.',
+      citations: extractCitations(answer, meeting.durationSec),
+      provider: this.name,
+    }
+  }
+}
+
 export function getAIProvider(): AIProvider {
   const choice = (process.env.AI_PROVIDER ?? 'mock').toLowerCase()
 
@@ -266,6 +310,12 @@ export function getAIProvider(): AIProvider {
     const key = process.env.GEMINI_API_KEY
     if (key) return new GeminiProvider(key)
     console.warn('AI_PROVIDER=gemini but GEMINI_API_KEY is unset; using MockProvider.')
+  }
+
+  if (choice === 'groq') {
+    const key = process.env.GROQ_API_KEY
+    if (key) return new GroqProvider(key)
+    console.warn('AI_PROVIDER=groq but GROQ_API_KEY is unset; using MockProvider.')
   }
 
   return new MockProvider()
