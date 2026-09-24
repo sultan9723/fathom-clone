@@ -14,9 +14,7 @@ export interface AskRequest {
 
 export interface AskResponse {
   answer: string
-  /** Transcript seconds the answer draws on, so the UI can offer jump links. */
   citations: number[]
-  /** Which provider actually answered — surfaced in the UI, never guessed at. */
   provider: 'claude' | 'openai' | 'gemini' | 'mock'
 }
 
@@ -45,7 +43,6 @@ ${context}
 Question: ${question}`
 }
 
-/** Pulls [m:ss] timestamps out of an answer so the UI can render seek links. */
 function extractCitations(answer: string, maxSeconds: number): number[] {
   const found = new Set<number>()
   for (const match of answer.matchAll(/\[(\d+):([0-5]\d)\]/g)) {
@@ -55,39 +52,21 @@ function extractCitations(answer: string, maxSeconds: number): number[] {
   return [...found].sort((a, b) => a - b)
 }
 
-/**
- * Retrieval is shared by every provider: send the model the lines that bear on
- * the question rather than the entire transcript.
- */
 function contextFor(meeting: Meeting, question: string): string {
   const index = new TranscriptIndex(meeting)
   const focused = index.buildContext(question, { limit: 10, neighbours: 1 })
-  // A question whose terms match nothing ("what was this about?") still
-  // deserves an answer, so fall back to the whole transcript.
   return focused || index.fullText()
 }
 
-/**
- * Answers without an API key by quoting the transcript directly.
- *
- * This is not a stub that throws — it is the reason the feature degrades
- * gracefully. With no key configured the panel still returns the relevant
- * moments with working timestamps; it just does not paraphrase them.
- */
 export class MockProvider implements AIProvider {
   readonly name = 'mock' as const
-
-  /** Below this, a line is an interjection rather than an answer. */
   private static readonly SUBSTANTIVE_CHARS = 90
-  /** How far to follow a short line forward looking for the substance. */
   private static readonly MAX_HOPS = 2
 
   async ask({ question, meeting }: AskRequest): Promise<AskResponse> {
     const index = new TranscriptIndex(meeting)
     const hits = index.search(question, 3)
 
-    // Questions like "what was decided?" name no term that appears in the
-    // dialogue, but the seed data already carries a precomputed answer.
     if (hits.length === 0) {
       return this.answerFromSummary(meeting)
     }
@@ -99,9 +78,6 @@ export class MockProvider implements AIProvider {
     for (const hit of hits) {
       const chain: TranscriptLineWithSpeaker[] = []
 
-      // Walk forward from the hit until the substance appears. A short line
-      // is usually a question whose answer is in the next turn, and that
-      // turn often shares no vocabulary with the query.
       let current: typeof hit.line | undefined = hit.line
       let speaker = hit.speaker
       for (let hop = 0; current && hop <= MockProvider.MAX_HOPS; hop++) {
@@ -122,7 +98,7 @@ export class MockProvider implements AIProvider {
         chain
           .map(
             (entry, i) =>
-              `${i === 0 ? '- ' : '  ↳ '}${entry.speakerName} at [${formatStamp(entry.line.start)}]: “${truncate(entry.line.text, 220)}”`
+              `${i === 0 ? '- ' : '  ↳ '}${entry.speakerName} at [${formatStamp(entry.line.start)}]: "${truncate(entry.line.text, 220)}"`
           )
           .join('\n')
       )
@@ -137,7 +113,6 @@ export class MockProvider implements AIProvider {
     }
   }
 
-  /** Falls back to the precomputed summary when retrieval finds nothing. */
   private answerFromSummary(meeting: Meeting): AskResponse {
     const parts = [
       'No AI provider is configured and nothing in the transcript matches those words directly, so here is the meeting summary:',
@@ -164,15 +139,9 @@ export class ClaudeProvider implements AIProvider {
   }
 
   async ask({ question, meeting }: AskRequest): Promise<AskResponse> {
-    const response = await this.client.beta.messages.create({
-      model: 'claude-opus-5',
-      // Answers are deliberately short; this is a cap, not a target.
+    const response = await this.client.messages.create({
+      model: 'claude-sonnet-4-6',
       max_tokens: 1024,
-      // Extractive Q&A over a handful of lines does not repay deep reasoning,
-      // and this route is latency-sensitive.
-      output_config: { effort: 'low' },
-      betas: ['server-side-fallback-2026-06-01'],
-      fallbacks: [{ model: 'claude-opus-4-8' }],
       system: SYSTEM_PROMPT,
       messages: [
         {
@@ -182,12 +151,8 @@ export class ClaudeProvider implements AIProvider {
       ],
     })
 
-    if (response.stop_reason === 'refusal') {
-      throw new Error('The model declined to answer this question.')
-    }
-
     const answer = response.content
-      .filter((block): block is Anthropic.Beta.BetaTextBlock => block.type === 'text')
+      .filter((block): block is Anthropic.TextBlock => block.type === 'text')
       .map((block) => block.text)
       .join('\n')
       .trim()
@@ -200,10 +165,6 @@ export class ClaudeProvider implements AIProvider {
   }
 }
 
-/**
- * Uses raw fetch rather than pulling in a second vendor SDK — this is the
- * secondary path and the request shape is small enough not to warrant it.
- */
 export class OpenAIProvider implements AIProvider {
   readonly name = 'openai' as const
 
@@ -230,6 +191,8 @@ export class OpenAIProvider implements AIProvider {
     })
 
     if (!res.ok) {
+      const errText = await res.text()
+      console.error('[openai] error response:', errText)
       throw new Error(`OpenAI request failed with ${res.status}`)
     }
 
@@ -246,10 +209,6 @@ export class OpenAIProvider implements AIProvider {
   }
 }
 
-/**
- * Uses raw fetch, same as OpenAIProvider — no official Gemini SDK dependency
- * for one endpoint.
- */
 export class GeminiProvider implements AIProvider {
   readonly name = 'gemini' as const
 
@@ -264,18 +223,15 @@ export class GeminiProvider implements AIProvider {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          // 2.5-flash thinks by default even for plain generateContent calls;
-          // this route is latency-sensitive extractive Q&A, not reasoning.
-          generationConfig: {
-            thinkingConfig: { thinkingBudget: 0 },
-          },
+          contents: [{ parts: [{ text: prompt }] }]
         }),
       }
     )
 
     if (!res.ok) {
-      throw new Error(`Gemini request failed with ${res.status}`)
+      const errText = await res.text()
+      console.error('[gemini] error response:', errText)
+      throw new Error(`Gemini request failed with ${res.status}: ${errText}`)
     }
 
     const data = (await res.json()) as {
@@ -291,11 +247,6 @@ export class GeminiProvider implements AIProvider {
   }
 }
 
-/**
- * Picks a provider from `AI_PROVIDER`, falling back to the mock whenever the
- * chosen provider has no key. Requesting a provider whose key is missing is a
- * misconfiguration worth a server log, but it must not break the page.
- */
 export function getAIProvider(): AIProvider {
   const choice = (process.env.AI_PROVIDER ?? 'mock').toLowerCase()
 
