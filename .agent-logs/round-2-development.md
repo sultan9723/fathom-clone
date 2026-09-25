@@ -9,13 +9,13 @@
 
 ## Milestones
 
-### [PENDING] M1: Backend Setup
-- Status: IN PROGRESS
-- Files: backend/main.py, database.py, models.py, schemas.py, routes/*
-- Agent: Claude Code
-- Expected: 1.5 hours
-- Actual: TBD
 
+### [COMPLETED] M1: Backend Setup
+- Status: COMPLETED
+-- Actual: 10 minutes
+- Commit: d8d9a22
+- PR: https://github.com/sultan9723/fathom-clone/pull/new/feat/backend-setup
+- Tests: All 8 endpoints verified (health, meetings CRUD, transcripts, search, action items, AI Q&A, cascade delete)
 ### [PENDING] M2: Frontend UI
 - Status: NOT STARTED
 - Files: app/meetings/page.tsx, [id]/page.tsx, components/*
