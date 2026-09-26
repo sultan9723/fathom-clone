@@ -1,8 +1,9 @@
 """Pydantic request/response schemas."""
 
 from datetime import date, datetime
+from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 # --- Meeting ---------------------------------------------------------------
@@ -16,7 +17,23 @@ class MeetingBase(BaseModel):
 
 
 class MeetingCreate(MeetingBase):
-    pass
+    # Some callers (e.g. seed scripts) send the legacy field names below
+    # instead of this schema's own speaker_count/duration_seconds/languages.
+    # Map them before validation so those requests stop silently defaulting
+    # to 0/0/null; the canonical field names still take priority if present.
+    @model_validator(mode="before")
+    @classmethod
+    def _map_legacy_fields(cls, data: Any) -> Any:
+        if not isinstance(data, dict):
+            return data
+        data = dict(data)
+        if "speaker_count" not in data and "participants" in data:
+            data["speaker_count"] = data["participants"]
+        if "duration_seconds" not in data and "duration_minutes" in data:
+            data["duration_seconds"] = data["duration_minutes"] * 60
+        if "languages" not in data and "language" in data:
+            data["languages"] = data["language"]
+        return data
 
 
 class MeetingUpdate(BaseModel):
