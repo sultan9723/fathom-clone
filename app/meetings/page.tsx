@@ -12,6 +12,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { Hourglass, Languages, UsersRound } from 'lucide-react'
 import type { ApiMeeting } from '@/lib/types'
 import { getMeetings, searchMeetings } from '@/lib/api'
 import { MeetingEmptyState, MeetingListSkeleton, MeetingLoadError } from '@/components/meeting-list/premium-feedback'
@@ -115,7 +116,7 @@ export default function MeetingsPage() {
               <Link
                 key={meeting.id}
                 href={`/meetings/${meeting.id}`}
-                className="group block rounded-lg border border-line bg-gradient-to-b from-white to-surface-1 p-6 shadow-[0_4px_12px_rgba(0,0,0,0.06)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.02] hover:border-cyan/40 hover:shadow-[0_8px_24px_rgba(0,212,255,0.15)]"
+                className="group block rounded-lg border-l-[3px] border-l-cyan bg-gradient-to-b from-white to-surface-1 p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_8px_16px_rgba(0,0,0,0.08)]"
               >
                 <h3 className="text-xl font-bold text-fg-1 transition-colors group-hover:text-brand">
                   {meeting.title}
@@ -123,12 +124,21 @@ export default function MeetingsPage() {
                 {meeting.description && (
                   <p className="mt-1.5 line-clamp-2 text-md text-fg-2">{meeting.description}</p>
                 )}
-                <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-xs font-medium text-fg-meta">
-                  <span>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-cyan/40 bg-gradient-to-br from-cyan/10 to-cyan/5 px-3 py-2 text-xs font-semibold text-fg-1 shadow-[0_1px_3px_rgba(0,212,255,0.1)]">
+                    <UsersRound className="h-3.5 w-3.5 text-cyan" aria-hidden="true" />
                     {meeting.speaker_count} {meeting.speaker_count === 1 ? 'speaker' : 'speakers'}
                   </span>
-                  <span>{Math.round(meeting.duration_seconds / 60)} min</span>
-                  {meeting.languages && <span>{formatLanguages(meeting.languages)}</span>}
+                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-cyan/40 bg-gradient-to-br from-cyan/10 to-cyan/5 px-3 py-2 text-xs font-semibold text-fg-1 shadow-[0_1px_3px_rgba(0,212,255,0.1)]">
+                    <Hourglass className="h-3.5 w-3.5 text-cyan" aria-hidden="true" />
+                    {Math.round(meeting.duration_seconds / 60)} min
+                  </span>
+                  {meeting.languages && (
+                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-cyan/50 bg-cyan/15 px-3 py-2 text-xs font-bold text-[#00a3cc] shadow-[0_2px_4px_rgba(0,212,255,0.15)]">
+                      <Languages className="h-3.5 w-3.5" aria-hidden="true" />
+                      {formatLanguages(meeting.languages)}
+                    </span>
+                  )}
                 </div>
               </Link>
             ))}
