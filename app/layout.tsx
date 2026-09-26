@@ -25,7 +25,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} max-w-full overflow-x-hidden`}>
       <body className="min-h-screen max-w-full overflow-x-hidden bg-page font-sans text-base text-fg-1 antialiased">
-        <header className="sticky top-0 z-30 min-w-0 overflow-hidden bg-topbar">
+        {/* Header and page ground are both white in the light theme, so the
+            chrome needs explicit rules to separate them — under the old dark
+            palette the colour difference did that job on its own. */}
+        <header className="sticky top-0 z-30 min-w-0 overflow-hidden border-b border-line bg-topbar">
           {/* No max-w cap: the meeting list/detail pages below run edge-to-
               edge, so a constrained header would drift out of alignment
               with them on wide viewports. */}
@@ -73,7 +76,7 @@ export default function RootLayout({
             </div>
           </div>
         </header>
-        <Suspense fallback={<div className="h-tab-bar border-t-[0.67px] border-page bg-topbar" />}>
+        <Suspense fallback={<div className="h-tab-bar border-b border-line bg-topbar" />}>
           <TabBar />
         </Suspense>
         {children}

@@ -3,20 +3,30 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 @layer base {
-  /* SPEC: default body weight 300, letter-spacing -0.01em to -0.03em on UI
+  /* Page ground and default text colour come from the tokens
+     (lib/design-tokens.ts -> pageBg #ffffff, text1 #1a1a1a) rather than
+     literal hex, so the palette stays defined in exactly one place.
+     app/layout.tsx applies the same pair to <body>; this makes the default
+     hold even for surfaces rendered outside it, such as Next's 404 page.
+
+     SPEC: default body weight 300, letter-spacing -0.01em to -0.03em on UI
      text. tracking-tight (-0.025em) sits inside that range and is applied
      once here rather than hand-tuned per element; components override
      font-weight explicitly wherever SPEC calls for something heavier. */
+  html {
+    @apply bg-page;
+  }
+
   body {
-    @apply font-light tracking-tight;
+    @apply bg-page font-light tracking-tight text-fg-1;
   }
 }
 
-/* Thumb #4a4b4b / track #1a1a1a — kept in sync with lib/design-tokens.ts
+/* Thumb #e0e0e0 / track #ffffff — kept in sync with lib/design-tokens.ts
    colors.border / colors.pageBg. Plain CSS can't import the token file, so
    these are the one place those two hex values are duplicated. */
 ::-webkit-scrollbar {
@@ -24,13 +34,13 @@
   height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: #ffffff;
 }
 ::-webkit-scrollbar-thumb {
-  background: #4a4b4b;
+  background: #e0e0e0;
   border-radius: 9999px;
 }
 * {
   scrollbar-width: thin;
-  scrollbar-color: #4a4b4b #1a1a1a;
+  scrollbar-color: #e0e0e0 #ffffff;
 }

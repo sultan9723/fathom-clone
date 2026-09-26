@@ -15,7 +15,7 @@ export function SearchResultRow({ result }: { result: SearchResult }) {
       className="block rounded-md p-3 transition-colors hover:bg-surface-2"
     >
       <div className="flex items-baseline gap-2">
-        <span className="text-base font-bold text-line">{result.speakerName}</span>
+        <span className="text-base font-bold text-fg-2">{result.speakerName}</span>
         <span className="rounded bg-brand/10 px-1.5 py-0.5 text-sm font-semibold text-brand">
           {formatTimestamp(result.line.start)}
         </span>

@@ -12,7 +12,7 @@ import { Participants } from './participants'
  */
 export function SummaryTab({ meeting }: { meeting: Meeting }) {
   return (
-    <div className="bg-black p-5">
+    <div className="bg-page p-5">
       <SummaryPanel summary={meeting.summary} />
       <Highlights highlights={meeting.highlights} />
       <Participants participants={meeting.participants} transcript={meeting.transcript} />

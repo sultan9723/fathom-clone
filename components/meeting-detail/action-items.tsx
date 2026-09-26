@@ -27,7 +27,7 @@ export function ActionItems({
     <section aria-labelledby="actions-heading">
       <h3
         id="actions-heading"
-        className="text-[15px] font-bold uppercase tracking-[0.375px] text-line-faint"
+        className="text-[15px] font-bold uppercase tracking-[0.375px] text-fg-3"
       >
         Action Items
       </h3>

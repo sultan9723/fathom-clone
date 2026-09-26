@@ -1,43 +1,50 @@
 /**
- * Design tokens taken from Fathom's live CSS.
+ * Design tokens — NoteAI light theme (DESIGN-NOTEAI.md).
  *
  * This file is the source of truth for colour, type and component sizing.
  * `tailwind.config.ts` imports it and derives the utility classes, so a value
- * is changed here and nowhere else.
+ * is changed here and nowhere else. Flipping the palette here is what turns
+ * the whole app light: every component styles itself with the derived
+ * utilities (bg-page, text-fg-1, border-line, …), so none of them change.
+ *
+ * The scales keep their original *meaning*, only inverted: surface1→5 still
+ * runs least- to most-contrasted against the page, and text1→4 still runs
+ * most- to least-prominent. That's why surface1 is the lightest here and was
+ * the darkest under the old dark palette.
  */
 
 export const colors = {
   // Backgrounds
-  pageBg: '#1a1a1a',
-  topBar: '#212124',
-  surface1: '#121314',
-  surface2: '#1d1e1f',
-  surface3: '#26262a',
-  surface4: '#29292e',
-  surface5: '#343435',
-  border: '#4a4b4b',
-  borderFaint: '#616162',
+  pageBg: '#ffffff',
+  topBar: '#ffffff',
+  surface1: '#fafafa',
+  surface2: '#f5f5f5',
+  surface3: '#f0f0f0',
+  surface4: '#ebebeb',
+  surface5: '#e5e5e5',
+  border: '#e0e0e0',
+  borderFaint: '#ededed',
   // Header search field — visually distinct from the surface scale.
-  searchPill: '#2d2c31',
+  searchPill: '#f5f5f5',
 
   // Text
-  text1: '#ffffff',
-  text2: '#c2c2c2',
-  text3: '#969696',
-  text4: '#505050',
+  text1: '#1a1a1a',
+  text2: '#666666',
+  text3: '#888888',
+  text4: '#bbbbbb',
   // Recurs across card meta rows, inactive sub-nav tabs, and the detail-page
   // date line — distinct from text3, not one of the four numbered text tones.
-  textMeta: '#818181',
+  textMeta: '#999999',
 
   // Brand
-  brand: '#00beff',
+  brand: '#0070f3',
 
   // Status
-  error: '#eb3341',
+  error: '#ef4444',
   danger: '#f77f25',
-  warning: '#ffc82f',
-  success: '#00974f',
-  info: '#0180ff',
+  warning: '#d97706',
+  success: '#10b981',
+  info: '#0070f3',
 
   // Accents
   accent1: '#ff5d69',

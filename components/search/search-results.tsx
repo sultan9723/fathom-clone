@@ -43,7 +43,7 @@ export function SearchResults({ results }: { results: SearchResult[] }) {
     <div>
       {groups.map((group, i) => (
         <Fragment key={group.meetingId}>
-          {i > 0 && <div className="border-t border-topbar" />}
+          {i > 0 && <div className="border-t border-line" />}
           <section className="py-4">
             <header className="mb-2 flex items-center gap-2 px-3">
               <PlatformIcon platform={group.meetingPlatform} />

@@ -42,7 +42,7 @@ export function AskPanel({ meetingId }: { meetingId: string }) {
   }
 
   return (
-    <section aria-labelledby="ask-heading" className="bg-black">
+    <section aria-labelledby="ask-heading" className="bg-page">
       <h2 id="ask-heading" className="sr-only">
         Ask about this meeting
       </h2>
@@ -64,13 +64,13 @@ export function AskPanel({ meetingId }: { meetingId: string }) {
             disabled={loading}
             // text-lg = 16px here (text-base is 13px in this project's
             // remapped scale) — the floor iOS needs to not zoom on focus.
-            className="h-[41px] w-full rounded-md border-[0.67px] border-line-faint bg-transparent pl-3 pr-14 text-lg text-fg-1 placeholder:text-line focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-60"
+            className="h-[41px] w-full rounded-md border-[0.67px] border-line-faint bg-transparent pl-3 pr-14 text-lg text-fg-1 placeholder:text-fg-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-60"
           />
           <button
             type="submit"
             disabled={loading || !question.trim()}
             aria-label="Ask"
-            className="absolute right-1.5 top-1/2 grid h-[30px] w-ask-send -translate-y-1/2 place-items-center rounded-[5px] bg-brand text-black transition hover:bg-brand-hover disabled:opacity-50"
+            className="absolute right-1.5 top-1/2 grid h-[30px] w-ask-send -translate-y-1/2 place-items-center rounded-[5px] bg-brand text-white transition hover:bg-brand-hover disabled:opacity-50"
           >
             {loading ? (
               <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
@@ -88,7 +88,7 @@ export function AskPanel({ meetingId }: { meetingId: string }) {
               key={s}
               type="button"
               onClick={() => submit(s)}
-              className="rounded-md border-2 border-topbar px-3 py-1 text-xs text-fg-1 transition-colors hover:border-surface-5"
+              className="rounded-md border-2 border-line px-3 py-1 text-xs text-fg-1 transition-colors hover:border-fg-3"
             >
               {s}
             </button>

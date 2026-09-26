@@ -53,7 +53,7 @@ export function SubNavTabs({
   return (
     // Matches the video wrapper's own px-4 sm:px-6 exactly (not a flat px-6)
     // so the tabs line up with the video at every breakpoint, not just desktop.
-    <div className="flex h-sub-nav min-w-0 items-center justify-between bg-black px-4 sm:px-6">
+    <div className="flex h-sub-nav min-w-0 items-center justify-between bg-page px-4 sm:px-6">
       <div className="flex h-full min-w-0 items-center overflow-x-auto">
         {TABS.map((tab) => {
           const isActive = active === tab.id
@@ -68,7 +68,7 @@ export function SubNavTabs({
                 tab.mobileOnly && 'lg:hidden',
                 isActive
                   ? 'border-brand text-brand'
-                  : 'border-[#1b1b20] text-fg-meta hover:text-fg-2'
+                  : 'border-transparent text-fg-meta hover:text-fg-2'
               )}
             >
               {tab.label}

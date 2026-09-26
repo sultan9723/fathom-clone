@@ -62,7 +62,7 @@ export default async function SearchPage({
       <div className="mt-4">
         {!query ? (
           <div className="flex flex-col items-center justify-center px-6 py-24 text-center">
-            <Search className="h-12 w-12 text-surface-5" aria-hidden="true" />
+            <Search className="h-12 w-12 text-fg-4" aria-hidden="true" />
             <p className="mt-4 text-md text-fg-3">
               Search across every transcript in every meeting.
             </p>

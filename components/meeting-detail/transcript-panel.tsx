@@ -76,7 +76,7 @@ export function TranscriptPanel({
   const showResumePill = !matchIds && !autoScroll && activeId !== null
 
   return (
-    <section aria-labelledby="transcript-heading" className="relative flex min-h-0 flex-col bg-black px-4">
+    <section aria-labelledby="transcript-heading" className="relative flex min-h-0 flex-col bg-page px-4">
       <h2 id="transcript-heading" className="sr-only">
         Transcript
       </h2>
@@ -84,7 +84,7 @@ export function TranscriptPanel({
       <div className="py-3">
         <div className="relative h-transcript-search w-transcript-search max-w-full">
           <Search
-            className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-line-faint"
+            className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-fg-3"
             aria-hidden="true"
           />
           <input
@@ -96,14 +96,14 @@ export function TranscriptPanel({
             // text-lg = 16px in this project's remapped type scale (text-base
             // is 13px here, per lib/design-tokens.ts) — 16px is the actual
             // floor iOS Safari needs to not zoom the page on focus.
-            className="h-full w-full rounded-full border-[0.67px] border-line-faint bg-surface-2 pl-8 pr-8 text-lg text-fg-1 placeholder:text-line-faint focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
+            className="h-full w-full rounded-full border-[0.67px] border-line-faint bg-surface-2 pl-8 pr-8 text-lg text-fg-1 placeholder:text-fg-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
           />
           {query && (
             <button
               type="button"
               onClick={() => setQuery('')}
               aria-label="Clear transcript search"
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-line-faint transition hover:text-fg-2"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-fg-3 transition hover:text-fg-2"
             >
               <X className="h-3.5 w-3.5" />
             </button>
@@ -127,7 +127,7 @@ export function TranscriptPanel({
           const isActive = line.id === activeId && !matchIds
           return (
             <li key={line.id} ref={isActive ? activeRef : undefined} className="flex items-start gap-3">
-              <span className="w-16 shrink-0 pt-1.5 text-right text-[13px] font-bold not-italic text-line sm:w-20">
+              <span className="w-16 shrink-0 pt-1.5 text-right text-[13px] font-bold not-italic text-fg-2 sm:w-20">
                 {speaker?.name ?? 'Unknown'}
               </span>
               <button
@@ -136,7 +136,7 @@ export function TranscriptPanel({
                 aria-current={isActive ? 'true' : undefined}
                 className={cn(
                   'w-4/5 rounded-md rounded-tr-none px-2.5 py-[5px] text-left transition-colors md:w-3/5',
-                  isActive ? 'bg-brand/15' : 'bg-[rgba(74,75,75,0.5)] hover:bg-[rgba(74,75,75,0.8)]'
+                  isActive ? 'bg-brand/15' : 'bg-surface-2 hover:bg-surface-3'
                 )}
               >
                 <p className="text-[13px] font-medium leading-4 text-fg-1">

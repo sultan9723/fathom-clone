@@ -60,7 +60,7 @@ export function MeetingDetail({
             // Same content as the persistent NotesColumn (lg+); this pane
             // is how mobile reaches it, so it disappears once that column
             // is visible instead of duplicating it on wide screens.
-            <div className="bg-black px-4 py-5 lg:hidden">
+            <div className="bg-page px-4 py-5 lg:hidden">
               <NotesContent meeting={meeting} />
             </div>
           )}

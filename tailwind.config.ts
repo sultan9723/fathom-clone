@@ -44,7 +44,8 @@ const config: Config = {
           meta: colors.textMeta,
         },
         brand: colors.brand,
-        'brand-hover': '#20c5ff',
+        // DESIGN-NOTEAI.md primary-button hover: darker blue, not lighter.
+        'brand-hover': '#0051cc',
         error: colors.error,
         danger: colors.danger,
         warning: colors.warning,

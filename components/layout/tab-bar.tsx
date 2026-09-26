@@ -24,9 +24,11 @@ export function TabBar() {
   const isTeamCalls = pathname === '/meetings' && searchParams.get('tab') === 'team'
 
   return (
+    // border-page used to hide the old top rule against the dark page; on
+    // white the tab bar needs a real divider below it instead.
     <nav
       aria-label="Primary"
-      className="h-tab-bar overflow-hidden border-t-[0.67px] border-page bg-topbar"
+      className="h-tab-bar overflow-hidden border-b border-line bg-topbar"
     >
       {/* No max-w cap — matches the header and page content below, which
           also run edge-to-edge. */}
