@@ -8,8 +8,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 import models  # noqa: F401  (imported so create_all sees every table)
-from database import Base, engine
+from database import Base, SessionLocal, engine
 from routes import ai, health, meetings, transcripts
+from seed import seed_if_empty
 
 load_dotenv()
 
@@ -22,6 +23,13 @@ CORS_ORIGINS = [o.strip() for o in os.getenv("CORS_ORIGINS", DEFAULT_ORIGINS).sp
 async def lifespan(app: FastAPI):
     # MVP: create tables on startup (no Alembic yet).
     Base.metadata.create_all(bind=engine)
+    # Render's disk isn't persistent across deploys, so a fresh DB needs
+    # seed data every time — seed_if_empty() is a no-op once it's populated.
+    db = SessionLocal()
+    try:
+        seed_if_empty(db)
+    finally:
+        db.close()
     yield
 
 
