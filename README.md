@@ -19,7 +19,7 @@ NoteAI solves a real problem: when your team speaks different languages in the s
 
 - **Frontend**: Next.js (App Router) + TypeScript + Tailwind CSS + shadcn/ui → Vercel
 - **Backend**: FastAPI (Python) → Render.com
-- **Database**: SQLite
+- **Database**: PostgreSQL 18 on Render (production-grade, persistent)
 - **AI**: Groq API (multilingual translation, summarization, Q&A)
 
 ## Live Demo
@@ -27,6 +27,10 @@ NoteAI solves a real problem: when your team speaks different languages in the s
 **Frontend**: https://fathom-clone-jade.vercel.app/meetings
 
 **Backend API**: https://noteai-backend-ja5c.onrender.com/api/v1/health
+
+## Deployment
+
+- **Backend Database**: PostgreSQL 18 on Render (auto-seeds 3 meetings on startup)
 
 ## API Routes
 
@@ -65,13 +69,19 @@ python main.py
 # Runs on http://localhost:8000
 ```
 
+### Environment Variables
+
+```bash
+DATABASE_URL=postgresql://noteai_user:PASSWORD@dpg-dartft8473hc73ev1d4g-a/noteai
+```
+
 ## Design Philosophy
 
 - **Light theme** for accessibility (WCAG AA contrast)
 - **Cyan accents** (#00d4ff) for NoteAI brand
 - **Premium badges** on meeting cards (speakers, duration, language)
 - **Responsive** at 375px mobile to 1440px desktop
-- **Real data** — no mock responses. Every meeting fetches from SQLite. Every AI response comes from Groq.
+- **Real data** — no mock responses. Every meeting fetches from PostgreSQL. Every AI response comes from Groq.
 
 ## What's Next
 
