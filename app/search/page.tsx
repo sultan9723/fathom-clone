@@ -1,78 +1,144 @@
-import type { Metadata } from 'next'
-import Link from 'next/link'
-import { ChevronLeft, Search } from 'lucide-react'
-import { getMeetingRepository } from '@/lib/repository'
-import { searchAcrossMeetings } from '@/lib/search'
-import { SearchPageInput } from '@/components/search/search-page-input'
-import { SearchResults } from '@/components/search/search-results'
-import { SearchEmptyState } from '@/components/search/search-empty-state'
+'use client'
 
-export async function generateMetadata({
-  searchParams,
-}: {
-  searchParams: Promise<{ q?: string }>
-}): Promise<Metadata> {
-  const { q = '' } = await searchParams
-  return { title: q ? `Search results for "${q}"` : 'Search' }
+/**
+ * Cross-meeting search. Reads ?q= and hits GET /api/v1/search, which matches
+ * on meeting title, description, languages *and* transcript text — so a hit
+ * here is not always visible in the card, which is why each result links
+ * through with the query attached for the detail page to highlight.
+ *
+ * useSearchParams() lives in a child under <Suspense>: at the top level of a
+ * client page it opts the whole route out of prerendering.
+ *
+ * Font sizes use this repo's token scale (lib/design-tokens.ts):
+ * text-xl = 18px, text-md = 14px, text-base = 13px, text-xs = 11px. H1 is
+ * 32px per DESIGN-NOTEAI.md, which has no token.
+ */
+
+import { Suspense, useEffect, useState } from 'react'
+import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
+import { ChevronLeft } from 'lucide-react'
+import type { ApiMeeting } from '@/lib/types'
+import { searchMeetings } from '@/lib/api'
+import { SearchPageInput } from '@/components/search/search-page-input'
+
+/** "en,es" -> "EN · ES" */
+function formatLanguages(languages: string | null): string {
+  if (!languages) return ''
+  return languages
+    .split(',')
+    .map((code) => code.trim().toUpperCase())
+    .filter(Boolean)
+    .join(' · ')
 }
 
-export default async function SearchPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ q?: string }>
-}) {
-  const { q = '' } = await searchParams
-  const query = q.trim()
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<SearchShell query="" />}>
+      <SearchView />
+    </Suspense>
+  )
+}
 
-  const meetings = query ? await getMeetingRepository().getAll() : []
-  const results = query ? searchAcrossMeetings(query, meetings) : []
-  const meetingCount = new Set(results.map((r) => r.meetingId)).size
+function SearchView() {
+  const searchParams = useSearchParams()
+  const query = searchParams.get('q') ?? ''
+
+  const [results, setResults] = useState<ApiMeeting[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+
+    ;(async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        // searchMeetings already short-circuits a blank query without a request.
+        const data = await searchMeetings(query)
+        if (cancelled) return
+        setResults(data)
+      } catch {
+        if (cancelled) return
+        setError('Search failed')
+        setResults([])
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    })()
+
+    return () => {
+      cancelled = true
+    }
+  }, [query])
+
+  const trimmed = query.trim()
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
-      <Link
-        href="/meetings"
-        className="inline-flex items-center gap-1 text-sm text-fg-meta transition hover:text-fg-2"
-      >
-        <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
-        Back
-      </Link>
+    <SearchShell query={query}>
+      {loading && <p className="text-md text-fg-2">Searching…</p>}
 
-      <h1 className="mt-2 text-2xl font-semibold text-fg-1">
-        {query ? (
-          <>
-            Search Results for &quot;{query}&quot;
-          </>
-        ) : (
-          'Search'
-        )}
-      </h1>
+      {error && <p className="text-md text-red-600">{error}</p>}
 
-      <div className="mt-4">
-        <SearchPageInput initialQuery={query} />
-      </div>
-
-      {query && (
-        <p className="mt-3 text-base text-fg-3">
-          {results.length} {results.length === 1 ? 'result' : 'results'} across{' '}
-          {meetingCount} {meetingCount === 1 ? 'meeting' : 'meetings'}
+      {!loading && !error && results.length === 0 && (
+        <p className="text-md text-fg-3">
+          {trimmed ? 'No results found' : 'Enter a search query above'}
         </p>
       )}
 
-      <div className="mt-4">
-        {!query ? (
-          <div className="flex flex-col items-center justify-center px-6 py-24 text-center">
-            <Search className="h-12 w-12 text-fg-4" aria-hidden="true" />
-            <p className="mt-4 text-md text-fg-3">
-              Search across every transcript in every meeting.
-            </p>
-          </div>
-        ) : results.length === 0 ? (
-          <SearchEmptyState query={query} />
-        ) : (
-          <SearchResults results={results} />
-        )}
+      {!loading && !error && results.length > 0 && (
+        <div className="flex flex-col gap-4">
+          <p className="text-xs text-fg-3">
+            {results.length} result{results.length !== 1 ? 's' : ''}
+          </p>
+          {results.map((meeting) => (
+            <Link
+              key={meeting.id}
+              // Carry the query through so the detail page highlights the
+              // matching words — the match is often only in the transcript.
+              href={`/meetings/${meeting.id}?q=${encodeURIComponent(trimmed)}`}
+              className="block rounded-md border border-line p-4 transition-colors hover:bg-surface-2"
+            >
+              <h3 className="text-xl font-semibold text-fg-1">{meeting.title}</h3>
+              {meeting.description && (
+                <p className="mt-1 text-md text-fg-2">{meeting.description}</p>
+              )}
+              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-fg-3">
+                <span>
+                  {meeting.speaker_count} {meeting.speaker_count === 1 ? 'speaker' : 'speakers'}
+                </span>
+                <span>{Math.round(meeting.duration_seconds / 60)} min</span>
+                {meeting.languages && <span>{formatLanguages(meeting.languages)}</span>}
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </SearchShell>
+  )
+}
+
+/** Header and chrome, shared by the page and its Suspense fallback. */
+function SearchShell({ query, children }: { query: string; children?: React.ReactNode }) {
+  return (
+    <div className="min-h-screen bg-page">
+      <div className="border-b border-line px-4 py-8 sm:px-6">
+        <Link
+          href="/meetings"
+          className="inline-flex items-center gap-1 text-base text-fg-2 transition-colors hover:text-brand"
+        >
+          <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+          All meetings
+        </Link>
+        <h1 className="mb-2 mt-2 text-[32px] font-bold leading-tight text-fg-1">Search Results</h1>
+        {query && <p className="text-base text-fg-2">Results for &quot;{query}&quot;</p>}
+        <div className="mt-4">
+          <SearchPageInput initialQuery={query} />
+        </div>
       </div>
-    </main>
+
+      <div className="max-w-4xl px-4 py-8 sm:px-6">{children}</div>
+    </div>
   )
 }
