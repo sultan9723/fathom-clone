@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { LockKeyhole, Pause, Play, RotateCcw } from 'lucide-react'
+import { Pause, Play, RotateCcw, Upload } from 'lucide-react'
 import { usePlayer } from '@/components/meeting-detail/player-provider'
 import { formatTimecode } from '@/lib/utils'
 import { getRecordingEmbed } from './recording-embed'
@@ -37,7 +37,7 @@ export function NoteAiVideoPlayer({ videoUrl }: { videoUrl?: string | null }) {
   const playLabel = demoPlaying ? 'Pause demo playback' : 'Play demo playback'
 
   return (
-    <section aria-label="Meeting recording" className="overflow-hidden rounded-lg border border-line bg-black text-white">
+    <section aria-label="Meeting recording" className="overflow-hidden rounded-xl border border-line bg-black text-white">
       <div className="relative aspect-video w-full">
         {embedded && recording ? (
           <iframe
@@ -48,21 +48,48 @@ export function NoteAiVideoPlayer({ videoUrl }: { videoUrl?: string | null }) {
             allowFullScreen
             referrerPolicy="strict-origin-when-cross-origin"
           />
-        ) : (
+        ) : recording ? (
           <div className="flex h-full flex-col items-center justify-center gap-2 px-4 text-center">
             <button
               type="button"
-              onClick={() => recording ? setActiveEmbed(recording.src) : toggleDemo()}
-              disabled={!recording && length === 0}
-              aria-label={recording ? `Play recording on ${recording.provider}` : playLabel}
-              className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-white/30 bg-white/10 transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan disabled:cursor-not-allowed disabled:opacity-50"
+              onClick={() => setActiveEmbed(recording.src)}
+              aria-label={`Play recording on ${recording.provider}`}
+              className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-white/30 bg-white/10 transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
             >
-              {demoPlaying && !recording ? <Pause className="h-5 w-5" aria-hidden="true" /> : <Play className="h-5 w-5" aria-hidden="true" />}
+              <Play className="h-5 w-5" aria-hidden="true" />
             </button>
             <p className="text-base font-medium">Recording available for premium members</p>
-            <p className="text-xs text-white/70">
-              {recording ? `Play with ${recording.provider}` : 'Demo player · No recording attached'}
-            </p>
+            <p className="text-xs text-white/70">Play with {recording.provider}</p>
+          </div>
+        ) : (
+          <div className="flex h-full flex-col items-center justify-center gap-3 bg-gradient-to-br from-[#0f0f0f] to-[#1a1a1a] p-6 text-center">
+            <button
+              type="button"
+              onClick={toggleDemo}
+              disabled={length === 0}
+              aria-label={playLabel}
+              className="grid h-[60px] w-[60px] shrink-0 place-items-center rounded-full border border-cyan/40 text-cyan transition-all duration-200 hover:scale-105 hover:border-cyan hover:shadow-[0_0_20px_rgba(0,212,255,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {demoPlaying ? (
+                <Pause className="h-7 w-7" aria-hidden="true" />
+              ) : (
+                <Play className="h-7 w-7 animate-pulse" aria-hidden="true" />
+              )}
+            </button>
+            <div>
+              <p className="text-xl font-bold text-white">Recording Coming Soon</p>
+              <p className="mt-1 text-base text-white/60">
+                Upload your meeting recording or connect Zoom to auto-sync
+              </p>
+            </div>
+            <button
+              type="button"
+              disabled
+              className="mt-1 inline-flex items-center gap-2 rounded-md border border-cyan/50 px-4 py-2 text-md font-semibold text-cyan transition-colors duration-200 hover:border-cyan hover:bg-cyan/10 disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              <Upload className="h-4 w-4" aria-hidden="true" />
+              Upload Recording
+            </button>
           </div>
         )}
       </div>
@@ -97,7 +124,7 @@ export function NoteAiVideoPlayer({ videoUrl }: { videoUrl?: string | null }) {
             </button>
           </div>
           <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-white/70">
-            <span className="inline-flex items-center gap-1.5"><LockKeyhole className="h-3 w-3" aria-hidden="true" />Demo timeline</span>
+            <span>Currently at</span>
             <span className="font-mono tabular-nums">{formatTimecode(currentTime)} / {formatTimecode(length)}</span>
           </div>
         </div>
