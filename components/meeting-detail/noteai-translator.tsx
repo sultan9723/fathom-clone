@@ -67,7 +67,7 @@ export function NoteAiTranslator({
 
   return (
     <section aria-labelledby="translate-heading" className="mt-6 border-t border-line pt-6">
-      <h3 id="translate-heading" className="mb-4 text-xl font-semibold text-fg-1">
+      <h3 id="translate-heading" className="mb-4 text-xl font-bold text-fg-1">
         Translate Transcript
       </h3>
 
@@ -81,7 +81,7 @@ export function NoteAiTranslator({
           onChange={(e) => setTargetLang(e.target.value)}
           // text-lg is 16px in this project's remapped scale — the floor iOS
           // needs to avoid zooming the page on focus.
-          className="rounded-md border border-line bg-white px-3 py-2 text-lg text-fg-1 focus:border-brand focus:outline-none"
+          className="rounded-md border border-line bg-white px-3 py-2 text-lg text-fg-1 transition-all duration-200 focus:border-cyan focus:shadow-[0_0_0_3px_rgba(0,212,255,0.15)] focus:outline-none"
         >
           {LANGUAGES.map((lang) => (
             <option key={lang.code} value={lang.code}>
@@ -94,7 +94,7 @@ export function NoteAiTranslator({
           type="button"
           onClick={handleTranslate}
           disabled={loading || !hasText}
-          className="inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2.5 text-md font-medium text-white transition-colors hover:bg-brand-hover disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2.5 text-md font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-brand-hover disabled:opacity-50 disabled:hover:scale-100"
         >
           {loading ? (
             <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
@@ -110,29 +110,36 @@ export function NoteAiTranslator({
       {error && <p className="mb-4 text-md text-red-600">{error}</p>}
 
       {translated && isNotice(translated) && (
-        <div className="rounded-md border border-line bg-surface-1 p-4">
+        <div className="animate-fadein rounded-md border border-line bg-surface-1 p-4">
           <p className="text-md font-medium text-fg-1">Translation not available</p>
           <p className="mt-1 text-base text-fg-2">
-            Set ANTHROPIC_API_KEY or OPENAI_API_KEY on the backend to enable translation.
+            Set GROQ_API_KEY, ANTHROPIC_API_KEY or OPENAI_API_KEY on the backend to enable
+            translation.
           </p>
           <p className="mt-2 break-words font-mono text-xs text-fg-3">{translated}</p>
         </div>
       )}
 
       {translated && !isNotice(translated) && (
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2" aria-live="polite">
-          <div className="rounded-md border border-line bg-surface-1 p-4">
+        <div
+          className="grid animate-fadein grid-cols-1 gap-4 lg:grid-cols-2"
+          aria-live="polite"
+        >
+          <div className="rounded-lg border border-line bg-surface-1 p-4">
             <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-3">
               Original ({sourceLang})
             </p>
-            <p className="whitespace-pre-wrap text-md leading-5 text-fg-1">{transcriptText}</p>
+            <p className="whitespace-pre-wrap text-md leading-6 text-fg-1">{transcriptText}</p>
           </div>
 
-          <div className="rounded-md border border-line bg-surface-1 p-4">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-3">
+          {/* The requested "dark accent" panel — a deliberate contrast pop
+              against the light theme everywhere else, marking this as the
+              AI-generated output. */}
+          <div className="rounded-lg border border-cyan/30 bg-[#0a0e14] p-4 shadow-[0_0_20px_rgba(0,212,255,0.08)]">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-cyan">
               Translated ({targetLang})
             </p>
-            <p className="whitespace-pre-wrap text-md leading-5 text-fg-1">{translated}</p>
+            <p className="whitespace-pre-wrap text-md leading-6 text-white">{translated}</p>
           </div>
         </div>
       )}

@@ -72,9 +72,9 @@ export function NoteAiSummary({ meeting }: { meeting: ApiMeeting }) {
             <button
               type="button"
               onClick={generate}
-              className="mt-3 inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2.5 text-md font-medium text-white transition-colors hover:bg-brand-hover"
+              className="mt-3 inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2.5 text-md font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-brand-hover"
             >
-              <Sparkles className="h-4 w-4" aria-hidden="true" />
+              <Sparkles className="h-4 w-4 text-cyan" aria-hidden="true" />
               Generate summary
             </button>
           </div>
@@ -90,17 +90,18 @@ export function NoteAiSummary({ meeting }: { meeting: ApiMeeting }) {
         {error && <p className="mt-2 text-md text-red-600">{error}</p>}
 
         {unavailable && (
-          <div className="mt-2 rounded-md border border-line bg-surface-1 p-3">
+          <div className="mt-2 animate-fadein rounded-md border border-line bg-surface-1 p-3">
             <p className="text-md font-medium text-fg-1">AI Q&amp;A not configured</p>
             <p className="mt-1 text-base text-fg-2">
-              Set ANTHROPIC_API_KEY or OPENAI_API_KEY on the backend to generate summaries.
+              Set GROQ_API_KEY, ANTHROPIC_API_KEY or OPENAI_API_KEY on the backend to generate
+              summaries.
             </p>
             <p className="mt-2 break-words font-mono text-xs text-fg-3">{summary}</p>
           </div>
         )}
 
         {parsed && (
-          <div className="mt-2" aria-live="polite">
+          <div className="mt-2 animate-fadein" aria-live="polite">
             {parsed.overview && (
               <p className="whitespace-pre-wrap text-md leading-5 text-fg-1">{parsed.overview}</p>
             )}
@@ -112,7 +113,7 @@ export function NoteAiSummary({ meeting }: { meeting: ApiMeeting }) {
                 <ul className="mt-2 flex flex-col gap-1.5">
                   {parsed.keyPoints.map((point, i) => (
                     <li key={i} className="flex gap-2 text-md leading-5 text-fg-1">
-                      <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
+                      <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-cyan" />
                       {point}
                     </li>
                   ))}

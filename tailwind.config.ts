@@ -46,6 +46,7 @@ const config: Config = {
         brand: colors.brand,
         // DESIGN-NOTEAI.md primary-button hover: darker blue, not lighter.
         'brand-hover': '#0051cc',
+        cyan: colors.cyan,
         error: colors.error,
         danger: colors.danger,
         warning: colors.warning,
@@ -108,6 +109,14 @@ const config: Config = {
         'ask-send': components.askSendButton.height,
         'share-copy': components.shareCopyButtonHeight,
         'action-checkbox': components.actionCheckbox,
+      },
+      keyframes: {
+        fadein: { from: { opacity: '0' }, to: { opacity: '1' } },
+      },
+      animation: {
+        // 200ms micro-interaction per the premium design pass — AI answers,
+        // translations and summaries fade in rather than popping in place.
+        fadein: 'fadein 200ms ease-out',
       },
     },
   },

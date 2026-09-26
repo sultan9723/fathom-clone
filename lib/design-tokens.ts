@@ -41,6 +41,10 @@ export const colors = {
 
   // Brand
   brand: '#0070f3',
+  // Neon pop accent for the premium visual pass — tab underlines, hover
+  // highlights, micro-interaction accents. Distinct from `brand`, which
+  // stays the primary-button color.
+  cyan: '#00d4ff',
 
   // Status
   error: '#ef4444',

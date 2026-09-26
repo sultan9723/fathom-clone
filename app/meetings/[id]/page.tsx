@@ -17,7 +17,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useParams, useSearchParams } from 'next/navigation'
-import { ChevronLeft, Loader2, Play } from 'lucide-react'
+import { ChevronLeft } from 'lucide-react'
 import type { ApiActionItem, ApiMeeting, ApiTranscript } from '@/lib/types'
 import { getActionItems, getMeeting, getTranscripts } from '@/lib/api'
 import { cn, formatDuration, formatMeetingDate, formatTimecode } from '@/lib/utils'
@@ -26,6 +26,8 @@ import { NoteAiTranscript } from '@/components/meeting-detail/noteai-transcript'
 import { NoteAiActionItems } from '@/components/meeting-detail/noteai-action-items'
 import { NoteAiSummary } from '@/components/meeting-detail/noteai-summary'
 import { NoteAiAsk } from '@/components/meeting-detail/noteai-ask'
+import { NoteAiVideoPlayer } from '@/app/components/meeting-detail/noteai-video-player'
+import { MeetingDetailSkeleton, MeetingEmptyState, MeetingLoadError, MeetingPanelBoundary, TranscriptSkeleton } from '@/components/meeting-list/premium-feedback'
 
 type Tab = 'summary' | 'transcript' | 'action-items'
 
@@ -54,29 +56,45 @@ export default function MeetingDetailPage() {
   const [actionItems, setActionItems] = useState<ApiActionItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [attempt, setAttempt] = useState(0)
+  const [transcriptLoading, setTranscriptLoading] = useState(true)
+  const [actionsLoading, setActionsLoading] = useState(true)
+  const [transcriptError, setTranscriptError] = useState(false)
+  const [actionsError, setActionsError] = useState(false)
 
   useEffect(() => {
     if (!meetingId) return
     let cancelled = false
 
     ;(async () => {
-      setLoading(true)
       setError(null)
+      setTranscriptLoading(true)
+      setActionsLoading(true)
+      setTranscriptError(false)
+      setActionsError(false)
+      setTranscripts([])
+      setActionItems([])
       try {
         // The meeting must exist before its children are worth fetching, but
         // the two child calls are independent of each other.
         const m = await getMeeting(meetingId)
-        const [t, a] = await Promise.all([
-          getTranscripts(meetingId),
-          getActionItems(meetingId),
-        ])
         if (cancelled) return
         setMeeting(m)
-        setTranscripts(t)
-        setActionItems(a)
+        setLoading(false)
+        // Each panel can finish or fail independently; metadata stays usable.
+        await Promise.all([
+          getTranscripts(meetingId).then(
+            (items) => { if (!cancelled) setTranscripts(items) },
+            () => { if (!cancelled) setTranscriptError(true) },
+          ).finally(() => { if (!cancelled) setTranscriptLoading(false) }),
+          getActionItems(meetingId).then(
+            (items) => { if (!cancelled) setActionItems(items) },
+            () => { if (!cancelled) setActionsError(true) },
+          ).finally(() => { if (!cancelled) setActionsLoading(false) }),
+        ])
       } catch {
         if (cancelled) return
-        setError('Failed to load this meeting')
+        setError('We couldn’t load this meeting')
         setMeeting(null)
       } finally {
         if (!cancelled) setLoading(false)
@@ -86,21 +104,18 @@ export default function MeetingDetailPage() {
     return () => {
       cancelled = true
     }
-  }, [meetingId])
+  }, [meetingId, attempt])
 
-  if (loading) {
-    return (
-      <div className="flex items-center gap-2 px-4 py-10 text-md text-fg-3 sm:px-6">
-        <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-        Loading meeting…
-      </div>
-    )
+  const retry = () => { setLoading(!meeting); setAttempt((value) => value + 1) }
+
+  if (loading || (meeting && meeting.id !== meetingId)) {
+    return <MeetingDetailSkeleton />
   }
 
   if (error || !meeting) {
     return (
       <div className="px-4 py-10 sm:px-6">
-        <p className="text-md text-red-600">{error ?? 'Meeting not found'}</p>
+        <MeetingLoadError title={error ?? 'Meeting not found'} onRetry={retry} />
         <Link href="/meetings" className="mt-3 inline-block text-md text-brand hover:underline">
           Back to meetings
         </Link>
@@ -109,12 +124,17 @@ export default function MeetingDetailPage() {
   }
 
   return (
-    <PlayerProvider durationSec={meeting.duration_seconds}>
+    <PlayerProvider key={meeting.id} durationSec={meeting.duration_seconds}>
       <MeetingDetailView
         meeting={meeting}
         transcripts={transcripts}
         actionItems={actionItems}
         onActionItemsChange={setActionItems}
+        transcriptLoading={transcriptLoading}
+        actionsLoading={actionsLoading}
+        transcriptError={transcriptError}
+        actionsError={actionsError}
+        onRetry={retry}
       />
     </PlayerProvider>
   )
@@ -125,11 +145,21 @@ function MeetingDetailView({
   transcripts,
   actionItems,
   onActionItemsChange,
+  transcriptLoading,
+  actionsLoading,
+  transcriptError,
+  actionsError,
+  onRetry,
 }: {
   meeting: ApiMeeting
   transcripts: ApiTranscript[]
   actionItems: ApiActionItem[]
   onActionItemsChange: (items: ApiActionItem[]) => void
+  transcriptLoading: boolean
+  actionsLoading: boolean
+  transcriptError: boolean
+  actionsError: boolean
+  onRetry: () => void
 }) {
   const searchParams = useSearchParams()
   const query = searchParams.get('q') ?? ''
@@ -137,7 +167,7 @@ function MeetingDetailView({
   const [tab, setTab] = useState<Tab>(query ? 'transcript' : 'summary')
 
   return (
-    <div className="mx-auto w-full max-w-[1400px] px-4 pb-12 pt-6 sm:px-6">
+    <div className="mx-auto w-full max-w-[1400px] px-4 pb-12 pt-6 motion-safe:animate-fadein sm:px-6">
       <Link
         href="/meetings"
         className="inline-flex items-center gap-1 text-base text-fg-2 transition-colors hover:text-brand"
@@ -148,9 +178,11 @@ function MeetingDetailView({
 
       <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-start">
         {/* Left: header, player placeholder, clock */}
-        <div className="flex w-full shrink-0 flex-col gap-4 lg:w-[40%]">
+        <div className="flex w-full shrink-0 flex-col gap-4 rounded-lg border border-line bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)] lg:w-[40%]">
           <MeetingHeader meeting={meeting} />
-          <VideoPlaceholder />
+          <MeetingPanelBoundary title="The recording player needs another try">
+            <NoteAiVideoPlayer />
+          </MeetingPanelBoundary>
           <CurrentPosition />
         </div>
 
@@ -159,7 +191,7 @@ function MeetingDetailView({
           <div
             role="tablist"
             aria-label="Meeting sections"
-            className="flex gap-6 overflow-x-auto border-b border-line"
+            className="flex gap-6 overflow-x-auto border-b-2 border-line"
           >
             {TABS.map(({ id, label }) => (
               <button
@@ -170,10 +202,10 @@ function MeetingDetailView({
                 aria-controls={`panel-${id}`}
                 onClick={() => setTab(id)}
                 className={cn(
-                  'shrink-0 border-b-2 pb-2.5 text-md font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand',
+                  'relative shrink-0 pb-3 text-md font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan',
                   tab === id
-                    ? 'border-brand text-brand'
-                    : 'border-transparent text-fg-3 hover:text-fg-1'
+                    ? 'text-fg-1 after:absolute after:inset-x-0 after:-bottom-0.5 after:h-[3px] after:rounded-full after:bg-cyan after:shadow-[0_0_8px_rgba(0,212,255,0.6)]'
+                    : 'text-fg-3 hover:text-fg-1'
                 )}
               >
                 {label}
@@ -188,10 +220,15 @@ function MeetingDetailView({
             role="tabpanel"
             id={`panel-${tab}`}
             aria-labelledby={`tab-${tab}`}
-            className="pt-4"
+            className="mt-4 rounded-lg border border-line bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)]"
           >
+            <MeetingPanelBoundary key={tab} title="This meeting section needs another try">
             {tab === 'summary' && <NoteAiSummary meeting={meeting} />}
             {tab === 'transcript' && (
+              transcriptLoading ? <TranscriptSkeleton /> :
+              transcriptError ? <MeetingLoadError title="We couldn’t load the transcript" onRetry={onRetry} /> :
+              transcripts.length === 0 ? <MeetingEmptyState kind="transcript" /> :
+              <div className="motion-safe:animate-fadein">
               <NoteAiTranscript
                 transcripts={transcripts}
                 query={query}
@@ -199,20 +236,29 @@ function MeetingDetailView({
                 // one code, so take the first as the source language.
                 sourceLang={meeting.languages?.split(',')[0]?.trim().toUpperCase() || 'EN'}
               />
+              </div>
             )}
             {tab === 'action-items' && (
+              actionsLoading ? <TranscriptSkeleton label="Loading action items" /> :
+              actionsError ? <MeetingLoadError title="We couldn’t load action items" onRetry={onRetry} /> :
+              actionItems.length === 0 ? <MeetingEmptyState kind="action-items" /> :
+              <div className="motion-safe:animate-fadein">
               <NoteAiActionItems
                 meetingId={meeting.id}
                 items={actionItems}
                 onItemsChange={onActionItemsChange}
               />
+              </div>
             )}
+            </MeetingPanelBoundary>
           </div>
         </div>
 
         {/* Right: Ask — full width under the rest on mobile */}
         <div className="w-full shrink-0 lg:w-[320px]">
-          <NoteAiAsk meetingId={meeting.id} />
+          <MeetingPanelBoundary title="The assistant needs another try">
+            <NoteAiAsk meetingId={meeting.id} />
+          </MeetingPanelBoundary>
         </div>
       </div>
     </div>
@@ -243,26 +289,6 @@ function MeetingHeader({ meeting }: { meeting: ApiMeeting }) {
         )}
       </div>
     </header>
-  )
-}
-
-/**
- * No recording is attached to a NoteAI meeting yet — the backend stores no
- * media URL. This is the shape the player will take, shown inert rather than
- * as a broken <video>.
- */
-function VideoPlaceholder() {
-  return (
-    <div
-      role="img"
-      aria-label="No recording attached to this meeting"
-      className="grid aspect-video w-full place-items-center rounded-md bg-black"
-    >
-      <div className="flex flex-col items-center gap-2">
-        <Play className="h-12 w-12 text-white/40" aria-hidden="true" />
-        <p className="text-xs text-white/50">No recording attached</p>
-      </div>
-    </div>
   )
 }
 

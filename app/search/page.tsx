@@ -89,7 +89,7 @@ function SearchView() {
 
       {!loading && !error && results.length > 0 && (
         <div className="flex flex-col gap-4">
-          <p className="text-xs text-fg-3">
+          <p className="text-xs font-medium text-fg-3">
             {results.length} result{results.length !== 1 ? 's' : ''}
           </p>
           {results.map((meeting) => (
@@ -98,13 +98,15 @@ function SearchView() {
               // Carry the query through so the detail page highlights the
               // matching words — the match is often only in the transcript.
               href={`/meetings/${meeting.id}?q=${encodeURIComponent(trimmed)}`}
-              className="block rounded-md border border-line p-4 transition-colors hover:bg-surface-2"
+              className="group block rounded-lg border border-line bg-white p-5 shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-cyan/40 hover:shadow-[0_8px_20px_rgba(0,212,255,0.14)]"
             >
-              <h3 className="text-xl font-semibold text-fg-1">{meeting.title}</h3>
+              <h3 className="text-xl font-bold text-fg-1 transition-colors group-hover:text-brand">
+                {meeting.title}
+              </h3>
               {meeting.description && (
                 <p className="mt-1 text-md text-fg-2">{meeting.description}</p>
               )}
-              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-fg-3">
+              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs font-medium text-fg-meta">
                 <span>
                   {meeting.speaker_count} {meeting.speaker_count === 1 ? 'speaker' : 'speakers'}
                 </span>

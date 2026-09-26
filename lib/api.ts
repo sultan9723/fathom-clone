@@ -8,7 +8,7 @@
  *
  * Errors: these throw plain Errors with generic messages — no backend URL or
  * response body is leaked to the UI. Callers decide how to surface them.
- * The one exception is searchMeetings, which degrades to an empty list.
+ * Failed searches also throw so the UI can distinguish failure from no matches.
  */
 
 import type {
@@ -46,21 +46,20 @@ export async function getTranscripts(meetingId: string): Promise<ApiTranscript[]
 /**
  * GET /api/v1/search?q= — meetings matching the query across titles,
  * descriptions, languages and transcript text. An empty query short-circuits
- * without a request; a failed search returns no results rather than throwing,
- * so a typo in the search box never blanks the page.
+ * without a request; a failed search throws so callers can offer a retry.
  */
 export async function searchMeetings(query: string): Promise<ApiMeeting[]> {
   if (!query.trim()) return []
   const res = await fetch(`${API_URL}/v1/search?q=${encodeURIComponent(query)}`)
-  if (!res.ok) return []
+  if (!res.ok) throw new Error('Failed to search meetings')
   return res.json()
 }
 
 /**
  * POST /api/v1/ai/ask — ask a question about one meeting. Returns the answer
- * text; the backend answers with HTTP 200 and an explanatory string (e.g.
- * "API key not configured") when no provider is available, so that surfaces
- * as a normal answer rather than an error.
+ * text. Provider failures can arrive with HTTP 200; normalize these to a
+ * generic error so callers show their friendly retry message, never raw
+ * provider diagnostics (which can contain credentials).
  */
 export async function askAI(meetingId: string, question: string): Promise<string> {
   const res = await fetch(`${API_URL}/v1/ai/ask`, {
@@ -70,6 +69,9 @@ export async function askAI(meetingId: string, question: string): Promise<string
   })
   if (!res.ok) throw new Error('Failed to ask AI')
   const data: AskResponse = await res.json()
+  if (data.response === 'API key not configured' || data.response.startsWith('AI unavailable:')) {
+    throw new Error('The assistant is temporarily unavailable. Please try again.')
+  }
   return data.response
 }
 
