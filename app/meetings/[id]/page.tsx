@@ -192,7 +192,13 @@ function MeetingDetailView({
           >
             {tab === 'summary' && <NoteAiSummary meeting={meeting} />}
             {tab === 'transcript' && (
-              <NoteAiTranscript transcripts={transcripts} query={query} />
+              <NoteAiTranscript
+                transcripts={transcripts}
+                query={query}
+                // `languages` is a comma list ("en,es"); the translator needs
+                // one code, so take the first as the source language.
+                sourceLang={meeting.languages?.split(',')[0]?.trim().toUpperCase() || 'EN'}
+              />
             )}
             {tab === 'action-items' && (
               <NoteAiActionItems

@@ -5,7 +5,9 @@ then OPENAI_API_KEY. With neither configured — or if the call fails for any re
 the endpoint degrades gracefully instead of returning a 5xx.
 """
 
+import logging
 import os
+from typing import Callable
 
 from fastapi import APIRouter, Depends
 from sqlalchemy import select
@@ -16,10 +18,25 @@ import schemas
 from database import get_db
 from routes.meetings import get_meeting_or_404
 
+logger = logging.getLogger(__name__)
+
 router = APIRouter(prefix="/api/v1/ai", tags=["ai"])
 
 NO_KEY_MESSAGE = "API key not configured"
+NO_KEY_TRANSLATE_MESSAGE = "Translation not configured. Add API key to use."
 MAX_CONTEXT_CHARS = 60_000
+# A transcript is translated in one call; 4096 output tokens is the ceiling
+# (the brief's 500 truncates anything past a few short lines).
+TRANSLATE_MAX_TOKENS = 4096
+TRANSLATE_MAX_CHARS = 20_000
+# Values that look like a key but aren't one — treated as "not configured"
+# rather than sent to a provider to earn a 401.
+PLACEHOLDER_KEYS = {"sk-test", "your-api-key-here", "changeme"}
+
+TRANSLATE_SYSTEM_PROMPT = (
+    "You are a translator. Return only the translated text — no preamble, no notes, "
+    "no quotes around it. Preserve speaker names, numbers and formatting."
+)
 
 SYSTEM_PROMPT = (
     "You answer questions about a recorded meeting using only the meeting metadata and "
@@ -57,16 +74,16 @@ def _build_prompt(meeting: models.Meeting, transcripts: list[models.Transcript],
     return f"{context}\n\nQuestion: {question}"
 
 
-def _ask_anthropic(prompt: str) -> str:
+def _anthropic(system: str, prompt: str, max_tokens: int) -> str:
     import anthropic
 
     client = anthropic.Anthropic()  # reads ANTHROPIC_API_KEY
     message = client.beta.messages.create(
         model="claude-opus-5",
-        max_tokens=4096,
+        max_tokens=max_tokens,
         betas=["server-side-fallback-2026-07-01"],
         fallbacks="default",
-        system=SYSTEM_PROMPT,
+        system=system,
         messages=[{"role": "user", "content": prompt}],
     )
     if message.stop_reason == "refusal":
@@ -75,15 +92,15 @@ def _ask_anthropic(prompt: str) -> str:
     return text or "The model returned an empty response."
 
 
-def _ask_openai(prompt: str) -> str:
+def _openai(system: str, prompt: str, max_tokens: int) -> str:
     from openai import OpenAI
 
     client = OpenAI()  # reads OPENAI_API_KEY
     completion = client.chat.completions.create(
         model="gpt-4o-mini",
-        max_tokens=1024,
+        max_tokens=max_tokens,
         messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "system", "content": system},
             {"role": "user", "content": prompt},
         ],
     )
@@ -91,15 +108,28 @@ def _ask_openai(prompt: str) -> str:
     return text or "The model returned an empty response."
 
 
+def _resolve_provider() -> Callable[[str, str, int], str] | None:
+    """
+    Pick the client that matches the key that is actually set — never hand one
+    provider's key to the other's SDK. A placeholder key counts as unconfigured.
+    """
+    if _is_real_key(os.getenv("ANTHROPIC_API_KEY")):
+        return _anthropic
+    if _is_real_key(os.getenv("OPENAI_API_KEY")):
+        return _openai
+    return None
+
+
+def _is_real_key(value: str | None) -> bool:
+    return bool(value) and value.strip() not in PLACEHOLDER_KEYS
+
+
 @router.post("/ask", response_model=schemas.AskResponse)
 def ask(payload: schemas.AskRequest, db: Session = Depends(get_db)) -> schemas.AskResponse:
     meeting = get_meeting_or_404(db, payload.meeting_id)
 
-    if os.getenv("ANTHROPIC_API_KEY"):
-        provider = _ask_anthropic
-    elif os.getenv("OPENAI_API_KEY"):
-        provider = _ask_openai
-    else:
+    provider = _resolve_provider()
+    if provider is None:
         return schemas.AskResponse(response=NO_KEY_MESSAGE)
 
     stmt = (
@@ -111,10 +141,55 @@ def ask(payload: schemas.AskRequest, db: Session = Depends(get_db)) -> schemas.A
     prompt = _build_prompt(meeting, transcripts, payload.question)
 
     try:
-        return schemas.AskResponse(response=provider(prompt))
+        return schemas.AskResponse(response=provider(SYSTEM_PROMPT, prompt, 4096))
     except ImportError:
         return schemas.AskResponse(
             response="AI unavailable: provider SDK is not installed (pip install -r requirements.txt)"
         )
     except Exception as exc:  # never fail the request because the AI provider is unhappy
         return schemas.AskResponse(response=f"AI unavailable: {type(exc).__name__}: {exc}")
+
+
+@router.post("/translate", response_model=schemas.TranslateResponse)
+def translate(payload: schemas.TranslateRequest) -> schemas.TranslateResponse:
+    """
+    Translate a block of text between languages.
+
+    Sync, not async: the provider SDKs block, which would stall the event loop
+    inside an async handler. FastAPI runs this in its threadpool instead.
+
+    Like /ask, this never returns a 5xx because the AI is unhappy — the failure
+    rides back in `translated` so the UI can show a notice. The exception is
+    logged server-side; only its type reaches the client, since provider errors
+    quote the API key back at you.
+    """
+    text = payload.text.strip()
+    if len(text) > TRANSLATE_MAX_CHARS:
+        text = text[:TRANSLATE_MAX_CHARS] + "\n[text truncated]"
+
+    def reply(translated: str) -> schemas.TranslateResponse:
+        return schemas.TranslateResponse(
+            original=payload.text,
+            translated=translated,
+            source_lang=payload.source_lang,
+            target_lang=payload.target_lang,
+        )
+
+    provider = _resolve_provider()
+    if provider is None:
+        return reply(NO_KEY_TRANSLATE_MESSAGE)
+
+    prompt = (
+        f"Translate the following {payload.source_lang} text into {payload.target_lang}.\n\n{text}"
+    )
+
+    try:
+        return reply(provider(TRANSLATE_SYSTEM_PROMPT, prompt, TRANSLATE_MAX_TOKENS))
+    except ImportError:
+        return reply(
+            "Translation unavailable: provider SDK is not installed "
+            "(pip install -r requirements.txt)"
+        )
+    except Exception as exc:
+        logger.exception("Translation failed (%s -> %s)", payload.source_lang, payload.target_lang)
+        return reply(f"Translation unavailable: {type(exc).__name__}")

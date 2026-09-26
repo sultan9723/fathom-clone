@@ -109,3 +109,16 @@ class AskRequest(BaseModel):
 
 class AskResponse(BaseModel):
     response: str
+
+
+class TranslateRequest(BaseModel):
+    text: str = Field(..., min_length=1)
+    source_lang: str = Field(..., min_length=1, max_length=32)
+    target_lang: str = Field(..., min_length=1, max_length=32)
+
+
+class TranslateResponse(BaseModel):
+    original: str
+    translated: str
+    source_lang: str
+    target_lang: str

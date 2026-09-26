@@ -95,3 +95,16 @@ export interface AskRequest {
 export interface AskResponse {
   response: string
 }
+
+export interface TranslateRequest {
+  text: string
+  source_lang: string
+  target_lang: string
+}
+
+export interface TranslateResponse {
+  original: string
+  translated: string
+  source_lang: string
+  target_lang: string
+}

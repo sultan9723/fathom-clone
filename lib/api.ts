@@ -11,7 +11,14 @@
  * The one exception is searchMeetings, which degrades to an empty list.
  */
 
-import type { ApiActionItem, ApiMeeting, ApiTranscript, AskResponse } from './types'
+import type {
+  ApiActionItem,
+  ApiMeeting,
+  ApiTranscript,
+  AskResponse,
+  TranslateRequest,
+  TranslateResponse,
+} from './types'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'
 
@@ -88,5 +95,20 @@ export async function updateActionItem(
     },
   )
   if (!res.ok) throw new Error('Failed to update action item')
+  return res.json()
+}
+
+/**
+ * POST /api/v1/ai/translate — translate a block of text between languages.
+ * Like askAI, an unconfigured or failing provider comes back as HTTP 200 with
+ * the notice in `translated`, so only transport failures throw here.
+ */
+export async function translateText(request: TranslateRequest): Promise<TranslateResponse> {
+  const res = await fetch(`${API_URL}/v1/ai/translate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(request),
+  })
+  if (!res.ok) throw new Error('Failed to translate text')
   return res.json()
 }
