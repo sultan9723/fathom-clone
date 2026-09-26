@@ -1,27 +1,19 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname, useSearchParams } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
 /**
- * Every tab is a real, clickable link now. Team Calls/Playlists/Alerts/
- * Deals have no feature behind them yet, so they land on an honest
- * "coming soon" empty state instead of a dead-end href="#" or an inert
- * span that looks broken.
+ * A single Meetings tab — the app has one section, so the bar names it
+ * rather than implying a set of features that don't exist yet.
  */
 const TABS = [
-  { label: 'My Calls', href: '/meetings' },
-  { label: 'Team Calls', href: '/meetings?tab=team' },
-  { label: 'Playlists', href: '/playlists' },
-  { label: 'Alerts', href: '/alerts' },
-  { label: 'Deals', href: '/deals' },
+  { label: 'Meetings', href: '/meetings' },
 ] as const
 
 export function TabBar() {
   const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const isTeamCalls = pathname === '/meetings' && searchParams.get('tab') === 'team'
 
   return (
     // border-page used to hide the old top rule against the dark page; on
@@ -34,12 +26,7 @@ export function TabBar() {
           also run edge-to-edge. */}
       <div className="flex h-full w-full items-center gap-6 overflow-x-auto px-4 sm:px-6">
         {TABS.map((tab) => {
-          const active =
-            tab.label === 'My Calls'
-              ? pathname === '/meetings' && !isTeamCalls
-              : tab.label === 'Team Calls'
-                ? isTeamCalls
-                : pathname === tab.href
+          const active = pathname === tab.href
 
           return (
             <Link

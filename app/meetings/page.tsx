@@ -138,7 +138,20 @@ export default function MeetingsPage() {
     return [...codes].sort()
   }, [meetings])
 
-  const filteredMeetings = meetings.filter((meeting) => {
+  // The backend has been seeded more than once, so it returns each meeting
+  // twice under distinct ids. Keyed by id the rows look unique, so collapse on
+  // title instead and keep the first (newest-first order) of each.
+  const uniqueMeetings = useMemo(() => {
+    const seen = new Set<string>()
+    return meetings.filter((meeting) => {
+      const key = meeting.title.trim().toLowerCase()
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+  }, [meetings])
+
+  const filteredMeetings = uniqueMeetings.filter((meeting) => {
     if (!matchesSpeakerFilter(meeting.speaker_count, speakerFilter)) return false
     if (!matchesDurationFilter(Math.round(meeting.duration_seconds / 60), durationFilter)) return false
     if (languageFilter !== 'any') {
