@@ -1,8 +1,9 @@
 """AI Q&A over a meeting transcript.
 
-Provider is auto-detected: ANTHROPIC_API_KEY first (SPEC.md targets the Claude API),
-then OPENAI_API_KEY. With neither configured — or if the call fails for any reason —
-the endpoint degrades gracefully instead of returning a 5xx.
+Provider is auto-detected: GROQ_API_KEY first (fast, free tier), then
+ANTHROPIC_API_KEY (SPEC.md's original target), then OPENAI_API_KEY. With none
+configured — or if the call fails for any reason — the endpoint degrades
+gracefully instead of returning a 5xx.
 """
 
 import logging
@@ -108,11 +109,35 @@ def _openai(system: str, prompt: str, max_tokens: int) -> str:
     return text or "The model returned an empty response."
 
 
+def _groq(system: str, prompt: str, max_tokens: int) -> str:
+    from groq import Groq
+
+    client = Groq()  # reads GROQ_API_KEY
+    completion = client.chat.completions.create(
+        # mixtral-8x7b-32768 is decommissioned on Groq's platform as of this
+        # writing (confirmed live: their API returns 400 "has been
+        # decommissioned" for it) — openai/gpt-oss-120b is Groq's current
+        # equivalent-tier model and is confirmed working against this key.
+        model="openai/gpt-oss-120b",
+        max_tokens=max_tokens,
+        messages=[
+            {"role": "system", "content": system},
+            {"role": "user", "content": prompt},
+        ],
+    )
+    text = (completion.choices[0].message.content or "").strip()
+    return text or "The model returned an empty response."
+
+
 def _resolve_provider() -> Callable[[str, str, int], str] | None:
     """
     Pick the client that matches the key that is actually set — never hand one
     provider's key to the other's SDK. A placeholder key counts as unconfigured.
+    Groq is checked first: it's the fast/free option, and preferring it over
+    Anthropic when both are configured is the point of adding it.
     """
+    if _is_real_key(os.getenv("GROQ_API_KEY")):
+        return _groq
     if _is_real_key(os.getenv("ANTHROPIC_API_KEY")):
         return _anthropic
     if _is_real_key(os.getenv("OPENAI_API_KEY")):
