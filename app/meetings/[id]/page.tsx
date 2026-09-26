@@ -23,6 +23,7 @@ import { getActionItems, getMeeting, getTranscripts } from '@/lib/api'
 import { cn, formatDuration, formatMeetingDate, formatTimecode } from '@/lib/utils'
 import { PlayerProvider, usePlayer } from '@/components/meeting-detail/player-provider'
 import { NoteAiTranscript } from '@/components/meeting-detail/noteai-transcript'
+import { NoteAiLiveTranscript } from '@/components/meeting-detail/noteai-live-transcript'
 import { NoteAiActionItems } from '@/components/meeting-detail/noteai-action-items'
 import { NoteAiSummary } from '@/components/meeting-detail/noteai-summary'
 import { NoteAiAsk } from '@/components/meeting-detail/noteai-ask'
@@ -36,6 +37,23 @@ const TABS: { id: Tab; label: string }[] = [
   { id: 'transcript', label: 'Transcript' },
   { id: 'action-items', label: 'Action Items' },
 ]
+
+const IN_PROGRESS_WINDOW_MS = 2 * 60 * 60 * 1000
+
+/**
+ * The backend serializes created_at without a UTC suffix (e.g.
+ * "2026-09-26T13:28:49.213574"), and `new Date()` treats a bare timestamp
+ * like that as local time — badly skewing "was this just now" checks. Force
+ * UTC interpretation when no zone designator is already present.
+ */
+function parseUtc(iso: string): Date {
+  return new Date(/[Zz]|[+-]\d\d:?\d\d$/.test(iso) ? iso : `${iso}Z`)
+}
+
+/** A meeting created within the last 2 hours is treated as still recording. */
+function isMeetingInProgress(createdAt: string): boolean {
+  return Date.now() - parseUtc(createdAt).getTime() < IN_PROGRESS_WINDOW_MS
+}
 
 /** "en,es" -> "EN · ES" */
 function formatLanguages(languages: string | null): string {
@@ -165,6 +183,10 @@ function MeetingDetailView({
   const query = searchParams.get('q') ?? ''
   // A ?q= link comes from search, so open on the tab that shows the matches.
   const [tab, setTab] = useState<Tab>(query ? 'transcript' : 'summary')
+  // Only a meeting still "in progress" gets the streaming reveal; once it
+  // finishes (or for any older meeting) the normal, fully-interactive
+  // transcript view takes over.
+  const [streaming, setStreaming] = useState(() => isMeetingInProgress(meeting.created_at))
 
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 pb-12 pt-6 motion-safe:animate-fadein sm:px-6">
@@ -228,6 +250,9 @@ function MeetingDetailView({
               transcriptLoading ? <TranscriptSkeleton /> :
               transcriptError ? <MeetingLoadError title="We couldn’t load the transcript" onRetry={onRetry} /> :
               transcripts.length === 0 ? <MeetingEmptyState kind="transcript" /> :
+              streaming ? (
+              <NoteAiLiveTranscript transcripts={transcripts} onDone={() => setStreaming(false)} />
+              ) : (
               <div className="motion-safe:animate-fadein">
               <NoteAiTranscript
                 transcripts={transcripts}
@@ -237,6 +262,7 @@ function MeetingDetailView({
                 sourceLang={meeting.languages?.split(',')[0]?.trim().toUpperCase() || 'EN'}
               />
               </div>
+              )
             )}
             {tab === 'action-items' && (
               actionsLoading ? <TranscriptSkeleton label="Loading action items" /> :
@@ -267,8 +293,21 @@ function MeetingDetailView({
 
 function MeetingHeader({ meeting }: { meeting: ApiMeeting }) {
   const languages = formatLanguages(meeting.languages)
+  const inProgress = isMeetingInProgress(meeting.created_at)
   return (
     <header>
+      {inProgress && (
+        <div className="mb-2 flex flex-wrap items-center gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan/50 bg-cyan/15 px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-[#00a3cc]">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-cyan" />
+            </span>
+            In Progress
+          </span>
+          <span className="text-xs font-medium text-fg-3">Live transcript</span>
+        </div>
+      )}
       <h1 className="text-2xl font-semibold leading-tight text-fg-1">{meeting.title}</h1>
       {meeting.description && (
         <p className="mt-2 text-md leading-5 text-fg-2">{meeting.description}</p>

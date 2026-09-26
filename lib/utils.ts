@@ -50,6 +50,22 @@ export function formatMeetingTime(iso: string): string {
   }).format(d)
 }
 
+const LANGUAGE_NAMES: Record<string, string> = {
+  EN: 'English',
+  ES: 'Spanish',
+  FR: 'French',
+  DE: 'German',
+  ZH: 'Chinese',
+  JA: 'Japanese',
+  AR: 'Arabic',
+  PT: 'Portuguese',
+}
+
+/** "en" -> "English"; falls back to the code itself when it isn't known. */
+export function languageName(code: string): string {
+  return LANGUAGE_NAMES[code.trim().toUpperCase()] ?? code
+}
+
 /** "Priya Raman" -> "PR", "Cher" -> "C" */
 export function initials(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean)

@@ -12,7 +12,7 @@
 
 import { useEffect, useRef, type ReactNode } from 'react'
 import type { ApiTranscript } from '@/lib/types'
-import { cn, formatTimecode, initials } from '@/lib/utils'
+import { cn, formatTimecode, initials, languageName } from '@/lib/utils'
 import { usePlayer } from './player-provider'
 import { NoteAiTranslator } from './noteai-translator'
 
@@ -148,12 +148,12 @@ export function NoteAiTranscript({
                       <span className="font-mono text-xs tabular-nums text-fg-3">
                         {formatTimecode(line.timestamp_seconds)}
                       </span>
-                      {line.original_language && (
-                        <span className="text-xs uppercase text-fg-3">
-                          {line.original_language}
-                        </span>
-                      )}
                     </span>
+                    {line.original_language && (
+                      <span className="mt-0.5 block text-xs text-fg-3">
+                        {languageName(line.original_language)}
+                      </span>
+                    )}
                     <span className="mt-1 block text-md leading-5 text-fg-1">
                       {highlight(line.text, query)}
                     </span>
