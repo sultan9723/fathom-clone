@@ -34,7 +34,10 @@ export const colors = {
   text4: '#bbbbbb',
   // Recurs across card meta rows, inactive sub-nav tabs, and the detail-page
   // date line — distinct from text3, not one of the four numbered text tones.
-  textMeta: '#999999',
+  // #767676 is 4.54:1 on white — the WCAG AA floor. DESIGN-NOTEAI.md lists
+  // #999 for muted text, but that is 2.85:1 and fails at the 11-13px sizes
+  // this tone is used for (timestamps, card meta rows, inactive sub-nav).
+  textMeta: '#767676',
 
   // Brand
   brand: '#0070f3',
