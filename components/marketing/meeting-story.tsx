@@ -14,7 +14,7 @@ function useDemoTime(enabled: boolean) {
     const timer = window.setInterval(() => {
       const elapsed = performance.now() - start
       setTime(elapsed)
-      if (elapsed > 7000) window.clearInterval(timer)
+      if (elapsed > 10000) window.clearInterval(timer)
     }, stagger.tight)
     return () => window.clearInterval(timer)
   }, [enabled])
@@ -42,7 +42,7 @@ function Translation({ index, time }: { index: number; time: number }) {
   return <div className="translation-line">
     <span {...presentation} className={`${presentation.className} language-label`}>{label}</span>
     <p {...presentation}><span className="sr-only">{line.text}</span><span aria-hidden="true">{text}</span></p>
-    <p className="original" lang="en">{atlas.lines[index].text}</p>
+    <p className="original" lang="en">{atlas.lines[line.sourceIndex].text}</p>
   </div>
 }
 
@@ -53,20 +53,21 @@ function StoryVisual({ step, animate, onJump }: { step: number; animate: boolean
   return <Panel className="story-panel">
     <div className="story-panel-header"><div><span className="eyebrow">Example meeting</span><h4>{atlas.title}</h4></div><Badge variant="live">Listening</Badge></div>
     {step === 0 && <div className="connect-visual">
-      <div className="connected-link"><span className="mono">meet.google.com/atlas-team</span><Badge variant="live">Joined</Badge></div>
+      <div className="connected-link"><span className="mono">meet.google.com/xqb-rmtn-kfe</span><Badge variant="live">Joined</Badge></div>
       <div className="participants">{atlas.participants.map((name, i) => <div className="participant" key={name}><span className={`avatar avatar-${i + 1}`}>{name.slice(0, 1)}</span><span>{name}</span></div>)}<div className="participant"><span className="avatar">N</span><span>NoteAI</span><Badge variant="live">Listening</Badge></div></div>
       <p className="recording-notice">NoteAI is recording and transcribing this meeting. This notice is visible to everyone.</p>
     </div>}
     {step === 1 && <div className="transcript-lines">{atlas.lines.map((line, i) => <div className="transcript-line" key={line.time}><div className="line-meta"><span>{line.speaker}</span><time>{line.time}</time></div><p><Stream text={line.text} time={elapsed} start={i * 1900} /></p></div>)}<span className="listening-caption"><span className="typing-caret" aria-hidden="true">|</span> Listening for the next word</span></div>}
     {step === 2 && <div className="translations">{atlas.translations.map((line, i) => <Translation key={line.code} index={i} time={elapsed} />)}</div>}
-    {step === 3 && <div className="understand-visual">{atlas.lines.map((line, i) => {
+    {step === 3 && <div className="understand-visual">{atlas.insights.map((insight, i) => {
+      const line = atlas.lines[insight.source]
       const shown = elapsed >= i * (duration.slow + stagger.loose)
       return <div key={line.time} className={`source-pair ${shown ? 'source-pair-visible' : ''}`}>
         <blockquote><span className="line-meta">{line.speaker} · {line.time}</span>{line.text}</blockquote>
-        <div className="summary-item" style={{ opacity: shown ? 1 : 0, transform: shown ? 'translateY(0)' : 'translateY(12px)' }}><span className="eyebrow">{i === 0 ? 'Decision' : 'Action item'}</span><p>{i === 0 ? 'Phase one: read-only maps with live location markers.' : i === 1 ? 'Keep scope fixed for the six-week build.' : 'Nina · Mockups for review by the end of next week.'}</p></div>
+        <div className="summary-item" style={{ opacity: shown ? 1 : 0, transform: shown ? 'translateY(0)' : 'translateY(12px)' }}><span className="eyebrow">{insight.kind}</span><p>{insight.text}</p></div>
       </div>
     })}</div>}
-    {step === 4 && <div className="ask-visual"><div className="question"><span className="eyebrow">You asked</span><p>{atlas.question}</p></div><span className="eyebrow">NoteAI</span><p {...i18nTextProps('ur')}>{atlas.answerUrdu}</p><p className="original" lang="en">{atlas.answer}</p><Button variant="secondary" onClick={onJump}>Jump to {atlas.lines[1].time} <span aria-hidden="true">↗</span></Button><p className="source-disclosure">Source preview · Ben&apos;s launch estimate</p></div>}
+    {step === 4 && <div className="ask-visual"><div className="question"><span className="eyebrow">You asked</span><p>{atlas.question}</p></div><span className="eyebrow">NoteAI</span><p {...i18nTextProps('ur')}>{atlas.answerUrdu}</p><p className="original" lang="en">{atlas.answer}</p><Button variant="secondary" onClick={onJump}>Jump to {atlas.lines[3].time} <span aria-hidden="true">↗</span></Button><p className="source-disclosure">Example source · Who reviews the FAQ</p></div>}
   </Panel>
 }
 
@@ -133,7 +134,7 @@ export function MeetingStory() {
     })
   }
   return <section id="how-it-works" className="landing-section story-section" aria-labelledby="story-heading">
-    <div className="section-intro"><span className="eyebrow">How it works</span><h2 id="story-heading">From a meeting link<br />to a shared understanding.</h2><p>Five steps. One conversation. Every voice stays connected.</p></div>
+    <div className="section-intro"><span className="eyebrow">How it works · Example workflow</span><h2 id="story-heading">From a meeting link<br />to a decision.</h2><p>Connect → Listen → Translate → Understand → Ask</p><p className="product-caption">An illustrative meeting, not a live call. Joining and recording services are not connected in this workspace.</p></div>
     <div ref={root} className={`story-track ${pinned ? 'is-pinned' : ''}`}>
       <div className="story-stage">
         {pinned ? <>
@@ -142,6 +143,6 @@ export function MeetingStory() {
         </> : <div className="stacked-steps">{steps.map((step, i) => <article key={step.title} id={`step-${i}`}><div className="stacked-step-heading"><span className="step-number">0{i + 1}</span><div><h3>{step.title}</h3><p>{step.description}</p></div></div><StoryVisual step={i} animate={false} onJump={jump} /></article>)}</div>}
       </div>
     </div>
-    {sourceOpen && <div ref={source} tabIndex={-1} className="source-preview" role="region" aria-label="Launch estimate source"><div><span className="eyebrow">Source · {atlas.title}</span><p>Ben · {atlas.lines[1].time}</p><blockquote>{atlas.lines[1].text}</blockquote></div><Button onClick={() => { setSourceOpen(false); sourceTrigger.current?.focus() }}>Close source</Button></div>}
+    {sourceOpen && <div ref={source} tabIndex={-1} className="source-preview" role="region" aria-label="FAQ review source"><div><span className="eyebrow">Example source · {atlas.title}</span><p>Ming · {atlas.lines[3].time}</p><blockquote>{atlas.lines[3].text}</blockquote></div><Button onClick={() => { setSourceOpen(false); sourceTrigger.current?.focus() }}>Close source</Button></div>}
   </section>
 }

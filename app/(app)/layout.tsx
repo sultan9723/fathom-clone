@@ -1,4 +1,6 @@
 import { Sidebar } from '@/components/layout/sidebar'
+import { ProductPreferences } from '@/components/product/preferences'
+import '@/components/product/product.css'
 
 /**
  * App shell: 240px sidebar beside the content, which takes DESIGN.md's
@@ -7,13 +9,6 @@ import { Sidebar } from '@/components/layout/sidebar'
  */
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen w-full items-stretch">
-      <div className="hidden lg:flex">
-        <Sidebar />
-      </div>
-      <main className="min-w-0 flex-1 px-4 py-app-y sm:px-6 lg:px-app-x">
-        {children}
-      </main>
-    </div>
+    <ProductPreferences><div className="product-shell"><a href="#product-main" className="product-skip">Skip to content</a><Sidebar /><main id="product-main" className="product-main">{children}</main></div></ProductPreferences>
   )
 }

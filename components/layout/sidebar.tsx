@@ -2,57 +2,24 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui'
+import { ScriptText, useReadingLanguage } from '@/components/product/preferences'
+import { i18nText } from '@/lib/i18n-text'
 
-/**
- * The app shell's 240px sidebar (DESIGN.md).
- *
- * Nav holds exactly one item. DESIGN.md is explicit that the app ships no
- * empty nav items and no "coming soon" pages, so a section appears here only
- * once it does something.
- */
-const NAV = [{ label: 'Meetings', href: '/meetings' }] as const
+const navigation = [{ label: 'Meetings', href: '/meetings' }, { label: 'Action items', href: '/action-items' }, { label: 'Settings', href: '/settings' }]
 
 export function Sidebar() {
   const pathname = usePathname()
-
-  return (
-    <aside className="flex w-sidebar shrink-0 flex-col gap-6 border-r border-border-subtle bg-bg px-4 py-7">
-      <Link
-        href="/"
-        className="rounded-chip px-2 text-title font-semibold text-text"
-      >
-        NoteAI
-      </Link>
-
-      <Button variant="primary" className="w-full">
-        Join a meeting
-      </Button>
-
-      <nav aria-label="Sections" className="flex flex-col gap-1">
-        {NAV.map((item) => {
-          // A meeting detail page is still the Meetings section.
-          const current = pathname === item.href || pathname.startsWith(`${item.href}/`)
-
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-current={current ? 'page' : undefined}
-              className={cn(
-                'rounded-chip px-3 py-2 text-body-sm',
-                'transition-[background-color,color] duration-fast ease-out-design',
-                current
-                  ? 'bg-surface-hover font-medium text-text'
-                  : 'text-muted hover:bg-surface-hover hover:text-text'
-              )}
-            >
-              {item.label}
-            </Link>
-          )
-        })}
-      </nav>
-    </aside>
-  )
+  const [open, setOpen] = useState(false)
+  const { language } = useReadingLanguage()
+  useEffect(() => setOpen(false), [pathname])
+  return <aside className="product-sidebar">
+    <div className="sidebar-heading"><Link href="/" className="product-wordmark">NoteAI</Link><Button className="mobile-menu-toggle" aria-expanded={open} aria-controls="product-navigation" onClick={() => setOpen(value => !value)}>{open ? 'Close menu' : 'Menu'}</Button></div>
+    <div id="product-navigation" className={`sidebar-content ${open ? 'menu-open' : ''}`}>
+      <Link href="/join" className="product-link-button primary">Join a meeting</Link>
+      <nav aria-label="Product navigation">{navigation.map(item => <Link key={item.href} href={item.href} aria-current={pathname === item.href || pathname.startsWith(`${item.href}/`) ? 'page' : undefined}>{item.label}</Link>)}</nav>
+      <Link href="/settings#profile" className="workspace-profile"><span className="product-avatar" aria-hidden="true">N</span><span>Shared workspace<small>Reads in <ScriptText language={language}>{i18nText(language).label}</ScriptText></small></span></Link>
+    </div>
+  </aside>
 }
