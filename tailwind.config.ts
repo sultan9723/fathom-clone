@@ -64,6 +64,12 @@ const config: Config = {
         },
 
         // ---- LEGACY: remove with the page redesigns ----
+        // The old numbered surface scale ran least- to most-contrasted
+        // against a white page; mapped onto the dark tokens it keeps that
+        // meaning. Only the two still in use are kept — surface-2 already
+        // comes from the `surface` object above.
+        'surface-1': 'var(--surface)',
+        'surface-4': 'var(--surface-hover)',
         page: 'var(--bg)',
         topbar: 'var(--surface)',
         line: {

@@ -200,7 +200,7 @@ function MeetingDetailView({
 
       <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-start">
         {/* Left: header, player placeholder, clock */}
-        <div className="flex w-full shrink-0 flex-col gap-4 rounded-lg border border-line bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)] lg:w-[40%]">
+        <div className="flex w-full shrink-0 flex-col gap-4 rounded-lg border border-line bg-surface p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)] lg:w-[40%]">
           <MeetingHeader meeting={meeting} />
           <MeetingPanelBoundary title="The recording player needs another try">
             <NoteAiVideoPlayer />
@@ -242,7 +242,7 @@ function MeetingDetailView({
             role="tabpanel"
             id={`panel-${tab}`}
             aria-labelledby={`tab-${tab}`}
-            className="mt-4 rounded-lg border border-line bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)]"
+            className="mt-4 rounded-lg border border-line bg-surface p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)]"
           >
             <MeetingPanelBoundary key={tab} title="This meeting section needs another try">
             {tab === 'summary' && <NoteAiSummary meeting={meeting} />}

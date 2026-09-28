@@ -133,7 +133,7 @@ export function NoteAiTranscript({
                   }}
                   className={cn(
                     'flex w-full gap-3 rounded-md p-3 text-left transition-colors',
-                    isActive ? 'bg-brand/10' : 'bg-white hover:bg-surface-2'
+                    isActive ? 'bg-brand/10' : 'bg-surface hover:bg-surface-2'
                   )}
                 >
                   <span

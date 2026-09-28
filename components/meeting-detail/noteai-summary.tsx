@@ -72,7 +72,7 @@ export function NoteAiSummary({ meeting }: { meeting: ApiMeeting }) {
             <button
               type="button"
               onClick={generate}
-              className="mt-3 inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2.5 text-md font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-brand-hover"
+              className="mt-3 inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2.5 text-md font-semibold text-accent-ink transition-all duration-200 hover:scale-105 hover:bg-brand-hover"
             >
               <Sparkles className="h-4 w-4 text-accent" aria-hidden="true" />
               Generate summary

@@ -63,7 +63,7 @@ export function NoteAiLiveTranscript({
           const finished = i < lineIndex
 
           return (
-            <li key={line.id} className="rounded-md bg-white p-3">
+            <li key={line.id} className="rounded-md bg-surface p-3">
               <span
                 aria-hidden="true"
                 className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-surface-4 text-xs font-semibold text-fg-1"

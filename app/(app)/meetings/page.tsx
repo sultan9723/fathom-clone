@@ -186,7 +186,7 @@ export default function MeetingsPage() {
             <select
               value={speakerFilter}
               onChange={(e) => setSpeakerFilter(e.target.value as SpeakerFilter)}
-              className="rounded-md border border-line bg-white px-2 py-1.5 text-xs text-fg-1 focus:border-accent focus:outline-none"
+              className="rounded-md border border-line bg-surface px-2 py-1.5 text-xs text-fg-1 focus:border-accent focus:outline-none"
             >
               <option value="any">Any</option>
               <option value="small">1–2</option>
@@ -200,7 +200,7 @@ export default function MeetingsPage() {
             <select
               value={durationFilter}
               onChange={(e) => setDurationFilter(e.target.value as DurationFilter)}
-              className="rounded-md border border-line bg-white px-2 py-1.5 text-xs text-fg-1 focus:border-accent focus:outline-none"
+              className="rounded-md border border-line bg-surface px-2 py-1.5 text-xs text-fg-1 focus:border-accent focus:outline-none"
             >
               <option value="any">Any</option>
               <option value="short">Under 30 min</option>
@@ -214,7 +214,7 @@ export default function MeetingsPage() {
             <select
               value={languageFilter}
               onChange={(e) => setLanguageFilter(e.target.value)}
-              className="rounded-md border border-line bg-white px-2 py-1.5 text-xs text-fg-1 focus:border-accent focus:outline-none"
+              className="rounded-md border border-line bg-surface px-2 py-1.5 text-xs text-fg-1 focus:border-accent focus:outline-none"
             >
               <option value="any">Any</option>
               {languageOptions.map((code) => (
@@ -262,7 +262,7 @@ export default function MeetingsPage() {
               <Link
                 key={meeting.id}
                 href={`/meetings/${meeting.id}`}
-                className="group block rounded-lg border-l-[3px] border-l-accent bg-gradient-to-b from-white to-surface-1 p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_8px_16px_rgba(0,0,0,0.08)]"
+                className="group block rounded-lg border-l-[3px] border-l-accent bg-surface p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_8px_16px_rgba(0,0,0,0.08)]"
               >
                 <h3 className="text-xl font-bold text-fg-1 transition-colors group-hover:text-brand">
                   {highlight(meeting.title, searchQuery)}

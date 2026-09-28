@@ -81,7 +81,7 @@ export function NoteAiTranslator({
           onChange={(e) => setTargetLang(e.target.value)}
           // text-lg is 16px in this project's remapped scale — the floor iOS
           // needs to avoid zooming the page on focus.
-          className="rounded-md border border-line bg-white px-3 py-2 text-lg text-fg-1 transition-all duration-200 focus:border-accent focus:shadow-[0_0_0_3px_rgba(74,222,128,0.15)] focus:outline-none"
+          className="rounded-md border border-line bg-surface px-3 py-2 text-lg text-fg-1 transition-all duration-200 focus:border-accent focus:shadow-[0_0_0_3px_rgba(74,222,128,0.15)] focus:outline-none"
         >
           {LANGUAGES.map((lang) => (
             <option key={lang.code} value={lang.code}>
@@ -94,7 +94,7 @@ export function NoteAiTranslator({
           type="button"
           onClick={handleTranslate}
           disabled={loading || !hasText}
-          className="inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2.5 text-md font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-brand-hover disabled:opacity-50 disabled:hover:scale-100"
+          className="inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2.5 text-md font-semibold text-accent-ink transition-all duration-200 hover:scale-105 hover:bg-brand-hover disabled:opacity-50 disabled:hover:scale-100"
         >
           {loading ? (
             <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />

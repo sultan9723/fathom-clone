@@ -52,7 +52,7 @@ export function NoteAiAsk({ meetingId }: { meetingId: string }) {
   return (
     <section
       aria-labelledby="ask-heading"
-      className="rounded-lg border border-line bg-white p-5 shadow-[0_2px_10px_rgba(0,0,0,0.05)]"
+      className="rounded-lg border border-line bg-surface p-5 shadow-[0_2px_10px_rgba(0,0,0,0.05)]"
     >
       <h2 id="ask-heading" className="text-xl font-bold text-fg-1">
         Ask NoteAI
@@ -77,7 +77,7 @@ export function NoteAiAsk({ meetingId }: { meetingId: string }) {
           type="submit"
           disabled={loading || !question.trim()}
           aria-label="Send question"
-          className="absolute right-1.5 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-md bg-brand text-white transition-all duration-200 hover:scale-105 hover:bg-brand-hover disabled:opacity-50 disabled:hover:scale-100"
+          className="absolute right-1.5 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-md bg-brand text-accent-ink transition-all duration-200 hover:scale-105 hover:bg-brand-hover disabled:opacity-50 disabled:hover:scale-100"
         >
           {loading ? (
             <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
