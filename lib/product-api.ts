@@ -1,6 +1,5 @@
 import type { ApiActionItem, ApiMeeting, ApiTranscript } from './types'
-
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'
+import { apiPath } from './api-base'
 
 export class ProductApiError extends Error {
   constructor(message: string, readonly status = 0) { super(message); this.name = 'ProductApiError' }
@@ -15,7 +14,7 @@ export async function productRequest<T>(path: string, options: RequestInit = {})
   options.signal?.addEventListener('abort', abort, { once: true })
   const timeout = setTimeout(() => { timedOut = true; controller.abort() }, path.includes('/ai/') || path.includes('/translations') ? 90000 : 20000)
   try {
-    const response = await fetch(`${API}/v1${path}`, {
+    const response = await fetch(apiPath(`/v1${path}`), {
       ...options, signal: controller.signal, cache: 'no-store',
       headers: { ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...options.headers },
     })
