@@ -195,7 +195,7 @@ function MeetingDetailView({
         className="inline-flex items-center gap-1 text-base text-fg-2 transition-colors hover:text-brand"
       >
         <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-        All meetings
+        Meetings
       </Link>
 
       <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-start">

@@ -1,4 +1,4 @@
-﻿# Instructions for Claude Code
+# Instructions for Claude Code
 
 Follow SPEC.md — it is the single source of truth.
 
@@ -12,6 +12,6 @@ Follow SPEC.md — it is the single source of truth.
 
 ## Rules
 - Run npm run build before marking any task done
-- Never touch components/meeting-list/ or data/
+- Never touch data/
 - Keep API key server-side only
 - Use PlayerProvider context for all time state

@@ -10,7 +10,7 @@
  * which has no token, so it's an arbitrary value.
  */
 
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import { Hourglass, Languages, UsersRound } from 'lucide-react'
 import type { ApiMeeting } from '@/lib/types'
@@ -79,17 +79,19 @@ export default function MeetingsPage() {
   const [speakerFilter, setSpeakerFilter] = useState<SpeakerFilter>('any')
   const [durationFilter, setDurationFilter] = useState<DurationFilter>('any')
   const [languageFilter, setLanguageFilter] = useState('any')
-  // Independent of the current search/filter — used for the "Searching
-  // across N meetings..." status line, so it doesn't shrink as results do.
-  const [totalMeetings, setTotalMeetings] = useState<number | null>(null)
+  // The whole library, independent of the current query — `meetings` holds
+  // search results once you type, so it can't say what was searched across.
+  // Kept as the list rather than a count so both counters below can run it
+  // through the same filters the grid uses.
+  const [allMeetings, setAllMeetings] = useState<ApiMeeting[] | null>(null)
 
   useEffect(() => {
     let cancelled = false
     getMeetings()
-      .then((all) => { if (!cancelled) setTotalMeetings(all.length) })
+      .then((all) => { if (!cancelled) setAllMeetings(all) })
       .catch(() => {})
     return () => { cancelled = true }
-  }, [])
+  }, [attempt])
 
   useEffect(() => {
     // `cancelled` guards against out-of-order responses: clearing the timer
@@ -138,28 +140,24 @@ export default function MeetingsPage() {
     return [...codes].sort()
   }, [meetings])
 
-  // The backend has been seeded more than once, so it returns each meeting
-  // twice under distinct ids. Keyed by id the rows look unique, so collapse on
-  // title instead and keep the first (newest-first order) of each.
-  const uniqueMeetings = useMemo(() => {
-    const seen = new Set<string>()
-    return meetings.filter((meeting) => {
-      const key = meeting.title.trim().toLowerCase()
-      if (seen.has(key)) return false
-      seen.add(key)
+  const matchesFilters = useCallback(
+    (meeting: ApiMeeting) => {
+      if (!matchesSpeakerFilter(meeting.speaker_count, speakerFilter)) return false
+      if (!matchesDurationFilter(Math.round(meeting.duration_seconds / 60), durationFilter)) return false
+      if (languageFilter !== 'any') {
+        const codes = (meeting.languages ?? '').split(',').map((c) => c.trim().toUpperCase())
+        if (!codes.includes(languageFilter)) return false
+      }
       return true
-    })
-  }, [meetings])
+    },
+    [speakerFilter, durationFilter, languageFilter]
+  )
 
-  const filteredMeetings = uniqueMeetings.filter((meeting) => {
-    if (!matchesSpeakerFilter(meeting.speaker_count, speakerFilter)) return false
-    if (!matchesDurationFilter(Math.round(meeting.duration_seconds / 60), durationFilter)) return false
-    if (languageFilter !== 'any') {
-      const codes = (meeting.languages ?? '').split(',').map((c) => c.trim().toUpperCase())
-      if (!codes.includes(languageFilter)) return false
-    }
-    return true
-  })
+  // Exactly the rows rendered in the grid below, so the results counter can
+  // never disagree with what's on screen.
+  const filteredMeetings = meetings.filter(matchesFilters)
+  // What a search actually covers: the full library under the same filters.
+  const searchableMeetings = allMeetings?.filter(matchesFilters) ?? null
 
   return (
     <div className="min-h-screen bg-page">
@@ -228,9 +226,11 @@ export default function MeetingsPage() {
           </label>
         </div>
 
-        {isSearching && totalMeetings !== null && (
+        {isSearching && searchableMeetings !== null && (
           <p className="mt-3 text-xs text-fg-3">
-            {loading ? `Searching across ${totalMeetings} meetings…` : `${filteredMeetings.length} result${filteredMeetings.length === 1 ? '' : 's'} for "${searchQuery.trim()}"`}
+            {loading
+              ? `Searching across ${searchableMeetings.length} meeting${searchableMeetings.length === 1 ? '' : 's'}…`
+              : `${filteredMeetings.length} result${filteredMeetings.length === 1 ? '' : 's'} for "${searchQuery.trim()}"`}
           </p>
         )}
       </div>
