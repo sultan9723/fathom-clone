@@ -22,20 +22,28 @@ export function SummaryPanel({
   lang: LanguageCode
 }) {
   const [summary, setSummary] = useState<string | null>(null)
+  // The language the summary on screen was actually written in. Rendering it
+  // with the currently selected language instead would flip an English
+  // summary to RTL the moment someone switched the transcript to Urdu.
+  const [summaryLang, setSummaryLang] = useState<LanguageCode>(lang)
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
   const [message, setMessage] = useState<string | null>(null)
 
   const target = i18nText(lang)
+  const written = i18nText(summaryLang)
+  const stale = summary !== null && summaryLang !== lang
 
   const generate = async () => {
+    const requested = lang
     setStatus('loading')
     setMessage(null)
     try {
       const answer = await askAI(
         meetingId,
-        `Summarise this meeting in ${target.label}. Give a short overview, then the key points and any decisions. Answer only in ${target.label}.`
+        `Summarise this meeting in ${i18nText(requested).label}. Give a short overview, then the key points and any decisions. Answer only in ${i18nText(requested).label}.`
       )
       setSummary(answer)
+      setSummaryLang(requested)
       setStatus('idle')
     } catch (error) {
       setStatus('error')
@@ -51,16 +59,16 @@ export function SummaryPanel({
         </h2>
         {summary && (
           <Button variant="secondary" onClick={generate} disabled={status === 'loading'}>
-            Regenerate
+            {stale ? `Rewrite in ${target.label}` : 'Regenerate'}
           </Button>
         )}
       </div>
 
       {summary ? (
         <p
-          dir={target.dir}
-          lang={target.lang}
-          className={`${target.className} mt-4 whitespace-pre-wrap text-body-sm text-text-2 motion-safe:animate-enter`}
+          dir={written.dir}
+          lang={written.lang}
+          className={`${written.className} mt-4 whitespace-pre-wrap text-body-sm text-text-2 motion-safe:animate-enter`}
         >
           {summary}
         </p>

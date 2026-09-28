@@ -7,8 +7,14 @@
  * The scramble is drawn from the *target* script, not random Latin noise —
  * the point of the moment is to show the text arriving in the new writing
  * system, so Urdu resolves out of Urdu-looking characters and Chinese out of
- * Chinese ones. Resolving left to right (or right to left for RTL) means the
- * characters that have settled read correctly the whole way through.
+ * Chinese ones.
+ *
+ * Resolution runs in reading order, which is index order in every script:
+ * a string's index 0 is where reading begins whether it renders leftmost
+ * (LTR) or rightmost (RTL). So the settled prefix always reads correctly,
+ * and no direction-specific handling is needed — an earlier version
+ * inverted for RTL and made Urdu resolve from the end of the sentence
+ * backwards, which is exactly wrong for someone reading it.
  *
  * Under prefers-reduced-motion the hook never animates: it returns the final
  * text immediately, which is DESIGN.md's rule for every signature moment.
@@ -16,7 +22,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useReducedMotion, translateTiming } from './motion'
-import { isRtl, type LanguageCode } from './i18n-text'
+import type { LanguageCode } from './i18n-text'
 
 /** Characters each script scrambles through. */
 const SCRIPT_POOLS: Record<string, string> = {
@@ -40,13 +46,11 @@ function randomFrom(pool: string): string {
  * noise from the target script. Whitespace is never scrambled, so the line
  * keeps its word shape while it resolves instead of becoming a solid block.
  */
-function frame(target: string, settled: number, pool: string, rtl: boolean): string {
-  const chars = Array.from(target)
-  return chars
+function frame(target: string, settled: number, pool: string): string {
+  return Array.from(target)
     .map((char, index) => {
       if (/\s/.test(char)) return char
-      const resolved = rtl ? index >= chars.length - settled : index < settled
-      return resolved ? char : randomFrom(pool)
+      return index < settled ? char : randomFrom(pool)
     })
     .join('')
 }
@@ -54,7 +58,7 @@ function frame(target: string, settled: number, pool: string, rtl: boolean): str
 export interface ScrambleOptions {
   /** The finished text. */
   text: string
-  /** Target language — picks the character pool and the resolve direction. */
+  /** Target language — picks the character pool the noise is drawn from. */
   lang: LanguageCode | string
   /** Position in the list, for the stagger. */
   index?: number
@@ -80,20 +84,19 @@ export function useScramble({ text, lang, index = 0, disabled = false }: Scrambl
     }
 
     const pool = poolFor(lang)
-    const rtl = isRtl(lang)
     const total = Array.from(text).length
     const delay = index * translateTiming.lineStagger
 
     // Hold the scrambled state through the stagger so a line that hasn't
     // started yet doesn't sit there showing its finished translation.
-    setDisplay(frame(text, 0, pool, rtl))
+    setDisplay(frame(text, 0, pool))
 
     let start = 0
     const step = (now: number) => {
       if (!start) start = now
       const progress = Math.min((now - start) / translateTiming.lineDuration, 1)
       const settled = Math.round(progress * total)
-      setDisplay(progress === 1 ? text : frame(text, settled, pool, rtl))
+      setDisplay(progress === 1 ? text : frame(text, settled, pool))
       if (progress < 1) frameRef.current = requestAnimationFrame(step)
     }
 
