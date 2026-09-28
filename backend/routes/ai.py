@@ -14,6 +14,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+import budget
 import models
 import schemas
 from database import get_db
@@ -211,6 +212,10 @@ def ask(payload: schemas.AskRequest, db: Session = Depends(get_db)) -> schemas.A
     transcripts = list(db.scalars(stmt).all())
     prompt = _build_prompt(meeting, transcripts, payload.question)
 
+    # Claimed only once a call is actually about to happen: an unconfigured
+    # provider or an oversized question must not consume the day's budget.
+    budget.reserve_provider_call(db)
+
     try:
         return schemas.AskResponse(response=provider(SYSTEM_PROMPT, prompt, 4096))
     except ImportError:
@@ -222,7 +227,9 @@ def ask(payload: schemas.AskRequest, db: Session = Depends(get_db)) -> schemas.A
 
 
 @router.post("/translate", response_model=schemas.TranslateResponse)
-def translate(payload: schemas.TranslateRequest) -> schemas.TranslateResponse:
+def translate(
+    payload: schemas.TranslateRequest, db: Session = Depends(get_db)
+) -> schemas.TranslateResponse:
     """
     Translate a block of text between languages.
 
@@ -233,6 +240,8 @@ def translate(payload: schemas.TranslateRequest) -> schemas.TranslateResponse:
     rides back in `translated` so the UI can show a notice. The exception is
     logged server-side; only its type reaches the client, since provider errors
     quote the API key back at you.
+
+    `db` is here only for the daily budget; this endpoint reads nothing.
     """
     reject_if_too_long(payload.text, max_translate_chars(), "text")
     text = payload.text.strip()
@@ -252,6 +261,8 @@ def translate(payload: schemas.TranslateRequest) -> schemas.TranslateResponse:
     prompt = (
         f"Translate the following {payload.source_lang} text into {payload.target_lang}.\n\n{text}"
     )
+
+    budget.reserve_provider_call(db)
 
     try:
         return reply(provider(TRANSLATE_SYSTEM_PROMPT, prompt, TRANSLATE_MAX_TOKENS))

@@ -83,7 +83,7 @@ def test_the_question_cap_is_checked_before_the_meeting_is_looked_up(db, monkeyp
 
 # --- /ai/translate -----------------------------------------------------------
 
-def test_oversized_text_is_rejected_rather_than_truncated(no_provider, monkeypatch):
+def test_oversized_text_is_rejected_rather_than_truncated(db, no_provider, monkeypatch):
     """Previously this silently translated the first 20,000 characters.
 
     Returning a translation of part of the text without saying so is worse
@@ -93,19 +93,21 @@ def test_oversized_text_is_rejected_rather_than_truncated(no_provider, monkeypat
 
     with pytest.raises(HTTPException) as raised:
         ai.translate(
-            schemas.TranslateRequest(text="x" * 201, source_lang="en", target_lang="ur")
+            schemas.TranslateRequest(text="x" * 201, source_lang="en", target_lang="ur"),
+            db=db,
         )
 
     assert raised.value.status_code == 413
     assert no_provider == []
 
 
-def test_text_within_the_cap_is_accepted(monkeypatch):
+def test_text_within_the_cap_is_accepted(db, monkeypatch):
     monkeypatch.setenv("MAX_TRANSLATE_CHARS", "200")
     monkeypatch.setattr(ai, "_resolve_provider", lambda: None)
 
     result = ai.translate(
-        schemas.TranslateRequest(text="x" * 200, source_lang="en", target_lang="ur")
+        schemas.TranslateRequest(text="x" * 200, source_lang="en", target_lang="ur"),
+        db=db,
     )
 
     assert result.translated == ai.NO_KEY_TRANSLATE_MESSAGE

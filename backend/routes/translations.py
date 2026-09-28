@@ -19,6 +19,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+import budget
 import models
 import schemas
 from database import get_db
@@ -146,6 +147,10 @@ def translate_meeting(
         raise HTTPException(
             status_code=503, detail="Translation is not configured on this server."
         )
+
+    # Claimed only once a call is genuinely about to happen: a cache hit, an
+    # unsupported language or an unconfigured provider must not spend budget.
+    budget.reserve_provider_call(db)
 
     try:
         raw = provider(
