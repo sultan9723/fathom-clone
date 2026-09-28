@@ -1,13 +1,11 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import Link from 'next/link'
-import { Inter } from 'next/font/google'
 import { Settings, HelpCircle } from 'lucide-react'
 import './globals.css'
+import { fontVariables } from '@/lib/fonts'
 import { HeaderSearch } from '@/components/layout/header-search'
 import { TabBar } from '@/components/layout/tab-bar'
-
-const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter' })
 
 export const metadata: Metadata = {
   title: {
@@ -23,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} max-w-full overflow-x-hidden`}>
+    <html lang="en" className={`${fontVariables} max-w-full overflow-x-hidden`}>
       <body className="min-h-screen max-w-full overflow-x-hidden bg-page font-sans text-base text-fg-1 antialiased">
         {/* Header and page ground are both white in the light theme, so the
             chrome needs explicit rules to separate them — under the old dark
