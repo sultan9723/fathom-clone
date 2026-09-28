@@ -140,3 +140,29 @@ export async function getMeetingTranslations(
   }
   return res.json()
 }
+
+/** PUT /api/v1/meetings/{id} — rename a meeting or change its description. */
+export async function updateMeeting(
+  id: string,
+  changes: { title: string; description: string },
+): Promise<ApiMeeting> {
+  const res = await fetch(apiPath(`/v1/meetings/${encodeURIComponent(id)}`), {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(changes),
+  })
+  if (!res.ok) throw new Error('Those changes could not be saved. Please try again.')
+  return res.json()
+}
+
+/**
+ * DELETE /api/v1/meetings/{id} — removes the meeting and, through the
+ * database's cascades, its transcript, action items, notes and cached
+ * translations. Returns 204, so there is no body to parse.
+ */
+export async function deleteMeeting(id: string): Promise<void> {
+  const res = await fetch(apiPath(`/v1/meetings/${encodeURIComponent(id)}`), {
+    method: 'DELETE',
+  })
+  if (!res.ok) throw new Error('This meeting could not be deleted. Please try again.')
+}
