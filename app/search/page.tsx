@@ -131,7 +131,7 @@ function SearchShell({ query, children }: { query: string; children?: React.Reac
           className="inline-flex items-center gap-1 text-base text-fg-2 transition-colors hover:text-brand"
         >
           <ChevronLeft className="h-4 w-4" aria-hidden="true" />
-          All meetings
+          Meetings
         </Link>
         <h1 className="mb-2 mt-2 text-[32px] font-bold leading-tight text-fg-1">Search Results</h1>
         {query && <p className="text-base text-fg-2">Results for &quot;{query}&quot;</p>}
