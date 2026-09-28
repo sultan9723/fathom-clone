@@ -9,14 +9,6 @@ import { layout, radius, spacing, typeScale } from './lib/design-tokens'
  *   bg, surface, surface-2, surface-hover, border, border-subtle,
  *   border-strong, text, text-2, muted, faint, accent, accent-ink,
  *   accent-bg, accent-bg-2, accent-border, warn, warn-border.
- *
- * The LEGACY block at the bottom is a deprecated compatibility shim. The
- * pages written against the old light palette (bg-page, text-fg-1, …) are
- * scheduled for redesign; until then those names resolve to the closest
- * DESIGN.md token so the app renders coherently instead of silently losing
- * its styles — Tailwind emits nothing for an unknown class, so dropping the
- * names outright would break 16 files with a passing build. Delete this
- * block once the pages are redesigned; nothing new should use it.
  */
 const config: Config = {
   content: [
@@ -63,34 +55,6 @@ const config: Config = {
           '3-bg': 'var(--speaker-3-bg)',
         },
 
-        // ---- LEGACY: remove with the page redesigns ----
-        // The old numbered surface scale ran least- to most-contrasted
-        // against a white page; mapped onto the dark tokens it keeps that
-        // meaning. Only the two still in use are kept — surface-2 already
-        // comes from the `surface` object above.
-        'surface-1': 'var(--surface)',
-        'surface-4': 'var(--surface-hover)',
-        page: 'var(--bg)',
-        topbar: 'var(--surface)',
-        line: {
-          DEFAULT: 'var(--border)',
-          faint: 'var(--border-subtle)',
-        },
-        fg: {
-          1: 'var(--text)',
-          2: 'var(--text-2)',
-          3: 'var(--muted)',
-          4: 'var(--faint)',
-          meta: 'var(--faint)',
-        },
-        brand: 'var(--accent)',
-        'brand-hover': 'var(--accent)',
-        error: 'var(--warn)',
-        danger: 'var(--warn)',
-        warning: 'var(--warn)',
-        success: 'var(--accent)',
-        info: 'var(--accent)',
-        'search-pill': 'var(--surface-2)',
       },
 
       borderRadius: {
@@ -127,22 +91,7 @@ const config: Config = {
         jp: ['var(--font-noto-sans-jp)', 'var(--font-geist-sans)', 'sans-serif'],
       },
 
-      fontSize: {
-        ...(typeScale as unknown as Record<string, [string, Record<string, string>]>),
-        // ---- LEGACY sizes: remove with the page redesigns ----
-        // text-md and text-2xs are custom keys with no Tailwind default, so
-        // dropping them would silently remove the font-size from 40+ call
-        // sites rather than change it. Kept at their old px values.
-        '2xs': ['10px', '12px'],
-        xs: ['11px', '13px'],
-        sm: ['12px', '14px'],
-        base: ['13px', '16px'],
-        md: ['14px', '16px'],
-        lg: ['16px', '20px'],
-        xl: ['18px', '22px'],
-        '2xl': ['22px', '28px'],
-        '3xl': ['28px', '32px'],
-      },
+      fontSize: typeScale as unknown as Record<string, [string, Record<string, string>]>,
 
       transitionTimingFunction: {
         'ease-out-design': 'cubic-bezier(0.2, 0.8, 0.2, 1)',
