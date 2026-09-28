@@ -9,12 +9,17 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import models  # noqa: F401  (imported so create_all sees every table)
 from database import Base, SessionLocal, engine
+from ratelimit import RateLimitMiddleware
 from routes import ai, health, meetings, transcripts, translations
 from seed import seed_if_empty
 
 load_dotenv()
 
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
+# Off only when explicitly disabled, so a missing variable never silently
+# removes the limit.
+RATE_LIMIT_ENABLED = (os.getenv("RATE_LIMIT_ENABLED", "true").strip().lower()
+                      not in {"false", "0", "no", "off"})
 DEFAULT_ORIGINS = "http://localhost:3000,http://127.0.0.1:3000"
 CORS_ORIGINS = [o.strip() for o in os.getenv("CORS_ORIGINS", DEFAULT_ORIGINS).split(",") if o.strip()]
 
@@ -39,6 +44,11 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan,
 )
+
+# Added before CORS so it runs after it: Starlette applies middleware in
+# reverse order, and a rejected caller should still receive CORS headers or
+# the browser reports an opaque network error instead of the 429.
+app.add_middleware(RateLimitMiddleware, enabled=RATE_LIMIT_ENABLED)
 
 app.add_middleware(
     CORSMiddleware,
