@@ -1,11 +1,27 @@
-﻿services:
+services:
   - type: web
     name: noteai-backend
     env: python
+    # backend/main.py imports its siblings flatly (`import models`,
+    # `from database import ...`), so the service must run with backend/ as
+    # its root. Starting `backend.main:app` from the repo root fails on the
+    # first import.
+    rootDir: backend
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
+      # Set in the Render dashboard, or wire to a Render Postgres instance.
+      # Never SQLite: Render's disk is not persistent across deploys, so a
+      # SQLite file silently loses every meeting on each redeploy.
       - key: DATABASE_URL
-        value: sqlite:///./noteai.db
-      - key: ANTHROPIC_API_KEY
-        value: sk-test
+        sync: false
+      # Provider key, read by backend/routes/ai.py. Set in the dashboard so
+      # it never enters the repository.
+      - key: GROQ_API_KEY
+        sync: false
+      # Comma-separated origins allowed by CORS — the deployed frontend's
+      # URL. Without this the backend only accepts localhost.
+      - key: CORS_ORIGINS
+        sync: false
+      - key: ENVIRONMENT
+        value: production
