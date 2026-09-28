@@ -1,12 +1,15 @@
 import type { Metadata } from 'next'
-import { Suspense } from 'react'
-import Link from 'next/link'
-import { Settings, HelpCircle } from 'lucide-react'
 import './globals.css'
 import { fontVariables } from '@/lib/fonts'
-import { HeaderSearch } from '@/components/layout/header-search'
-import { TabBar } from '@/components/layout/tab-bar'
 
+/**
+ * Document shell only: fonts, metadata, the page ground.
+ *
+ * No navigation lives here any more. The marketing and app sections have
+ * genuinely different chrome — a landing page and a 240px sidebar — so each
+ * route group owns its own layout instead of sharing a global tab bar that
+ * suited neither.
+ */
 export const metadata: Metadata = {
   title: {
     default: 'NoteAI',
@@ -15,68 +18,10 @@ export const metadata: Metadata = {
   description: 'AI meeting notetaker — transcripts, summaries and action items.',
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${fontVariables} max-w-full overflow-x-hidden`}>
-      <body className="min-h-screen max-w-full overflow-x-hidden bg-page font-sans text-base text-fg-1 antialiased">
-        {/* Header and page ground are both white in the light theme, so the
-            chrome needs explicit rules to separate them — under the old dark
-            palette the colour difference did that job on its own. */}
-        <header className="sticky top-0 z-30 min-w-0 overflow-hidden border-b border-line bg-topbar">
-          {/* No max-w cap: the meeting list/detail pages below run edge-to-
-              edge, so a constrained header would drift out of alignment
-              with them on wide viewports. */}
-          <div className="flex h-topbar w-full min-w-0 items-center gap-2 overflow-hidden px-4 sm:gap-4 sm:px-6">
-            <Link
-              href="/meetings"
-              className="flex h-5 w-[140px] shrink-0 items-center rounded-md text-lg font-semibold text-brand focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
-            >
-              NoteAI
-            </Link>
-
-            <div className="flex min-w-0 flex-1 justify-center overflow-hidden">
-              <Suspense fallback={<div className="h-pill-h w-pill-w max-w-full rounded-md bg-search-pill" />}>
-                <HeaderSearch />
-              </Suspense>
-            </div>
-
-            <div className="flex shrink-0 items-center gap-1">
-              {/* No settings/help pages exist yet — inert, styled per SPEC's
-                  nav-link states, not routed anywhere. Text collapses to
-                  icon-only below sm so the header never forces horizontal
-                  scroll on narrow phones. */}
-              <span
-                aria-disabled="true"
-                className="flex cursor-default select-none items-center gap-1.5 rounded-md px-2 py-1.5 text-sm font-semibold text-fg-2"
-              >
-                <Settings className="h-4 w-4 shrink-0" aria-hidden="true" />
-                <span className="hidden sm:inline">Settings</span>
-              </span>
-              <span
-                aria-disabled="true"
-                className="flex cursor-default select-none items-center gap-1.5 rounded-md px-2 py-1.5 text-sm font-semibold text-fg-2"
-              >
-                <HelpCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
-                <span className="hidden sm:inline">Help</span>
-              </span>
-              {/* Static placeholder — no auth/user model exists, so these
-                  are fixed initials rather than a real logged-in identity. */}
-              <span
-                aria-hidden="true"
-                className="ml-2 grid h-avatar w-avatar shrink-0 place-items-center rounded-full bg-surface-5 text-sm font-semibold text-fg-1"
-              >
-                SQ
-              </span>
-            </div>
-          </div>
-        </header>
-        <Suspense fallback={<div className="h-tab-bar border-b border-line bg-topbar" />}>
-          <TabBar />
-        </Suspense>
+      <body className="min-h-screen max-w-full overflow-x-hidden bg-bg font-sans text-body text-text antialiased">
         {children}
       </body>
     </html>
