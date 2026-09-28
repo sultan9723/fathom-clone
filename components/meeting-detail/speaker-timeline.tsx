@@ -29,11 +29,30 @@ export interface Turn {
   end: number
 }
 
-/** Merges consecutive lines by the same speaker into turns. */
+/** The typical gap between lines — used to give the final line a length. */
+function typicalGap(ordered: ApiTranscript[]): number {
+  if (ordered.length < 2) return 30
+  const gaps = ordered
+    .slice(1)
+    .map((line, i) => line.timestamp_seconds - ordered[i]!.timestamp_seconds)
+    .filter((gap) => gap > 0)
+    .sort((a, b) => a - b)
+  return gaps.length ? gaps[Math.floor(gaps.length / 2)]! : 30
+}
+
+/**
+ * Merges consecutive lines by the same speaker into turns.
+ *
+ * The last line gets the median gap as its length rather than running to the
+ * meeting's duration. Transcripts routinely stop well before the recording
+ * does, and stretching the final turn across that silence would draw the last
+ * speaker as though they held the floor for the rest of the meeting.
+ */
 export function buildTurns(lines: ApiTranscript[], durationSeconds: number): Turn[] {
   if (lines.length === 0) return []
 
   const ordered = [...lines].sort((a, b) => a.timestamp_seconds - b.timestamp_seconds)
+  const tail = typicalGap(ordered)
   const turns: Turn[] = []
 
   for (let i = 0; i < ordered.length; i += 1) {
@@ -41,7 +60,9 @@ export function buildTurns(lines: ApiTranscript[], durationSeconds: number): Tur
     const speaker = line.speaker_name?.trim() || 'Unknown'
     const next = ordered[i + 1]
     // A line has no end of its own; it runs until the next one starts.
-    const end = next ? next.timestamp_seconds : Math.max(durationSeconds, line.timestamp_seconds)
+    const end = next
+      ? next.timestamp_seconds
+      : Math.min(line.timestamp_seconds + tail, Math.max(durationSeconds, line.timestamp_seconds))
 
     const previous = turns[turns.length - 1]
     if (previous && previous.speaker === speaker) {
