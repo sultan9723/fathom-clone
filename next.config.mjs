@@ -1,3 +1,5 @@
+import { PHASE_DEVELOPMENT_SERVER } from 'next/constants.js'
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   outputFileTracingIncludes: {
@@ -7,4 +9,11 @@ const nextConfig = {
     '/search': ['./data/meetings/**'],
   },
 }
-export default nextConfig
+// Dev workers must not read artifacts that `next build` cleans and rewrites.
+// Next 15 does not provide the newer isolatedDevBuild option.
+export default function config(phase) {
+  return {
+    ...nextConfig,
+    distDir: phase === PHASE_DEVELOPMENT_SERVER ? '.next-dev' : '.next',
+  }
+}
