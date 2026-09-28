@@ -71,7 +71,7 @@ export function NoteAiAsk({ meetingId }: { meetingId: string }) {
           disabled={loading}
           // text-lg is 16px in this project's remapped scale — the floor iOS
           // needs to avoid zooming the page on focus.
-          className="h-11 w-full rounded-md border border-line bg-surface-1 pl-3 pr-12 text-lg text-fg-1 placeholder-fg-3 transition-all duration-200 focus:border-cyan focus:shadow-[0_0_0_3px_rgba(0,212,255,0.15)] focus:outline-none disabled:opacity-60"
+          className="h-11 w-full rounded-md border border-line bg-surface-1 pl-3 pr-12 text-lg text-fg-1 placeholder-fg-3 transition-all duration-200 focus:border-accent focus:shadow-[0_0_0_3px_rgba(74,222,128,0.15)] focus:outline-none disabled:opacity-60"
         />
         <button
           type="submit"
@@ -106,7 +106,7 @@ export function NoteAiAsk({ meetingId }: { meetingId: string }) {
         <div
           className={cn(
             'mt-3 animate-fadein',
-            !unavailable && 'rounded-md border-l-2 border-cyan bg-surface-1 p-3'
+            !unavailable && 'rounded-md border-l-2 border-accent bg-surface-1 p-3'
           )}
           aria-live="polite"
         >

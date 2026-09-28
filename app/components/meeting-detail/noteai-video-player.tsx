@@ -54,7 +54,7 @@ export function NoteAiVideoPlayer({ videoUrl }: { videoUrl?: string | null }) {
               type="button"
               onClick={() => setActiveEmbed(recording.src)}
               aria-label={`Play recording on ${recording.provider}`}
-              className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-white/30 bg-white/10 transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
+              className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-white/30 bg-white/10 transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               <Play className="h-5 w-5" aria-hidden="true" />
             </button>
@@ -68,7 +68,7 @@ export function NoteAiVideoPlayer({ videoUrl }: { videoUrl?: string | null }) {
               onClick={toggleDemo}
               disabled={length === 0}
               aria-label={playLabel}
-              className="grid h-[60px] w-[60px] shrink-0 place-items-center rounded-full border border-cyan/40 text-cyan transition-all duration-200 hover:scale-105 hover:border-cyan hover:shadow-[0_0_20px_rgba(0,212,255,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan disabled:cursor-not-allowed disabled:opacity-50"
+              className="grid h-[60px] w-[60px] shrink-0 place-items-center rounded-full border border-accent/40 text-accent transition-all duration-200 hover:scale-105 hover:border-accent hover:shadow-[0_0_20px_rgba(74,222,128,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-not-allowed disabled:opacity-50"
             >
               {demoPlaying ? (
                 <Pause className="h-7 w-7" aria-hidden="true" />
@@ -85,7 +85,7 @@ export function NoteAiVideoPlayer({ videoUrl }: { videoUrl?: string | null }) {
             <button
               type="button"
               disabled
-              className="mt-1 inline-flex items-center gap-2 rounded-md border border-cyan/50 px-4 py-2 text-md font-semibold text-cyan transition-colors duration-200 hover:border-cyan hover:bg-cyan/10 disabled:cursor-not-allowed disabled:opacity-70"
+              className="mt-1 inline-flex items-center gap-2 rounded-md border border-accent/50 px-4 py-2 text-md font-semibold text-accent transition-colors duration-200 hover:border-accent hover:bg-accent/10 disabled:cursor-not-allowed disabled:opacity-70"
             >
               <Upload className="h-4 w-4" aria-hidden="true" />
               Upload Recording
@@ -97,14 +97,14 @@ export function NoteAiVideoPlayer({ videoUrl }: { videoUrl?: string | null }) {
       {recording ? (
         <div className="flex flex-wrap items-center justify-between gap-2 border-t border-white/15 px-3 py-3 text-xs text-white/70">
           <span>Embedded playback uses its own timeline.</span>
-          <a href={recording.url} target="_blank" rel="noopener noreferrer" className="text-white underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan">
+          <a href={recording.url} target="_blank" rel="noopener noreferrer" className="text-white underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">
             Open on {recording.provider}
           </a>
         </div>
       ) : (
         <div className="space-y-2 border-t border-white/15 p-3">
           <div className="flex items-center gap-2">
-            <button type="button" onClick={toggleDemo} disabled={length === 0} aria-label={playLabel} className="grid h-9 w-9 shrink-0 place-items-center rounded hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan disabled:opacity-50">
+            <button type="button" onClick={toggleDemo} disabled={length === 0} aria-label={playLabel} className="grid h-9 w-9 shrink-0 place-items-center rounded hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:opacity-50">
               {demoPlaying ? <Pause className="h-4 w-4" aria-hidden="true" /> : <Play className="h-4 w-4" aria-hidden="true" />}
             </button>
             <input
@@ -117,9 +117,9 @@ export function NoteAiVideoPlayer({ videoUrl }: { videoUrl?: string | null }) {
               disabled={length === 0}
               aria-label="Seek demo playback"
               aria-valuetext={`${formatTimecode(currentTime)} of ${formatTimecode(length)}`}
-              className="h-9 min-w-0 flex-1 accent-cyan focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan"
+              className="h-9 min-w-0 flex-1 accent-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             />
-            <button type="button" onClick={() => seek(0)} disabled={length === 0} aria-label="Restart demo playback" className="grid h-9 w-9 shrink-0 place-items-center rounded hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan disabled:opacity-50">
+            <button type="button" onClick={() => seek(0)} disabled={length === 0} aria-label="Restart demo playback" className="grid h-9 w-9 shrink-0 place-items-center rounded hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:opacity-50">
               <RotateCcw className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>

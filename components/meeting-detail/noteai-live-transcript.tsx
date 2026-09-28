@@ -47,10 +47,10 @@ export function NoteAiLiveTranscript({
 
   return (
     <div>
-      <div className="mb-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-cyan">
+      <div className="mb-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-accent">
         <span className="relative flex h-2 w-2">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan opacity-75" />
-          <span className="relative inline-flex h-2 w-2 rounded-full bg-cyan" />
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
         </span>
         Live transcript
       </div>
@@ -77,13 +77,13 @@ export function NoteAiLiveTranscript({
                     {formatTimecode(line.timestamp_seconds)}
                   </span>
                 </div>
-                <p className="mt-0.5 text-xs text-cyan">
+                <p className="mt-0.5 text-xs text-accent">
                   {speaker} detected
                   {line.original_language && ` (${languageName(line.original_language)})`}
                 </p>
                 <p className="mt-1 text-md leading-5 text-fg-1">
                   {shownWords.join(' ')}
-                  {!finished && <span className="ml-0.5 animate-pulse text-cyan">▌</span>}
+                  {!finished && <span className="ml-0.5 animate-pulse text-accent">▌</span>}
                 </p>
               </div>
             </li>

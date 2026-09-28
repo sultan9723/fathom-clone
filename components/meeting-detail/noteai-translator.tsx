@@ -81,7 +81,7 @@ export function NoteAiTranslator({
           onChange={(e) => setTargetLang(e.target.value)}
           // text-lg is 16px in this project's remapped scale — the floor iOS
           // needs to avoid zooming the page on focus.
-          className="rounded-md border border-line bg-white px-3 py-2 text-lg text-fg-1 transition-all duration-200 focus:border-cyan focus:shadow-[0_0_0_3px_rgba(0,212,255,0.15)] focus:outline-none"
+          className="rounded-md border border-line bg-white px-3 py-2 text-lg text-fg-1 transition-all duration-200 focus:border-accent focus:shadow-[0_0_0_3px_rgba(74,222,128,0.15)] focus:outline-none"
         >
           {LANGUAGES.map((lang) => (
             <option key={lang.code} value={lang.code}>
@@ -135,8 +135,8 @@ export function NoteAiTranslator({
           {/* The requested "dark accent" panel — a deliberate contrast pop
               against the light theme everywhere else, marking this as the
               AI-generated output. */}
-          <div className="rounded-lg border border-cyan/30 bg-[#0a0e14] p-4 shadow-[0_0_20px_rgba(0,212,255,0.08)]">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-cyan">
+          <div className="rounded-lg border border-accent/30 bg-[#0a0e14] p-4 shadow-[0_0_20px_rgba(74,222,128,0.08)]">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-accent">
               Translated ({targetLang})
             </p>
             <p className="whitespace-pre-wrap text-md leading-6 text-white">{translated}</p>

@@ -74,7 +74,7 @@ export function NoteAiSummary({ meeting }: { meeting: ApiMeeting }) {
               onClick={generate}
               className="mt-3 inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2.5 text-md font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-brand-hover"
             >
-              <Sparkles className="h-4 w-4 text-cyan" aria-hidden="true" />
+              <Sparkles className="h-4 w-4 text-accent" aria-hidden="true" />
               Generate summary
             </button>
           </div>
@@ -113,7 +113,7 @@ export function NoteAiSummary({ meeting }: { meeting: ApiMeeting }) {
                 <ul className="mt-2 flex flex-col gap-1.5">
                   {parsed.keyPoints.map((point, i) => (
                     <li key={i} className="flex gap-2 text-md leading-5 text-fg-1">
-                      <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-cyan" />
+                      <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
                       {point}
                     </li>
                   ))}
