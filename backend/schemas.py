@@ -139,3 +139,18 @@ class TranslateResponse(BaseModel):
     translated: str
     source_lang: str
     target_lang: str
+
+
+# --- Batch transcript translation ------------------------------------------
+
+class TranslationLine(BaseModel):
+    line_id: str
+    text: str
+
+
+class MeetingTranslations(BaseModel):
+    meeting_id: str
+    lang: str
+    lines: list[TranslationLine]
+    # True when every line came from the cache and no provider call was made.
+    cached: bool

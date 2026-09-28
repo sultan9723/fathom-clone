@@ -14,6 +14,7 @@
 import type {
   ApiActionItem,
   ApiMeeting,
+  ApiMeetingTranslations,
   ApiTranscript,
   AskResponse,
   TranslateRequest,
@@ -112,5 +113,32 @@ export async function translateText(request: TranslateRequest): Promise<Translat
     body: JSON.stringify(request),
   })
   if (!res.ok) throw new Error('Failed to translate text')
+  return res.json()
+}
+
+/**
+ * POST /api/v1/meetings/{id}/translations?lang= — translate the whole
+ * transcript in one call, served from the backend's cache when it has one.
+ *
+ * Unlike translateText, this surfaces failure as a thrown error: the UI needs
+ * to tell a failed translation apart from a real one so it can keep showing
+ * the original and offer a retry. The backend's `detail` is a message written
+ * for people, so it is used when present.
+ */
+export async function getMeetingTranslations(
+  meetingId: string,
+  lang: string,
+): Promise<ApiMeetingTranslations> {
+  const res = await fetch(
+    `${API_URL}/v1/meetings/${encodeURIComponent(meetingId)}/translations?lang=${encodeURIComponent(lang)}`,
+    { method: 'POST' },
+  )
+  if (!res.ok) {
+    const detail = await res
+      .json()
+      .then((body) => (typeof body?.detail === 'string' ? body.detail : null))
+      .catch(() => null)
+    throw new Error(detail ?? 'Translation failed. Please try again.')
+  }
   return res.json()
 }

@@ -1,97 +1,56 @@
 'use client'
 
 /**
- * Meeting list with live search against the NoteAI backend.
+ * Meeting list. Everything on this page comes from the API — there is no
+ * seed or demo content behind it.
  *
- * Font sizes use this repo's token scale (lib/design-tokens.ts replaces
- * Tailwind's default scale): text-xl = 18px, text-md = 14px, text-base = 13px,
- * text-xs = 11px. That's why the classes here don't read like stock Tailwind —
- * they're chosen to land on the px values in DESIGN-NOTEAI.md. H1 is 32px,
- * which has no token, so it's an arbitrary value.
+ * Search hits GET /v1/search, debounced; the All / This week filter is
+ * applied client-side over whatever that returned, so the two compose
+ * instead of fighting.
  */
 
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
-import Link from 'next/link'
-import { Hourglass, Languages, UsersRound } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { ApiMeeting } from '@/lib/types'
 import { getMeetings, searchMeetings } from '@/lib/api'
-import { MeetingEmptyState, MeetingListSkeleton, MeetingLoadError } from '@/components/meeting-list/premium-feedback'
+import { Input, SegmentedControl } from '@/components/ui'
+import { JoinBar } from '@/components/meetings/join-bar'
+import { MeetingsTable } from '@/components/meetings/meetings-table'
+import {
+  MeetingsEmpty,
+  MeetingsError,
+  MeetingsSkeleton,
+} from '@/components/meetings/list-states'
 
-/** "en,es,fr" → "EN · ES · FR" */
-function formatLanguages(languages: string | null): string {
-  if (!languages) return ''
-  return languages
-    .split(',')
-    .map((code) => code.trim().toUpperCase())
-    .filter(Boolean)
-    .join(' · ')
+type Range = 'all' | 'week'
+
+const RANGE_OPTIONS = [
+  { value: 'all' as const, label: 'All' },
+  { value: 'week' as const, label: 'This week' },
+]
+
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000
+
+/**
+ * The backend serialises created_at without a zone suffix, and `new Date()`
+ * reads a bare timestamp as local time — which would shift the week boundary
+ * by the viewer's offset. Force UTC when no designator is present.
+ */
+function parseUtc(iso: string): number {
+  return new Date(/[Zz]|[+-]\d\d:?\d\d$/.test(iso) ? iso : `${iso}Z`).getTime()
 }
 
-/** Wraps every case-insensitive occurrence of `query` in a <mark>. */
-function highlight(text: string, query: string): ReactNode {
-  const q = query.trim()
-  if (!q) return text
-
-  const parts: ReactNode[] = []
-  const haystack = text.toLowerCase()
-  const needle = q.toLowerCase()
-  let from = 0
-  let found = haystack.indexOf(needle, from)
-
-  while (found !== -1) {
-    if (found > from) parts.push(text.slice(from, found))
-    parts.push(
-      <mark key={found} className="rounded bg-yellow-200 px-0.5 text-fg-1">
-        {text.slice(found, found + needle.length)}
-      </mark>
-    )
-    from = found + needle.length
-    found = haystack.indexOf(needle, from)
-  }
-  if (from < text.length) parts.push(text.slice(from))
-  return parts
-}
-
-type SpeakerFilter = 'any' | 'small' | 'medium' | 'large'
-type DurationFilter = 'any' | 'short' | 'medium' | 'long'
-
-function matchesSpeakerFilter(count: number, filter: SpeakerFilter): boolean {
-  if (filter === 'small') return count >= 1 && count <= 2
-  if (filter === 'medium') return count >= 3 && count <= 5
-  if (filter === 'large') return count >= 6
-  return true
-}
-
-function matchesDurationFilter(minutes: number, filter: DurationFilter): boolean {
-  if (filter === 'short') return minutes < 30
-  if (filter === 'medium') return minutes >= 30 && minutes <= 60
-  if (filter === 'long') return minutes > 60
-  return true
+function withinWeek(meeting: ApiMeeting): boolean {
+  return Date.now() - parseUtc(meeting.created_at) <= WEEK_MS
 }
 
 export default function MeetingsPage() {
   const [meetings, setMeetings] = useState<ApiMeeting[]>([])
-  const [searchQuery, setSearchQuery] = useState('')
+  const [query, setQuery] = useState('')
+  const [range, setRange] = useState<Range>('all')
   const [loading, setLoading] = useState(true)
   const [hasLoaded, setHasLoaded] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState(false)
   const [attempt, setAttempt] = useState(0)
-  const [speakerFilter, setSpeakerFilter] = useState<SpeakerFilter>('any')
-  const [durationFilter, setDurationFilter] = useState<DurationFilter>('any')
-  const [languageFilter, setLanguageFilter] = useState('any')
-  // The whole library, independent of the current query — `meetings` holds
-  // search results once you type, so it can't say what was searched across.
-  // Kept as the list rather than a count so both counters below can run it
-  // through the same filters the grid uses.
-  const [allMeetings, setAllMeetings] = useState<ApiMeeting[] | null>(null)
-
-  useEffect(() => {
-    let cancelled = false
-    getMeetings()
-      .then((all) => { if (!cancelled) setAllMeetings(all) })
-      .catch(() => {})
-    return () => { cancelled = true }
-  }, [attempt])
 
   useEffect(() => {
     // `cancelled` guards against out-of-order responses: clearing the timer
@@ -99,19 +58,19 @@ export default function MeetingsPage() {
     // fast typing could otherwise let an older result overwrite a newer one.
     let cancelled = false
 
-    const loadMeetings = async () => {
+    const load = async () => {
       try {
         setLoading(true)
-        setError(null)
-        const results = searchQuery.trim()
-          ? await searchMeetings(searchQuery)
+        setError(false)
+        const results = query.trim()
+          ? await searchMeetings(query)
           : await getMeetings()
-        if (cancelled) return
-        setMeetings(results)
+        if (!cancelled) setMeetings(results)
       } catch {
-        if (cancelled) return
-        setError('We couldn’t load your meetings')
-        setMeetings([])
+        if (!cancelled) {
+          setError(true)
+          setMeetings([])
+        }
       } finally {
         if (!cancelled) {
           setLoading(false)
@@ -120,179 +79,77 @@ export default function MeetingsPage() {
       }
     }
 
-    const debounceTimer = setTimeout(loadMeetings, 300)
+    const timer = setTimeout(load, 300)
     return () => {
       cancelled = true
-      clearTimeout(debounceTimer)
+      clearTimeout(timer)
     }
-  }, [searchQuery, attempt])
+  }, [query, attempt])
 
-  const isSearching = searchQuery.trim().length > 0
-
-  const languageOptions = useMemo(() => {
-    const codes = new Set<string>()
-    for (const m of meetings) {
-      for (const code of (m.languages ?? '').split(',')) {
-        const trimmed = code.trim().toUpperCase()
-        if (trimmed) codes.add(trimmed)
-      }
-    }
-    return [...codes].sort()
-  }, [meetings])
-
-  const matchesFilters = useCallback(
-    (meeting: ApiMeeting) => {
-      if (!matchesSpeakerFilter(meeting.speaker_count, speakerFilter)) return false
-      if (!matchesDurationFilter(Math.round(meeting.duration_seconds / 60), durationFilter)) return false
-      if (languageFilter !== 'any') {
-        const codes = (meeting.languages ?? '').split(',').map((c) => c.trim().toUpperCase())
-        if (!codes.includes(languageFilter)) return false
-      }
-      return true
-    },
-    [speakerFilter, durationFilter, languageFilter]
+  const visible = useMemo(
+    () => (range === 'week' ? meetings.filter(withinWeek) : meetings),
+    [meetings, range]
   )
 
-  // Exactly the rows rendered in the grid below, so the results counter can
-  // never disagree with what's on screen.
-  const filteredMeetings = meetings.filter(matchesFilters)
-  // What a search actually covers: the full library under the same filters.
-  const searchableMeetings = allMeetings?.filter(matchesFilters) ?? null
+  const retry = useCallback(() => {
+    setHasLoaded(false)
+    setError(false)
+    setAttempt((value) => value + 1)
+  }, [])
+
+  const showSkeleton = loading && !hasLoaded
+  const showEmpty = hasLoaded && !loading && !error && visible.length === 0
 
   return (
-    <div className="min-h-screen bg-page">
-      {/* Header */}
-      <div className="border-b border-line px-4 py-10 sm:px-6">
-        <h1 className="mb-2 text-[32px] font-bold leading-tight tracking-tight text-fg-1">
-          Meetings
-        </h1>
-        <p className="text-base text-fg-3">Search and view all your meetings</p>
-      </div>
+    <div className="mx-auto w-full max-w-[1100px]">
+      <header className="pb-6">
+        <h1 className="text-h1 text-text">Meetings</h1>
+      </header>
 
-      {/* Search */}
-      <div className="border-b border-line px-4 py-6 sm:px-6">
-        <input
-          type="search"
-          aria-label="Search meetings"
-          placeholder="Search meetings..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full rounded-lg border border-line bg-surface-1 px-4 py-3 text-lg text-fg-1 placeholder-fg-3 shadow-sm transition-all duration-200 focus:border-accent focus:shadow-[0_0_0_3px_rgba(74,222,128,0.15)] focus:outline-none"
-        />
+      <JoinBar />
 
-        <div className="mt-3 flex flex-wrap items-center gap-3">
-          <label className="flex items-center gap-1.5 text-xs font-medium text-fg-3">
-            Speakers
-            <select
-              value={speakerFilter}
-              onChange={(e) => setSpeakerFilter(e.target.value as SpeakerFilter)}
-              className="rounded-md border border-line bg-surface px-2 py-1.5 text-xs text-fg-1 focus:border-accent focus:outline-none"
-            >
-              <option value="any">Any</option>
-              <option value="small">1–2</option>
-              <option value="medium">3–5</option>
-              <option value="large">6+</option>
-            </select>
+      <div className="flex flex-col gap-4 py-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="sm:max-w-sm sm:flex-1">
+          <label htmlFor="meeting-search" className="sr-only">
+            Search meetings
           </label>
-
-          <label className="flex items-center gap-1.5 text-xs font-medium text-fg-3">
-            Duration
-            <select
-              value={durationFilter}
-              onChange={(e) => setDurationFilter(e.target.value as DurationFilter)}
-              className="rounded-md border border-line bg-surface px-2 py-1.5 text-xs text-fg-1 focus:border-accent focus:outline-none"
-            >
-              <option value="any">Any</option>
-              <option value="short">Under 30 min</option>
-              <option value="medium">30–60 min</option>
-              <option value="long">Over 60 min</option>
-            </select>
-          </label>
-
-          <label className="flex items-center gap-1.5 text-xs font-medium text-fg-3">
-            Language
-            <select
-              value={languageFilter}
-              onChange={(e) => setLanguageFilter(e.target.value)}
-              className="rounded-md border border-line bg-surface px-2 py-1.5 text-xs text-fg-1 focus:border-accent focus:outline-none"
-            >
-              <option value="any">Any</option>
-              {languageOptions.map((code) => (
-                <option key={code} value={code}>
-                  {code}
-                </option>
-              ))}
-            </select>
-          </label>
+          <Input
+            id="meeting-search"
+            type="search"
+            placeholder="Search meetings and transcripts"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+          />
         </div>
 
-        {isSearching && searchableMeetings !== null && (
-          <p className="mt-3 text-xs text-fg-3">
-            {loading
-              ? `Searching across ${searchableMeetings.length} meeting${searchableMeetings.length === 1 ? '' : 's'}…`
-              : `${filteredMeetings.length} result${filteredMeetings.length === 1 ? '' : 's'} for "${searchQuery.trim()}"`}
-          </p>
-        )}
+        <SegmentedControl
+          label="Filter meetings by date"
+          options={RANGE_OPTIONS}
+          value={range}
+          onChange={setRange}
+        />
       </div>
 
-      {/* Results */}
-      <div className="px-4 py-10 sm:px-6">
-        {!hasLoaded && loading && <MeetingListSkeleton />}
+      {/* Announced for screen readers; the count on screen is the table itself. */}
+      <p aria-live="polite" className="sr-only">
+        {loading
+          ? 'Loading meetings'
+          : `${visible.length} ${visible.length === 1 ? 'meeting' : 'meetings'}`}
+      </p>
 
-        {error && <MeetingLoadError title={error} onRetry={() => { setHasLoaded(false); setLoading(true); setError(null); setAttempt((value) => value + 1) }} />}
-
-        {hasLoaded && !loading && !error && meetings.length === 0 && (
-          <MeetingEmptyState kind={isSearching ? 'search' : 'meetings'} />
-        )}
-
-        {hasLoaded && !loading && !error && meetings.length > 0 && filteredMeetings.length === 0 && (
-          <p className="text-md text-fg-3">No meetings match these filters.</p>
-        )}
-
-        {hasLoaded && loading && meetings.length === 0 && <MeetingListSkeleton />}
-
-        {hasLoaded && !error && filteredMeetings.length > 0 && (
-          // DESIGN-NOTEAI.md: loading is a dim, not a spinner — the list stays
-          // in place while a search refetches instead of flashing empty.
-          <div
-            aria-busy={loading}
-            className={`grid grid-cols-1 gap-5 motion-safe:animate-fadein motion-safe:transition-opacity duration-200 sm:grid-cols-2 xl:grid-cols-3 ${loading ? 'opacity-60' : 'opacity-100'}`}
-          >
-            {filteredMeetings.map((meeting) => (
-              <Link
-                key={meeting.id}
-                href={`/meetings/${meeting.id}`}
-                className="group block rounded-lg border-l-[3px] border-l-accent bg-surface p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_8px_16px_rgba(0,0,0,0.08)]"
-              >
-                <h3 className="text-xl font-bold text-fg-1 transition-colors group-hover:text-brand">
-                  {highlight(meeting.title, searchQuery)}
-                </h3>
-                {meeting.description && (
-                  <p className="mt-1.5 line-clamp-2 text-md text-fg-2">
-                    {highlight(meeting.description, searchQuery)}
-                  </p>
-                )}
-                <div className="mt-4 flex flex-wrap gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-accent/40 bg-gradient-to-br from-accent/10 to-accent/5 px-3 py-2 text-xs font-semibold text-fg-1 shadow-[0_1px_3px_rgba(74,222,128,0.1)]">
-                    <UsersRound className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
-                    {meeting.speaker_count} {meeting.speaker_count === 1 ? 'speaker' : 'speakers'}
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-accent/40 bg-gradient-to-br from-accent/10 to-accent/5 px-3 py-2 text-xs font-semibold text-fg-1 shadow-[0_1px_3px_rgba(74,222,128,0.1)]">
-                    <Hourglass className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
-                    {Math.round(meeting.duration_seconds / 60)} min
-                  </span>
-                  {meeting.languages && (
-                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-accent/50 bg-accent/15 px-3 py-2 text-xs font-bold text-[#4ade80] shadow-[0_2px_4px_rgba(74,222,128,0.15)]">
-                      <Languages className="h-3.5 w-3.5" aria-hidden="true" />
-                      {formatLanguages(meeting.languages)}
-                    </span>
-                  )}
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
+      {showSkeleton && <MeetingsSkeleton />}
+      {error && <MeetingsError onRetry={retry} />}
+      {showEmpty && (
+        <MeetingsEmpty
+          reason={
+            query.trim() ? 'search' : range === 'week' && meetings.length > 0 ? 'week' : 'none'
+          }
+          query={query}
+        />
+      )}
+      {!showSkeleton && !error && visible.length > 0 && (
+        <MeetingsTable meetings={visible} query={query} busy={loading} />
+      )}
     </div>
   )
 }

@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import models  # noqa: F401  (imported so create_all sees every table)
 from database import Base, SessionLocal, engine
-from routes import ai, health, meetings, transcripts
+from routes import ai, health, meetings, transcripts, translations
 from seed import seed_if_empty
 
 load_dotenv()
@@ -53,6 +53,7 @@ app.include_router(meetings.router)
 app.include_router(meetings.search_router)
 app.include_router(transcripts.router)
 app.include_router(ai.router)
+app.include_router(translations.router)
 
 
 @app.get("/", tags=["root"])
