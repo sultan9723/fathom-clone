@@ -36,7 +36,7 @@ export function MeetingDetail({
             className="mt-2 inline-flex items-center gap-0.5 px-4 text-xs text-fg-meta transition hover:text-fg-2 sm:px-6"
           >
             <ChevronLeft className="h-3.5 w-3.5" aria-hidden="true" />
-            My Calls
+            Meetings
           </Link>
 
           <div className="px-4 sm:px-6">
