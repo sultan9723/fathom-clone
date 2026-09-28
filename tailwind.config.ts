@@ -1,19 +1,22 @@
 import type { Config } from 'tailwindcss'
-import { colors, typography, components } from './lib/design-tokens'
+import { layout, radius, spacing, typeScale } from './lib/design-tokens'
 
 /**
- * Every value here comes from `lib/design-tokens.ts`. Nothing is hardcoded.
+ * DESIGN.md tokens as Tailwind utilities.
  *
- * Token -> utility naming:
- *   pageBg / topBar        -> bg-page      bg-topbar
- *   surface1..5            -> bg-surface-1 .. bg-surface-5
- *   border / borderFaint   -> border-line  border-line-faint
- *   text1..4               -> text-fg-1 .. text-fg-4
- *   brand, status, accents -> text-brand, bg-error, text-accent-1, ...
- *   searchPill             -> bg-search-pill
+ * Colours resolve to the CSS variables declared in app/globals.css, so the
+ * hexes live in exactly one place. Names match DESIGN.md's token table:
+ *   bg, surface, surface-2, surface-hover, border, border-subtle,
+ *   border-strong, text, text-2, muted, faint, accent, accent-ink,
+ *   accent-bg, accent-bg-2, accent-border, warn, warn-border.
  *
- * Radius is NOT customized: SPEC's 4/6/8/9999px scale maps exactly onto
- * Tailwind's built-in rounded/rounded-md/rounded-lg/rounded-full.
+ * The LEGACY block at the bottom is a deprecated compatibility shim. The
+ * pages written against the old light palette (bg-page, text-fg-1, …) are
+ * scheduled for redesign; until then those names resolve to the closest
+ * DESIGN.md token so the app renders coherently instead of silently losing
+ * its styles — Tailwind emits nothing for an unknown class, so dropping the
+ * names outright would break 16 files with a passing build. Delete this
+ * block once the pages are redesigned; nothing new should use it.
  */
 const config: Config = {
   content: [
@@ -23,100 +26,147 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        page: colors.pageBg,
-        topbar: colors.topBar,
+        bg: 'var(--bg)',
         surface: {
-          1: colors.surface1,
-          2: colors.surface2,
-          3: colors.surface3,
-          4: colors.surface4,
-          5: colors.surface5,
+          DEFAULT: 'var(--surface)',
+          2: 'var(--surface-2)',
+          hover: 'var(--surface-hover)',
         },
+        border: {
+          DEFAULT: 'var(--border)',
+          subtle: 'var(--border-subtle)',
+          strong: 'var(--border-strong)',
+        },
+        text: {
+          DEFAULT: 'var(--text)',
+          2: 'var(--text-2)',
+        },
+        muted: 'var(--muted)',
+        faint: 'var(--faint)',
+        accent: {
+          DEFAULT: 'var(--accent)',
+          ink: 'var(--accent-ink)',
+          bg: 'var(--accent-bg)',
+          'bg-2': 'var(--accent-bg-2)',
+          border: 'var(--accent-border)',
+        },
+        warn: {
+          DEFAULT: 'var(--warn)',
+          border: 'var(--warn-border)',
+        },
+        speaker: {
+          1: 'var(--speaker-1)',
+          '1-bg': 'var(--speaker-1-bg)',
+          2: 'var(--speaker-2)',
+          '2-bg': 'var(--speaker-2-bg)',
+          3: 'var(--speaker-3)',
+          '3-bg': 'var(--speaker-3-bg)',
+        },
+
+        // ---- LEGACY: remove with the page redesigns ----
+        // The old numbered surface scale ran least- to most-contrasted
+        // against a white page; mapped onto the dark tokens it keeps that
+        // meaning. Only the two still in use are kept — surface-2 already
+        // comes from the `surface` object above.
+        'surface-1': 'var(--surface)',
+        'surface-4': 'var(--surface-hover)',
+        page: 'var(--bg)',
+        topbar: 'var(--surface)',
         line: {
-          DEFAULT: colors.border,
-          faint: colors.borderFaint,
+          DEFAULT: 'var(--border)',
+          faint: 'var(--border-subtle)',
         },
         fg: {
-          1: colors.text1,
-          2: colors.text2,
-          3: colors.text3,
-          4: colors.text4,
-          meta: colors.textMeta,
+          1: 'var(--text)',
+          2: 'var(--text-2)',
+          3: 'var(--muted)',
+          4: 'var(--faint)',
+          meta: 'var(--faint)',
         },
-        brand: colors.brand,
-        // DESIGN-NOTEAI.md primary-button hover: darker blue, not lighter.
-        'brand-hover': '#0051cc',
-        cyan: colors.cyan,
-        error: colors.error,
-        danger: colors.danger,
-        warning: colors.warning,
-        success: colors.success,
-        info: colors.info,
-        accent: {
-          1: colors.accent1,
-          2: colors.accent2,
-          3: colors.accent3,
-          4: colors.accent4,
-        },
-        'search-pill': colors.searchPill,
+        brand: 'var(--accent)',
+        'brand-hover': 'var(--accent)',
+        error: 'var(--warn)',
+        danger: 'var(--warn)',
+        warning: 'var(--warn)',
+        success: 'var(--accent)',
+        info: 'var(--accent)',
+        'search-pill': 'var(--surface-2)',
+      },
+
+      borderRadius: {
+        chip: radius.chip,
+        control: radius.control,
+        card: radius.card,
+        section: radius.section,
+      },
+
+      spacing: {
+        ...spacing,
+        sidebar: layout.sidebarWidth,
+        'app-y': layout.appPaddingY,
+        'app-x': layout.appPaddingX,
+        'landing-x': layout.landingPaddingX,
+        touch: layout.touchTarget,
+        control: layout.controlHeight,
+        'control-lg': layout.controlHeightLg,
+        input: layout.inputHeight,
+        'input-lg': layout.inputHeightLg,
+        badge: layout.badgeHeight,
+      },
+
+      maxWidth: {
+        landing: layout.landingMaxWidth,
       },
 
       fontFamily: {
-        // next/font supplies the Inter face; the token provides the fallbacks.
-        sans: [`var(--font-inter)`, ...typography.fontFamily.split(',').map((f) => f.trim())],
+        sans: ['var(--font-geist-sans)', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-geist-mono)', 'ui-monospace', 'monospace'],
+        urdu: ['var(--font-noto-nastaliq-urdu)', 'serif'],
+        arabic: ['var(--font-noto-naskh-arabic)', 'serif'],
+        sc: ['var(--font-noto-sans-sc)', 'var(--font-geist-sans)', 'sans-serif'],
+        jp: ['var(--font-noto-sans-jp)', 'var(--font-geist-sans)', 'sans-serif'],
       },
 
-      // Each size carries its paired line height from the tokens.
-      fontSize: Object.fromEntries(
-        Object.entries(typography.sizes).map(([key, size]) => [
-          key,
-          [size, typography.lineHeights[key as keyof typeof typography.lineHeights]],
-        ])
-      ) as Record<string, [string, string]>,
-
-      spacing: {
-        topbar: components.topBarHeight,
-        avatar: components.avatar,
-        'pill-w': components.searchPill.width,
-        'pill-h': components.searchPill.height,
-        'btn-sm': components.buttonSm.height,
-        'btn-sm-x': components.buttonSm.paddingX,
+      fontSize: {
+        ...(typeScale as unknown as Record<string, [string, Record<string, string>]>),
+        // ---- LEGACY sizes: remove with the page redesigns ----
+        // text-md and text-2xs are custom keys with no Tailwind default, so
+        // dropping them would silently remove the font-size from 40+ call
+        // sites rather than change it. Kept at their old px values.
+        '2xs': ['10px', '12px'],
+        xs: ['11px', '13px'],
+        sm: ['12px', '14px'],
+        base: ['13px', '16px'],
+        md: ['14px', '16px'],
+        lg: ['16px', '20px'],
+        xl: ['18px', '22px'],
+        '2xl': ['22px', '28px'],
+        '3xl': ['28px', '32px'],
       },
 
-      // Element-specific one-off dimensions live here, not in `spacing`
-      // (which also drives padding/margin/gap and shouldn't carry these).
-      minHeight: {
-        video: components.videoMinHeight,
+      transitionTimingFunction: {
+        'ease-out-design': 'cubic-bezier(0.2, 0.8, 0.2, 1)',
       },
-      width: {
-        'ask-sidebar': components.askSidebarWidth,
-        'notes-col': components.notesColumnWidth,
-        'transcript-search': components.transcriptSearchPill.width,
-        'resume-pill': components.resumeScrollPill.width,
-        'share-modal': components.shareModalWidth,
-        toggle: components.toggle.width,
-        'send-circle': components.sendButtonCircle,
-        'ask-send': components.askSendButton.width,
+      transitionDuration: {
+        fast: '150ms',
+        base: '280ms',
+        slow: '520ms',
       },
-      height: {
-        'sub-nav': components.subNavHeight,
-        'tab-bar': components.tabBarHeight,
-        'transcript-search': components.transcriptSearchPill.height,
-        'resume-pill': components.resumeScrollPill.height,
-        toggle: components.toggle.height,
-        'ask-composer': components.askComposerHeight,
-        'send-circle': components.sendButtonCircle,
-        'ask-send': components.askSendButton.height,
-        'share-copy': components.shareCopyButtonHeight,
-        'action-checkbox': components.actionCheckbox,
-      },
+
       keyframes: {
-        fadein: { from: { opacity: '0' }, to: { opacity: '1' } },
+        // DESIGN.md entrances: fade + 8-18px rise. Never layout properties.
+        enter: {
+          from: { opacity: '0', transform: 'translateY(12px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        'pulse-dot': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.45' },
+        },
       },
       animation: {
-        // 200ms micro-interaction per the premium design pass — AI answers,
-        // translations and summaries fade in rather than popping in place.
-        fadein: 'fadein 200ms ease-out',
+        enter: 'enter 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both',
+        'pulse-dot': 'pulse-dot 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) infinite',
       },
     },
   },

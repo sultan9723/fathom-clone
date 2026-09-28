@@ -177,7 +177,7 @@ export default function MeetingsPage() {
           placeholder="Search meetings..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full rounded-lg border border-line bg-surface-1 px-4 py-3 text-lg text-fg-1 placeholder-fg-3 shadow-sm transition-all duration-200 focus:border-cyan focus:shadow-[0_0_0_3px_rgba(0,212,255,0.15)] focus:outline-none"
+          className="w-full rounded-lg border border-line bg-surface-1 px-4 py-3 text-lg text-fg-1 placeholder-fg-3 shadow-sm transition-all duration-200 focus:border-accent focus:shadow-[0_0_0_3px_rgba(74,222,128,0.15)] focus:outline-none"
         />
 
         <div className="mt-3 flex flex-wrap items-center gap-3">
@@ -186,7 +186,7 @@ export default function MeetingsPage() {
             <select
               value={speakerFilter}
               onChange={(e) => setSpeakerFilter(e.target.value as SpeakerFilter)}
-              className="rounded-md border border-line bg-white px-2 py-1.5 text-xs text-fg-1 focus:border-cyan focus:outline-none"
+              className="rounded-md border border-line bg-surface px-2 py-1.5 text-xs text-fg-1 focus:border-accent focus:outline-none"
             >
               <option value="any">Any</option>
               <option value="small">1–2</option>
@@ -200,7 +200,7 @@ export default function MeetingsPage() {
             <select
               value={durationFilter}
               onChange={(e) => setDurationFilter(e.target.value as DurationFilter)}
-              className="rounded-md border border-line bg-white px-2 py-1.5 text-xs text-fg-1 focus:border-cyan focus:outline-none"
+              className="rounded-md border border-line bg-surface px-2 py-1.5 text-xs text-fg-1 focus:border-accent focus:outline-none"
             >
               <option value="any">Any</option>
               <option value="short">Under 30 min</option>
@@ -214,7 +214,7 @@ export default function MeetingsPage() {
             <select
               value={languageFilter}
               onChange={(e) => setLanguageFilter(e.target.value)}
-              className="rounded-md border border-line bg-white px-2 py-1.5 text-xs text-fg-1 focus:border-cyan focus:outline-none"
+              className="rounded-md border border-line bg-surface px-2 py-1.5 text-xs text-fg-1 focus:border-accent focus:outline-none"
             >
               <option value="any">Any</option>
               {languageOptions.map((code) => (
@@ -262,7 +262,7 @@ export default function MeetingsPage() {
               <Link
                 key={meeting.id}
                 href={`/meetings/${meeting.id}`}
-                className="group block rounded-lg border-l-[3px] border-l-cyan bg-gradient-to-b from-white to-surface-1 p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_8px_16px_rgba(0,0,0,0.08)]"
+                className="group block rounded-lg border-l-[3px] border-l-accent bg-surface p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_8px_16px_rgba(0,0,0,0.08)]"
               >
                 <h3 className="text-xl font-bold text-fg-1 transition-colors group-hover:text-brand">
                   {highlight(meeting.title, searchQuery)}
@@ -273,16 +273,16 @@ export default function MeetingsPage() {
                   </p>
                 )}
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-cyan/40 bg-gradient-to-br from-cyan/10 to-cyan/5 px-3 py-2 text-xs font-semibold text-fg-1 shadow-[0_1px_3px_rgba(0,212,255,0.1)]">
-                    <UsersRound className="h-3.5 w-3.5 text-cyan" aria-hidden="true" />
+                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-accent/40 bg-gradient-to-br from-accent/10 to-accent/5 px-3 py-2 text-xs font-semibold text-fg-1 shadow-[0_1px_3px_rgba(74,222,128,0.1)]">
+                    <UsersRound className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
                     {meeting.speaker_count} {meeting.speaker_count === 1 ? 'speaker' : 'speakers'}
                   </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-cyan/40 bg-gradient-to-br from-cyan/10 to-cyan/5 px-3 py-2 text-xs font-semibold text-fg-1 shadow-[0_1px_3px_rgba(0,212,255,0.1)]">
-                    <Hourglass className="h-3.5 w-3.5 text-cyan" aria-hidden="true" />
+                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-accent/40 bg-gradient-to-br from-accent/10 to-accent/5 px-3 py-2 text-xs font-semibold text-fg-1 shadow-[0_1px_3px_rgba(74,222,128,0.1)]">
+                    <Hourglass className="h-3.5 w-3.5 text-accent" aria-hidden="true" />
                     {Math.round(meeting.duration_seconds / 60)} min
                   </span>
                   {meeting.languages && (
-                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-cyan/50 bg-cyan/15 px-3 py-2 text-xs font-bold text-[#00a3cc] shadow-[0_2px_4px_rgba(0,212,255,0.15)]">
+                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-accent/50 bg-accent/15 px-3 py-2 text-xs font-bold text-[#4ade80] shadow-[0_2px_4px_rgba(74,222,128,0.15)]">
                       <Languages className="h-3.5 w-3.5" aria-hidden="true" />
                       {formatLanguages(meeting.languages)}
                     </span>

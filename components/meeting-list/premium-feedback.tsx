@@ -72,7 +72,7 @@ export function MeetingDetailSkeleton() {
       <div aria-hidden="true">
         <SkeletonBlock className="h-4 w-24" />
         <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-start">
-          <div className="w-full shrink-0 space-y-4 rounded-lg border border-line bg-white p-6 lg:w-[40%]">
+          <div className="w-full shrink-0 space-y-4 rounded-lg border border-line bg-surface p-6 lg:w-[40%]">
             <SkeletonBlock className="h-7 w-5/6" />
             <SkeletonBlock className="h-3.5 w-full" />
             <SkeletonBlock className="h-3 w-2/3" />
@@ -85,11 +85,11 @@ export function MeetingDetailSkeleton() {
               <SkeletonBlock className="h-4 w-20" />
               <SkeletonBlock className="h-4 w-20" />
             </div>
-            <div className="mt-4 rounded-lg border border-line bg-white p-6">
+            <div className="mt-4 rounded-lg border border-line bg-surface p-6">
               <TranscriptSkeletonRows />
             </div>
           </div>
-          <div className="w-full shrink-0 space-y-4 rounded-lg border border-line bg-white p-6 lg:w-[320px]">
+          <div className="w-full shrink-0 space-y-4 rounded-lg border border-line bg-surface p-6 lg:w-[320px]">
             <SkeletonBlock className="h-5 w-24" />
             <SkeletonBlock className="h-3.5 w-full" />
             <SkeletonBlock className="h-3.5 w-3/4" />
@@ -156,7 +156,7 @@ export function MeetingLoadError({
       <button
         type="button"
         onClick={onRetry}
-        className="mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-brand px-4 py-2.5 text-md font-medium text-white transition-colors hover:bg-brand-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
+        className="mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-brand px-4 py-2.5 text-md font-medium text-accent-ink transition-colors hover:bg-brand-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2"
       >
         <RefreshCw className="h-4 w-4" aria-hidden="true" />
         Try again

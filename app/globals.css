@@ -2,45 +2,120 @@
 @tailwind components;
 @tailwind utilities;
 
+/**
+ * DESIGN.md is the source of truth for every value below.
+ *
+ * The hexes live here and only here. tailwind.config.ts maps utility names
+ * onto these variables (`bg: 'var(--bg)'`), so a colour is changed in one
+ * place. lib/design-tokens.ts carries the non-colour scales — spacing,
+ * radius, type — because Tailwind needs those as plain numbers.
+ */
 :root {
-  color-scheme: light;
+  color-scheme: dark;
+
+  /* Surfaces */
+  --bg: #0a0b0d;
+  --surface: #121417;
+  --surface-2: #181b1f;
+  --surface-hover: #16191d;
+
+  /* Borders */
+  --border: #24282e;
+  --border-subtle: #1c1f24;
+  --border-strong: #2e333a;
+
+  /* Text — never lighter-on-dark than --faint */
+  --text: #edeff2;
+  --text-2: #c9ced6;
+  --muted: #9ba3ae;
+  --faint: #7c8490;
+
+  /* Accent: live, primary actions, current selection. Nothing else. */
+  --accent: #4ade80;
+  --accent-ink: #06210f;
+  --accent-bg: #10201a;
+  --accent-bg-2: #16261c;
+  --accent-border: #2b5a3e;
+
+  /* Warnings and errors */
+  --warn: #f5b971;
+  --warn-border: #3b2f22;
+
+  /* Speakers, assigned in order of first appearance */
+  --speaker-1: #edeff2;
+  --speaker-1-bg: #2a2f36;
+  --speaker-2: #f5b971;
+  --speaker-2-bg: #3a2f22;
+  --speaker-3: #7db4ff;
+  --speaker-3-bg: #1e2a3b;
+
+  /* Radius — 999 is for status dots only */
+  --radius-chip: 8px;
+  --radius-control: 10px;
+  --radius-card: 16px;
+  --radius-section: 24px;
+
+  /* Motion (mirrored in lib/motion.ts for JS-driven animation) */
+  --duration-fast: 150ms;
+  --duration-base: 280ms;
+  --duration-slow: 520ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 @layer base {
-  /* Page ground and default text colour come from the tokens
-     (lib/design-tokens.ts -> pageBg #ffffff, text1 #1a1a1a) rather than
-     literal hex, so the palette stays defined in exactly one place.
-     app/layout.tsx applies the same pair to <body>; this makes the default
-     hold even for surfaces rendered outside it, such as Next's 404 page.
-
-     SPEC: default body weight 300, letter-spacing -0.01em to -0.03em on UI
-     text. tracking-tight (-0.025em) sits inside that range and is applied
-     once here rather than hand-tuned per element; components override
-     font-weight explicitly wherever SPEC calls for something heavier. */
   html {
-    @apply bg-page;
+    background-color: var(--bg);
   }
 
   body {
-    @apply bg-page font-light tracking-tight text-fg-1;
+    background-color: var(--bg);
+    color: var(--text);
+  }
+
+  /* DESIGN.md: visible focus is a 2px accent outline, offset 2-3px.
+     Applied once here so every real button/link/input gets it for free. */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Urdu and Arabic set dir="rtl" through lib/i18n-text.ts; this keeps the
+     text edge aligned with the direction rather than the container. */
+  [dir='rtl'] {
+    text-align: right;
   }
 }
 
-/* Thumb #e0e0e0 / track #ffffff — kept in sync with lib/design-tokens.ts
-   colors.border / colors.pageBg. Plain CSS can't import the token file, so
-   these are the one place those two hex values are duplicated. */
+/* DESIGN.md: no infinite motion except live indicators and skeletons. */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Show the final state instantly — no pulse, no streaming, no scramble. */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #ffffff;
+  background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: #e0e0e0;
-  border-radius: 9999px;
+  background: var(--border-strong);
+  border-radius: 999px;
 }
 * {
   scrollbar-width: thin;
-  scrollbar-color: #e0e0e0 #ffffff;
+  scrollbar-color: var(--border-strong) var(--bg);
 }

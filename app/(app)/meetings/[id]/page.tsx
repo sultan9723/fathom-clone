@@ -200,7 +200,7 @@ function MeetingDetailView({
 
       <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-start">
         {/* Left: header, player placeholder, clock */}
-        <div className="flex w-full shrink-0 flex-col gap-4 rounded-lg border border-line bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)] lg:w-[40%]">
+        <div className="flex w-full shrink-0 flex-col gap-4 rounded-lg border border-line bg-surface p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)] lg:w-[40%]">
           <MeetingHeader meeting={meeting} />
           <MeetingPanelBoundary title="The recording player needs another try">
             <NoteAiVideoPlayer />
@@ -224,9 +224,9 @@ function MeetingDetailView({
                 aria-controls={`panel-${id}`}
                 onClick={() => setTab(id)}
                 className={cn(
-                  'relative shrink-0 pb-3 text-md font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan',
+                  'relative shrink-0 pb-3 text-md font-semibold transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent',
                   tab === id
-                    ? 'text-fg-1 after:absolute after:inset-x-0 after:-bottom-0.5 after:h-[3px] after:rounded-full after:bg-cyan after:shadow-[0_0_8px_rgba(0,212,255,0.6)]'
+                    ? 'text-fg-1 after:absolute after:inset-x-0 after:-bottom-0.5 after:h-[3px] after:rounded-full after:bg-accent after:shadow-[0_0_8px_rgba(74,222,128,0.6)]'
                     : 'text-fg-3 hover:text-fg-1'
                 )}
               >
@@ -242,7 +242,7 @@ function MeetingDetailView({
             role="tabpanel"
             id={`panel-${tab}`}
             aria-labelledby={`tab-${tab}`}
-            className="mt-4 rounded-lg border border-line bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)]"
+            className="mt-4 rounded-lg border border-line bg-surface p-6 shadow-[0_2px_10px_rgba(0,0,0,0.05)]"
           >
             <MeetingPanelBoundary key={tab} title="This meeting section needs another try">
             {tab === 'summary' && <NoteAiSummary meeting={meeting} />}
@@ -298,10 +298,10 @@ function MeetingHeader({ meeting }: { meeting: ApiMeeting }) {
     <header>
       {inProgress && (
         <div className="mb-2 flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-cyan/50 bg-cyan/15 px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-[#00a3cc]">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/50 bg-accent/15 px-2.5 py-1 text-xs font-bold uppercase tracking-wide text-[#4ade80]">
             <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-cyan" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
             </span>
             In Progress
           </span>

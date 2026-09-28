@@ -98,7 +98,7 @@ function SearchView() {
               // Carry the query through so the detail page highlights the
               // matching words — the match is often only in the transcript.
               href={`/meetings/${meeting.id}?q=${encodeURIComponent(trimmed)}`}
-              className="group block rounded-lg border border-line bg-white p-5 shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-cyan/40 hover:shadow-[0_8px_20px_rgba(0,212,255,0.14)]"
+              className="group block rounded-lg border border-line bg-surface p-5 shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-accent/40 hover:shadow-[0_8px_20px_rgba(74,222,128,0.14)]"
             >
               <h3 className="text-xl font-bold text-fg-1 transition-colors group-hover:text-brand">
                 {meeting.title}
