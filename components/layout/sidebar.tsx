@@ -17,7 +17,7 @@ export function Sidebar() {
   return <aside className="product-sidebar">
     <div className="sidebar-heading"><Link href="/" className="product-wordmark">NoteAI</Link><Button className="mobile-menu-toggle" aria-expanded={open} aria-controls="product-navigation" onClick={() => setOpen(value => !value)}>{open ? 'Close menu' : 'Menu'}</Button></div>
     <div id="product-navigation" className={`sidebar-content ${open ? 'menu-open' : ''}`}>
-      <Link href="/join" className="product-link-button primary">Join a meeting</Link>
+      <Link href="/join" className="product-link-button primary">Add a meeting</Link>
       <nav aria-label="Product navigation">{navigation.map(item => <Link key={item.href} href={item.href} aria-current={pathname === item.href || pathname.startsWith(`${item.href}/`) ? 'page' : undefined}>{item.label}</Link>)}</nav>
       <Link href="/settings#profile" className="workspace-profile"><span className="product-avatar" aria-hidden="true">N</span><span>Shared workspace<small>Reads in <ScriptText language={language}>{i18nText(language).label}</ScriptText></small></span></Link>
     </div>
