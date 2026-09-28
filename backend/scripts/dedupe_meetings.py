@@ -3,7 +3,7 @@
 
 Groups meetings by title, keeps the oldest row in each group (by created_at,
 then id as a stable tie-break) and removes the rest along with their
-transcripts, action items and notes.
+transcripts, action items, notes and cached translations.
 
 Dry run is the default: without --apply nothing is written, the script only
 prints what it would delete. DATABASE_URL comes from the environment (or
@@ -68,6 +68,7 @@ def _child_counts(db, meeting_id: str) -> dict[str, int]:
         "transcripts": db.query(models.Transcript).filter_by(meeting_id=meeting_id).count(),
         "action items": db.query(models.ActionItem).filter_by(meeting_id=meeting_id).count(),
         "notes": db.query(models.Note).filter_by(meeting_id=meeting_id).count(),
+        "translations": db.query(models.TranscriptTranslation).filter_by(meeting_id=meeting_id).count(),
     }
 
 
@@ -124,7 +125,7 @@ def main(argv: list[str] | None = None) -> int:
             return 0
 
         ids = [meeting.id for meeting in doomed]
-        for model in (models.Transcript, models.ActionItem, models.Note):
+        for model in (models.TranscriptTranslation, models.Transcript, models.ActionItem, models.Note):
             model_query = db.query(model).filter(model.meeting_id.in_(ids))
             removed = model_query.delete(synchronize_session=False)
             print(f"  removed {removed} {model.__tablename__}")
