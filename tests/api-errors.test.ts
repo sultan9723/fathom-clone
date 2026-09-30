@@ -32,7 +32,7 @@ describe('recoverable API failures', () => {
   it.each(['API key not configured', 'AI unavailable: AuthenticationError secret-provider-diagnostic'])(
     'treats a provider notice as a safe error: %s', async (response) => {
       vi.stubGlobal('fetch', vi.fn().mockResolvedValue(Response.json({ response })))
-      await expect(askAI('meeting-1', 'Summarise')).rejects.toThrow(
+      await expect(askAI('meeting-1', 'Summarize')).rejects.toThrow(
         'The assistant is temporarily unavailable. Please try again.',
       )
     },
