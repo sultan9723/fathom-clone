@@ -176,7 +176,8 @@ html:has(.landing), body:has(.landing) { overflow-x: clip; }
 .hero-import { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 32px; }
 .landing-hero .hero-import-help { font-size: 13px; margin-top: 20px; }
 .landing .join-example { max-width: 880px; margin: 32px auto 0; padding: 20px; border: 1px solid var(--accent-border); border-radius: var(--radius-card); background: var(--surface); text-align: left; color: var(--text-2); font-size: 16px; }
-.landing .join-example summary { min-height: 44px; cursor: pointer; padding: 12px 0; color: var(--text); font-weight: 600; }
+/* Was a <summary>; the section is always open now, so this is a plain H4. */
+.landing .join-example-title { margin: 0 0 8px; color: var(--text); }
 .landing .mobile-menu-toggle { display: none; }
 @media (max-width: 767px) {
   .landing .landing-header { flex-wrap: wrap; gap: 12px; }
