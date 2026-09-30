@@ -4,6 +4,14 @@ import { askAI, getMeetings, searchMeetings } from '../lib/api'
 afterEach(() => vi.unstubAllGlobals())
 
 describe('recoverable API failures', () => {
+  it.each([
+    [429, { detail: 'internal information' }, 'Too many AI requests. Please wait a moment and try again.'],
+    [503, { detail: 'The daily limit for AI requests has been reached.' }, 'The daily AI limit has been reached. Translations, summaries, and answers will be available again tomorrow.'],
+    [503, { detail: 'provider credentials or private diagnostics' }, 'The assistant is temporarily unavailable. Please try again later.'],
+  ])('surfaces a safe and actionable HTTP %s message', async (status, body, message) => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(Response.json(body, { status: status as number })))
+    await expect(askAI('meeting-1', 'Summarize')).rejects.toThrow(message as string)
+  })
   it('distinguishes a failed search from an empty result', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('unavailable', { status: 503 })))
     await expect(searchMeetings('planning')).rejects.toThrow('Failed to search meetings')
