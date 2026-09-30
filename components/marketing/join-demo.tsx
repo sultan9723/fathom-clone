@@ -36,7 +36,13 @@ export function JoinDemo() {
       <div className="join-demo-bar" aria-hidden="true">
         <span className="join-demo-url">{url || 'Paste a meeting link'}{phase < 40 && <span className="typing-caret">|</span>}</span>
         <Badge>{detected || 'Meeting link'}</Badge>
-        <Button tabIndex={-1} variant={phase >= 65 ? 'joined' : 'primary'} className="join-demo-state">{state}</Button>
+        {/* Once joined this is a status, not an action, so it becomes the live
+            badge rather than a third button variant. */}
+        {phase >= 65 ? (
+          <Badge variant="live" className="join-demo-state">{state}</Badge>
+        ) : (
+          <Button tabIndex={-1} variant="primary" className="join-demo-state">{state}</Button>
+        )}
       </div>
       <div className="demo-caption">
         <span>Demo · A link is all it takes.</span>

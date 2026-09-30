@@ -58,7 +58,7 @@ export function SummaryPanel({
   return (
     <Panel as="section" aria-labelledby="summary-heading" className="p-5">
       <div className="flex items-center justify-between gap-3">
-        <h2 id="summary-heading" className="text-label-sm uppercase text-faint">
+        <h2 id="summary-heading" className="text-caption uppercase text-faint">
           Summary
         </h2>
         {summary && (
@@ -74,7 +74,7 @@ export function SummaryPanel({
           text={summary}
           dir={written.dir}
           lang={written.lang}
-          className={`${written.className} mt-4 text-body-sm text-text-2 motion-safe:animate-enter`}
+          className={`${written.className} mt-4 text-body text-text-2 motion-safe:animate-enter`}
         />
       ) : (
         <div className="mt-4">

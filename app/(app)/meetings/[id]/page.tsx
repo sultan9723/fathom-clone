@@ -94,7 +94,7 @@ export default function MeetingDetailPage() {
     return (
       <div className="mx-auto w-full max-w-[1100px]">
         <BackLink />
-        <p role="status" className="mt-8 text-body-sm text-muted">
+        <p role="status" className="mt-8 text-body text-muted">
           Loading this meeting…
         </p>
       </div>
@@ -106,8 +106,8 @@ export default function MeetingDetailPage() {
       <div className="mx-auto w-full max-w-[1100px]">
         <BackLink />
         <Panel className="mt-6 border-warn-border px-6 py-12 text-center">
-          <h1 className="text-title font-semibold text-warn">We couldn&rsquo;t load this meeting</h1>
-          <p className="mx-auto mt-2 max-w-sm text-body-sm text-muted">
+          <h1 className="text-h4 font-semibold text-warn">We couldn&rsquo;t load this meeting</h1>
+          <p className="mx-auto mt-2 max-w-sm text-body text-muted">
             The connection to the server failed.
           </p>
           <Button variant="secondary" onClick={retry} className="mt-6">
@@ -126,9 +126,9 @@ export default function MeetingDetailPage() {
 
       <header className="mt-4 border-b border-border-subtle pb-6">
         {live && <Badge variant="live">Live</Badge>}
-        <h1 className={`text-h1 text-text ${live ? 'mt-3' : ''}`}>{meeting.title}</h1>
+        <h1 className={`text-h2 text-text ${live ? 'mt-3' : ''}`}>{meeting.title}</h1>
         {meeting.description && (
-          <p className="mt-2 max-w-prose text-body-sm text-muted">{meeting.description}</p>
+          <p className="mt-2 max-w-prose text-body text-muted">{meeting.description}</p>
         )}
         <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-small text-faint">
           <span>{formatMeetingDate(meeting.created_at)}</span>
@@ -159,7 +159,7 @@ export default function MeetingDetailPage() {
             />
           ) : (
             <Panel className="p-5">
-              <h2 className="text-label-sm uppercase text-faint">Transcript</h2>
+              <h2 className="text-caption uppercase text-faint">Transcript</h2>
               <p className="mt-3 text-small text-muted">
                 No transcript was recorded for this meeting.
               </p>

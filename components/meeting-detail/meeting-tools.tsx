@@ -156,7 +156,7 @@ export function MeetingTools({
 
   return (
     <Panel as="section" aria-labelledby="tools-heading" className="p-5">
-      <h2 id="tools-heading" className="text-label-sm uppercase text-faint">
+      <h2 id="tools-heading" className="text-caption uppercase text-faint">
         This meeting
       </h2>
 
@@ -183,8 +183,8 @@ export function MeetingTools({
 
       {mode === 'edit' && (
         <form onSubmit={saveEdit} className="mt-5 border-t border-border-subtle pt-5">
-          <h3 className="text-body-sm font-medium text-text">Edit meeting</h3>
-          <label htmlFor="edit-title" className="mt-4 block text-label-sm uppercase text-faint">
+          <h3 className="text-body font-medium text-text">Edit meeting</h3>
+          <label htmlFor="edit-title" className="mt-4 block text-caption uppercase text-faint">
             Title
           </label>
           <input
@@ -196,7 +196,7 @@ export function MeetingTools({
             onChange={(event) => setTitle(event.target.value)}
             className="mt-2 h-input w-full rounded-control border border-border bg-surface px-4 text-text disabled:opacity-50"
           />
-          <label htmlFor="edit-description" className="mt-4 block text-label-sm uppercase text-faint">
+          <label htmlFor="edit-description" className="mt-4 block text-caption uppercase text-faint">
             Description
           </label>
           <textarea
@@ -220,7 +220,7 @@ export function MeetingTools({
 
       {mode === 'delete' && (
         <div className="mt-5 rounded-card border border-warn-border bg-surface-2 p-4">
-          <h3 className="text-body-sm font-medium text-warn">
+          <h3 className="text-body font-medium text-warn">
             Delete &ldquo;{meeting.title}&rdquo;?
           </h3>
           <p className="mt-2 text-small text-muted">

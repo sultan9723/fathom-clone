@@ -84,7 +84,7 @@ export function MeetingsTable({
       <ul className="space-y-3 sm:hidden" aria-label="Meetings">
         {meetings.map(meeting => (
           <li key={meeting.id} className="rounded-card border border-border bg-surface p-4">
-            <Link href={`/meetings/${meeting.id}`} className="block break-words text-body-sm font-semibold text-text hover:text-accent">
+            <Link href={`/meetings/${meeting.id}`} className="block break-words text-body font-semibold text-text hover:text-accent">
               {highlight(meeting.title, query)}
             </Link>
             <dl className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-small text-muted">
@@ -101,7 +101,7 @@ export function MeetingsTable({
               <th
                 key={heading}
                 scope="col"
-                className="hidden py-3 pr-6 text-label-sm uppercase text-faint sm:table-cell"
+                className="hidden py-3 pr-6 text-caption uppercase text-faint sm:table-cell"
               >
                 {heading}
               </th>
@@ -122,7 +122,7 @@ export function MeetingsTable({
               <td className="block py-4 pr-6 align-top sm:table-cell">
                 <Link
                   href={`/meetings/${meeting.id}`}
-                  className="block rounded-chip text-title font-semibold text-text transition-colors duration-fast ease-out-design group-hover:text-accent"
+                  className="block rounded-chip text-h4 font-semibold text-text transition-colors duration-fast ease-out-design group-hover:text-accent"
                 >
                   {highlight(meeting.title, query)}
                 </Link>

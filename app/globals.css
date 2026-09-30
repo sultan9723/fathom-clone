@@ -48,6 +48,9 @@
   --accent-bg: #10201a;
   --accent-bg-2: #16261c;
   --accent-border: #2b5a3e;
+  /* Disabled primary button: its own fill, so it doesn't read as a washed-out
+     live button. From the reference canvas. */
+  --accent-disabled: #1d3325;
 
   /* Warnings and errors */
   --warn: #f5b971;
@@ -75,6 +78,10 @@
   --duration-base: 280ms;
   --duration-slow: 520ms;
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* Drawer slide. The JS close timer reads this same number (see
+     navigation-drawer.tsx) so the panel can't vanish mid-animation. */
+  --drawer-duration: 260ms;
 }
 
 @layer base {
@@ -82,8 +89,11 @@
     background-color: var(--bg);
   }
 
+  /* No background-color here on purpose. html paints the page ground; giving
+     body an opaque background too would paint over the ambient glows, which
+     sit at a negative z-index. In CSS painting order a block's own background
+     comes after its negative-z descendants, so body's fill would hide them. */
   body {
-    background-color: var(--bg);
     color: var(--text);
   }
 
@@ -99,6 +109,17 @@
   [dir='rtl'] {
     text-align: right;
   }
+}
+
+/* Ambient background glows (DESIGN.md). Only transform animates, and the two
+   loops have different periods so they never beat in sync. */
+@keyframes drift-a {
+  0%, 100% { transform: translate(-10%, -10%) scale(1); }
+  50%      { transform: translate(6%, 4%) scale(1.15); }
+}
+@keyframes drift-b {
+  0%, 100% { transform: translate(8%, 6%) scale(1.05); }
+  50%      { transform: translate(-6%, -8%) scale(0.95); }
 }
 
 /* DESIGN.md: no infinite motion except live indicators and skeletons. */

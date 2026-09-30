@@ -102,7 +102,7 @@ export function SpeakerTimeline({
 
   return (
     <Panel as="section" aria-labelledby="timeline-heading" className="p-5">
-      <h2 id="timeline-heading" className="text-label-sm uppercase text-faint">
+      <h2 id="timeline-heading" className="text-caption uppercase text-faint">
         Speaker participation
       </h2>
 

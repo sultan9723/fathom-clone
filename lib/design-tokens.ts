@@ -37,23 +37,35 @@ export const radius = {
 } as const
 
 /** DESIGN.md type scale: [font-size, { lineHeight, letterSpacing, fontWeight }] */
+/**
+ * DESIGN.md's type scale: seven sizes, and only seven. Each entry carries its
+ * own line height, weight and tracking, so `text-h2` alone is the whole style
+ * and a heading never needs a second class to look right.
+ *
+ * Deliberately no ranges and no in-between steps. The previous scale had
+ * eleven entries with overlapping sizes (14 and 15, 11 and 12), which is how
+ * the product ended up with headings that almost matched each other.
+ */
 export const typeScale = {
-  display: ['76px', { lineHeight: '1.02', letterSpacing: '-0.035em', fontWeight: '600' }],
-  h2: ['46px', { lineHeight: '1.05', letterSpacing: '-0.03em', fontWeight: '600' }],
-  h1: ['28px', { lineHeight: '1.2', letterSpacing: '-0.02em', fontWeight: '600' }],
-  title: ['20px', { lineHeight: '1.3', letterSpacing: '-0.01em', fontWeight: '600' }],
-  'body-lg': ['19px', { lineHeight: '1.55', letterSpacing: '0', fontWeight: '400' }],
-  body: ['16px', { lineHeight: '1.5', letterSpacing: '0', fontWeight: '400' }],
-  'body-sm': ['15px', { lineHeight: '1.5', letterSpacing: '0', fontWeight: '400' }],
-  small: ['14px', { lineHeight: '1.45', letterSpacing: '0', fontWeight: '400' }],
-  'small-xs': ['13px', { lineHeight: '1.45', letterSpacing: '0', fontWeight: '500' }],
-  label: ['12px', { lineHeight: '1.2', letterSpacing: '0.1em', fontWeight: '500' }],
-  'label-sm': ['11px', { lineHeight: '1.2', letterSpacing: '0.1em', fontWeight: '500' }],
+  h1: ['56px', { lineHeight: '1.05', letterSpacing: '-0.03em', fontWeight: '600' }],
+  h2: ['36px', { lineHeight: '1.15', letterSpacing: '-0.02em', fontWeight: '600' }],
+  h3: ['24px', { lineHeight: '1.25', letterSpacing: '-0.01em', fontWeight: '600' }],
+  h4: ['18px', { lineHeight: '1.3', letterSpacing: '0', fontWeight: '600' }],
+  body: ['16px', { lineHeight: '1.55', letterSpacing: '0', fontWeight: '400' }],
+  small: ['13px', { lineHeight: '1.4', letterSpacing: '0', fontWeight: '400' }],
+  caption: ['11px', { lineHeight: '1.3', letterSpacing: '0.1em', fontWeight: '500' }],
 } as const
 
 /** Layout dimensions from DESIGN.md. */
 export const layout = {
   sidebarWidth: '240px',
+  /** Navbar is 72px; its buttons are the 40px `nav` size, not the 44px system one. */
+  navbarHeight: '72px',
+  navButtonHeight: '40px',
+  /** Marketing footer is 84px; the app's minimal one is 48px. */
+  footerHeight: '84px',
+  footerHeightApp: '48px',
+  drawerWidth: '300px',
   /** Minimum touch target. */
   touchTarget: '44px',
   controlHeight: '44px',

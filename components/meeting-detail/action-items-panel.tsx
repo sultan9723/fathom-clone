@@ -48,11 +48,11 @@ export function ActionItemsPanel({
   return (
     <Panel as="section" aria-labelledby="actions-heading" className="p-5">
       <div className="flex items-baseline justify-between gap-3">
-        <h2 id="actions-heading" className="text-label-sm uppercase text-faint">
+        <h2 id="actions-heading" className="text-caption uppercase text-faint">
           Action items
         </h2>
         {items.length > 0 && (
-          <span className="font-mono text-label-sm tabular-nums text-faint">
+          <span className="font-mono text-caption tabular-nums text-faint">
             {items.filter((item) => item.completed).length}/{items.length}
           </span>
         )}
@@ -80,7 +80,7 @@ export function ActionItemsPanel({
                 />
                 <span className="min-w-0">
                   <span
-                    className={`block text-body-sm ${
+                    className={`block text-body ${
                       item.completed ? 'text-faint line-through' : 'text-text'
                     }`}
                   >
