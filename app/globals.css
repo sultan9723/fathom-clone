@@ -54,12 +54,15 @@
   --warn-border: #3b2f22;
 
   /* Speakers, assigned in order of first appearance */
-  --speaker-1: #edeff2;
+  --speaker-1: #7dd3fc;
   --speaker-1-bg: #2a2f36;
   --speaker-2: #f5b971;
   --speaker-2-bg: #3a2f22;
   --speaker-3: #7db4ff;
   --speaker-3-bg: #1e2a3b;
+  --speaker-4: #c4b5fd;
+  --speaker-5: #f9a8d4;
+  --speaker-6: #5eead4;
 
   /* Radius — 999 is for status dots only */
   --radius-chip: 8px;

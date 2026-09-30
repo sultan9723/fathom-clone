@@ -1,118 +1,123 @@
-"""Startup seed data.
+"""Versioned demo data; repair only complete known seed fingerprints.
 
-Render's disk isn't persistent across deploys, so every restart starts from
-an empty database. seed_if_empty() runs once at app startup (see main.py's
-lifespan) and only inserts anything when the meetings table is empty.
-
-That table-level guard alone wasn't enough: production ended up with every
-meeting twice because auto-seed ran and a manual seed script ran too, each
-seeing a state the other's guard didn't cover. seed_meetings() is therefore
-idempotent per row — it checks each seed title against the table and inserts
-only what's missing — so seeding any number of times, by any route, can never
-create a duplicate. Use backend/scripts/dedupe_meetings.py to clean up a
-database that already has them.
+Titles alone never identify disposable data. Existing IDs, notes, and action
+items survive a repair. User-edited transcripts and metadata are left intact.
 """
+import json
+from pathlib import Path
+from uuid import NAMESPACE_URL, uuid5
 
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 import models
 
-_MEETINGS: list[dict] = [
-    {
-        "title": "Sales Pipeline Review",
-        "description": "Monthly forecast and customer updates",
-        "languages": "en",
-        "speaker_count": 4,
-        "duration_seconds": 1800,
-        "transcripts": [
-            (0, "David", "Let's get started. This month's pipeline is looking strong across all regions."),
-            (25, "Jessica", "Agreed. We've got three major deals slated to close before quarter end."),
-            (60, "David", "Walk us through the forecast numbers for the West region."),
-            (95, "Marcus", "West is tracking about 12% ahead of target, mostly driven by the Atlas renewal."),
-            (140, "Priya", "On the customer side, churn risk is down. Support tickets from our top accounts are trending well."),
-            (180, "David", "Good. Let's follow up individually on the three big deals and reconvene next week."),
-        ],
-    },
-    {
-        "title": "Q4 Engineering Roadmap",
-        "description": "Quarterly planning and team capacity review",
-        "languages": "en",
-        "speaker_count": 5,
-        "duration_seconds": 2700,
-        "transcripts": [
-            (0, "Aisha", "Welcome everyone. Today we're finalizing the Q4 roadmap and checking capacity."),
-            (30, "Tom", "The platform team has bandwidth for two of the three proposed migrations."),
-            (75, "Elena", "I'd prioritize the auth service migration — it's blocking the mobile team."),
-            (120, "Raj", "Mobile agrees. We can't ship offline mode until that's done."),
-            (160, "Tom", "Understood, we'll move it to the top of the sprint board."),
-            (210, "Aisha", "Let's also lock the API versioning plan before the next release cut."),
-            (250, "Elena", "I'll draft the versioning doc and share it by Friday."),
-        ],
-    },
-    {
-        "title": "Product Atlas Kickoff",
-        "description": "New feature launch strategy",
-        "languages": "en",
-        "speaker_count": 3,
-        "duration_seconds": 1200,
-        "transcripts": [
-            (0, "Sofia", "This is the kickoff for Atlas — our new mapping feature. Let's cover scope first."),
-            (35, "Ben", "Phase one is read-only maps with live location markers, no editing yet."),
-            (80, "Nina", "From a design side, I want to keep the map full-bleed on mobile with a bottom sheet for details."),
-            (130, "Sofia", "Sounds good. What's realistic for a phase one launch date?"),
-            (160, "Ben", "If scope stays fixed, we can target a six-week build."),
-            (190, "Nina", "I'll have mockups ready for review by end of next week."),
-        ],
-    },
-]
+_MEETINGS = json.loads(Path(__file__).with_name("seed_data.json").read_text(encoding="utf-8"))
+_LEGACY = json.loads(Path(__file__).with_name("seed_legacy.json").read_text(encoding="utf-8"))
+_SINGLE_LINES = {
+    "Sales Pipeline Review": "Let's discuss the sales pipeline for Q4. We've seen strong growth in enterprise deals.",
+    "Q4 Engineering Roadmap": "Our roadmap focuses on API performance improvements and real-time collaboration features.",
+    "Product Atlas Kickoff": "Project Atlas is our new global initiative. We're launching in three regions simultaneously.",
+}
+
+
+def _lock(db: Session) -> None:
+    # Serialize startup/manual seed paths across PostgreSQL workers.
+    if db.get_bind().dialect.name == "postgresql":
+        db.execute(text("SELECT pg_advisory_xact_lock(735918240)"))
+
+
+def _signature(lines):
+    return sorted(((line.timestamp_seconds, line.speaker_name, line.text, line.original_language)
+                   for line in lines), key=lambda row: (row[0], row[1] or "", row[2], row[3] or ""))
+
+
+def _expected(entry):
+    return sorted((stamp, speaker, content, entry["languages"])
+                  for stamp, speaker, content in entry["transcripts"])
+
+
+def _known(db: Session, meeting, entry) -> bool:
+    legacy = next(item for item in _LEGACY if item["title"] == entry["title"])
+    descriptions = {entry["description"], legacy["description"]}
+    if entry["title"] == "Q4 Engineering Roadmap":
+        descriptions.add("Sprint planning and API improvements")
+    if (meeting.description not in descriptions or
+            meeting.languages not in {"en", "EN"} or
+            meeting.speaker_count != entry["speaker_count"] or
+            meeting.duration_seconds != entry["duration_seconds"]):
+        return False
+    actual = _signature(db.query(models.Transcript).filter_by(meeting_id=meeting.id).all())
+    return actual in [_expected(entry), _expected(legacy),
+                      [(0, None, _SINGLE_LINES[entry["title"]], None)]]
+
+
+def _write_lines(db: Session, meeting_id: str, entry) -> None:
+    for timestamp, speaker, content in entry["transcripts"]:
+        db.add(models.Transcript(meeting_id=meeting_id, timestamp_seconds=timestamp,
+                                 speaker_name=speaker, text=content, original_language="en"))
+
+
+def repair_demo_meetings(db: Session, *, apply: bool = False) -> list[dict]:
+    """Report or repair exact known demo rows; caller owns the transaction."""
+    _lock(db)
+    report = []
+    for entry in _MEETINGS:
+        candidates = db.query(models.Meeting).filter_by(title=entry["title"]).order_by(
+            models.Meeting.created_at, models.Meeting.id).all()
+        known = [meeting for meeting in candidates if _known(db, meeting, entry)]
+        if not known:
+            continue
+        keep, *duplicates = known
+        lines = db.query(models.Transcript).filter_by(meeting_id=keep.id).all()
+        rewrite = _signature(lines) != _expected(entry)
+        if not rewrite and not duplicates:
+            continue
+        report.append({"title": entry["title"], "keep": keep.id,
+                       "remove": [m.id for m in duplicates], "replace_transcript": rewrite})
+        if not apply:
+            continue
+        for duplicate in duplicates:
+            for model in (models.ActionItem, models.Note):
+                db.query(model).filter_by(meeting_id=duplicate.id).update({"meeting_id": keep.id})
+            for model in (models.TranscriptTranslation, models.Transcript):
+                db.query(model).filter_by(meeting_id=duplicate.id).delete(synchronize_session=False)
+            db.delete(duplicate)
+        if rewrite:
+            db.query(models.TranscriptTranslation).filter_by(meeting_id=keep.id).delete(synchronize_session=False)
+            db.query(models.Transcript).filter_by(meeting_id=keep.id).delete(synchronize_session=False)
+            _write_lines(db, keep.id, entry)
+        keep.languages = "en"
+        db.flush()
+    return report
 
 
 def seed_meetings(db: Session) -> list[str]:
-    """Insert every seed meeting not already present, matched by title.
-
-    Safe to call repeatedly: titles already in the table are skipped, so this
-    adds missing seed rows without ever duplicating existing ones. Returns the
-    titles it inserted.
-    """
-    existing_titles = {title for (title,) in db.query(models.Meeting.title).all()}
-    inserted: list[str] = []
-
+    """Seed missing titles, repairing only exact known demo fingerprints."""
+    _lock(db)
+    repair_demo_meetings(db, apply=True)
+    existing = {title for (title,) in db.query(models.Meeting.title).all()}
+    inserted = []
     for entry in _MEETINGS:
-        if entry["title"] in existing_titles:
+        if entry["title"] in existing:
             continue
-
         meeting = models.Meeting(
-            title=entry["title"],
-            description=entry["description"],
-            languages=entry["languages"],
-            speaker_count=entry["speaker_count"],
-            duration_seconds=entry["duration_seconds"],
-        )
+            id=str(uuid5(NAMESPACE_URL, f'noteai:demo:{entry["title"]}')),
+            **{key: value for key, value in entry.items() if key != "transcripts"})
         db.add(meeting)
-        db.flush()  # assigns meeting.id for the transcripts below
-
-        for timestamp_seconds, speaker_name, text in entry["transcripts"]:
-            db.add(
-                models.Transcript(
-                    meeting_id=meeting.id,
-                    text=text,
-                    timestamp_seconds=timestamp_seconds,
-                    speaker_name=speaker_name,
-                    original_language=entry["languages"],
-                )
-            )
-
-        # Guard against the same title appearing twice in _MEETINGS itself.
-        existing_titles.add(entry["title"])
+        db.flush()
+        _write_lines(db, meeting.id, entry)
+        existing.add(entry["title"])
         inserted.append(entry["title"])
-
-    if inserted:
-        db.commit()
+    db.commit()
     return inserted
 
 
 def seed_if_empty(db: Session) -> None:
-    """Startup hook: seed only a completely empty meetings table."""
-    if db.query(models.Meeting).count() > 0:
-        return
-    seed_meetings(db)
+    """Repair known seeds on startup; do not populate a user-only workspace."""
+    _lock(db)
+    if db.query(models.Meeting).count() == 0:
+        seed_meetings(db)
+    else:
+        repair_demo_meetings(db, apply=True)
+        db.commit()

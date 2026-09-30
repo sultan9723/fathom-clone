@@ -6,21 +6,22 @@ import { formatTimecode } from '@/lib/utils'
 import { Panel } from '@/components/ui'
 
 /**
- * Who spoke when, derived entirely from transcript timestamps.
+ * Estimated participation, derived entirely from transcript timestamps.
  *
  * A line has a start but no end, so a turn runs until the next line begins;
- * the last turn runs to the meeting's duration. Consecutive lines from the
- * same speaker are merged into one turn, which is what makes the shape
- * readable — otherwise every line is its own sliver.
+ * the final line gets a typical turn's duration. Consecutive lines from the
+ * same speaker are merged, then totaled into one proportional bar per speaker.
  *
- * DESIGN.md assigns speaker colours in order of first appearance and gives
- * three; a fourth speaker onward reuses them in the same order.
+ * Colors follow first appearance, with six distinct colors for demo speakers.
  */
 
 const SPEAKER_STYLES = [
   { bar: 'bg-speaker-1', dot: 'bg-speaker-1', text: 'text-speaker-1' },
   { bar: 'bg-speaker-2', dot: 'bg-speaker-2', text: 'text-speaker-2' },
   { bar: 'bg-speaker-3', dot: 'bg-speaker-3', text: 'text-speaker-3' },
+  { bar: 'bg-speaker-4', dot: 'bg-speaker-4', text: 'text-speaker-4' },
+  { bar: 'bg-speaker-5', dot: 'bg-speaker-5', text: 'text-speaker-5' },
+  { bar: 'bg-speaker-6', dot: 'bg-speaker-6', text: 'text-speaker-6' },
 ]
 
 export interface Turn {
@@ -97,13 +98,12 @@ export function SpeakerTimeline({
 
   if (turns.length === 0) return null
 
-  // The timeline spans the meeting, or the last turn if that runs past it.
-  const span = Math.max(durationSeconds, turns[turns.length - 1]!.end, 1)
+  const totalSpoken = Math.max(turns.reduce((total, turn) => total + turn.end - turn.start, 0), 1)
 
   return (
     <Panel as="section" aria-labelledby="timeline-heading" className="p-5">
       <h2 id="timeline-heading" className="text-label-sm uppercase text-faint">
-        Who spoke when
+        Speaker participation
       </h2>
 
       <div className="mt-4 space-y-3">
@@ -123,17 +123,15 @@ export function SpeakerTimeline({
               </div>
 
               <div className="relative h-6 rounded-chip bg-surface-2">
-                {own.map((turn) => (
                   <span
-                    key={`${turn.start}-${turn.end}`}
+                    data-speaker-bar={speaker}
                     className={`absolute inset-y-1 rounded-[3px] ${style.bar}`}
                     style={{
-                      left: `${(turn.start / span) * 100}%`,
-                      width: `${Math.max(((turn.end - turn.start) / span) * 100, 0.6)}%`,
+                      left: 0,
+                      width: `${(spoken / totalSpoken) * 100}%`,
                     }}
-                    title={`${speaker} · ${formatTimecode(turn.start)}–${formatTimecode(turn.end)}`}
+                    title={`${speaker} · ${Math.round(spoken / totalSpoken * 100)}% · ${formatTimecode(spoken)}`}
                   />
-                ))}
                 <span className="sr-only">
                   {speaker} spoke for {formatTimecode(spoken)} across {own.length}{' '}
                   {own.length === 1 ? 'turn' : 'turns'}
@@ -144,10 +142,7 @@ export function SpeakerTimeline({
         })}
       </div>
 
-      <div className="mt-3 flex justify-between border-t border-border-subtle pt-2 font-mono text-label-sm text-faint">
-        <span>0:00</span>
-        <span>{formatTimecode(span)}</span>
-      </div>
+      <p className="mt-3 text-small text-faint">Estimated share of speaking time, based on transcript timestamps.</p>
     </Panel>
   )
 }

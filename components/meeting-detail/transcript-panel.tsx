@@ -30,7 +30,7 @@ const READ_IN: { value: LanguageCode; label: string }[] = [
   { value: 'es', label: 'ES' },
 ]
 
-const SPEAKER_TEXT = ['text-speaker-1', 'text-speaker-2', 'text-speaker-3']
+const SPEAKER_TEXT = ['text-speaker-1', 'text-speaker-2', 'text-speaker-3', 'text-speaker-4', 'text-speaker-5', 'text-speaker-6']
 
 type Status = 'idle' | 'loading' | 'error'
 
