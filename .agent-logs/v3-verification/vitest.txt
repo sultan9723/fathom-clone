@@ -1,0 +1,23 @@
+
+> fathom-clone@0.1.0 test:run
+> vitest --run
+
+[33mThe CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.[39m
+
+ RUN  v2.1.9 F:/fathom-clone-1
+
+ ✓ tests/i18n-text.test.ts (9 tests) 11ms
+ ✓ tests/api-base.test.ts (5 tests) 78ms
+ ✓ tests/marketing-demo.test.ts (13 tests) 13ms
+ ✓ tests/motion.test.ts (7 tests) 10ms
+ ✓ tests/scramble.test.ts (7 tests) 11ms
+ ✓ tests/api-errors.test.ts (10 tests) 33ms
+ ✓ tests/speaker-timeline.test.ts (9 tests) 20ms
+ ✓ tests/meeting-filter.test.ts (3 tests) 16ms
+ ✓ tests/next-config.test.ts (2 tests) 14ms
+
+ Test Files  9 passed (9)
+      Tests  65 passed (65)
+   Start at  15:59:47
+   Duration  2.58s (transform 1.07s, setup 0ms, collect 1.78s, tests 205ms, environment 4ms, prepare 4.03s)
+
