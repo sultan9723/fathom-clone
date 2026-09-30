@@ -283,3 +283,17 @@ def test_parser_reattaches_wrapped_continuation_lines():
 def test_parser_rejects_a_reply_missing_a_line():
     with pytest.raises(ValueError, match="2 of 3"):
         translations._parse_batch_response("1. one\n3. three", 3)
+
+
+def test_batch_translation_never_logs_the_provider_error_text(db, meeting, use_provider, caplog):
+    """Real provider errors quote the API key back."""
+    secret = "401 Unauthorized: invalid api key gsk_liveSECRETkey123"
+    use_provider(FakeProvider(error=RuntimeError(secret)))
+
+    with caplog.at_level("DEBUG"):
+        with pytest.raises(HTTPException) as raised:
+            translate(meeting.id, "ur", db)
+
+    assert "gsk_liveSECRETkey123" not in raised.value.detail
+    assert "gsk_liveSECRETkey123" not in caplog.text
+    assert secret not in caplog.text

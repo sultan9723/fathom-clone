@@ -223,7 +223,10 @@ def ask(payload: schemas.AskRequest, db: Session = Depends(get_db)) -> schemas.A
             response="AI unavailable: provider SDK is not installed (pip install -r requirements.txt)"
         )
     except Exception as exc:  # never fail the request because the AI provider is unhappy
-        return schemas.AskResponse(response=f"AI unavailable: {type(exc).__name__}: {exc}")
+        # Only the exception type, never str(exc): provider errors quote the
+        # API key back, and this string is rendered straight into the UI.
+        logger.error("Ask failed for meeting %s: %s", meeting.id, type(exc).__name__)
+        return schemas.AskResponse(response=f"AI unavailable: {type(exc).__name__}")
 
 
 @router.post("/translate", response_model=schemas.TranslateResponse)
@@ -272,5 +275,12 @@ def translate(
             "(pip install -r requirements.txt)"
         )
     except Exception as exc:
-        logger.exception("Translation failed (%s -> %s)", payload.source_lang, payload.target_lang)
+        # error(), not exception(): a traceback would carry the provider's
+        # message, and that message carries the key.
+        logger.error(
+            "Translation failed (%s -> %s): %s",
+            payload.source_lang,
+            payload.target_lang,
+            type(exc).__name__,
+        )
         return reply(f"Translation unavailable: {type(exc).__name__}")

@@ -156,3 +156,46 @@ def test_the_assembled_transcript_context_is_truncated_not_rejected():
 
     assert "[transcript truncated]" in prompt
     assert prompt.endswith("Question: What happened?")
+
+
+# --- Secrets never escape ----------------------------------------------------
+
+class LeakyProvider:
+    """A provider whose error quotes the API key back, as real ones do."""
+
+    MESSAGE = "401 Unauthorized: invalid api key gsk_liveSECRETkey123 for openai/gpt-oss-120b"
+
+    def __call__(self, system, prompt, max_tokens):
+        raise RuntimeError(self.MESSAGE)
+
+
+def test_ask_never_returns_the_provider_error_text(db, meeting, monkeypatch, caplog):
+    monkeypatch.setattr(ai, "_resolve_provider", lambda: LeakyProvider())
+
+    with caplog.at_level("DEBUG"):
+        result = ai.ask(
+            schemas.AskRequest(meeting_id=meeting.id, question="What happened?"), db=db
+        )
+
+    # The response is rendered straight into the UI.
+    assert "gsk_liveSECRETkey123" not in result.response
+    assert LeakyProvider.MESSAGE not in result.response
+    assert result.response == "AI unavailable: RuntimeError"
+
+    logged = caplog.text
+    assert "gsk_liveSECRETkey123" not in logged
+    assert LeakyProvider.MESSAGE not in logged
+
+
+def test_translate_never_returns_or_logs_the_provider_error_text(db, monkeypatch, caplog):
+    monkeypatch.setattr(ai, "_resolve_provider", lambda: LeakyProvider())
+
+    with caplog.at_level("DEBUG"):
+        result = ai.translate(
+            schemas.TranslateRequest(text="hello", source_lang="en", target_lang="es"),
+            db=db,
+        )
+
+    assert "gsk_liveSECRETkey123" not in result.translated
+    assert result.translated == "Translation unavailable: RuntimeError"
+    assert "gsk_liveSECRETkey123" not in caplog.text
