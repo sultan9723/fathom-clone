@@ -79,6 +79,11 @@
   --duration-slow: 520ms;
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
 
+  /* Chrome heights, so a page can subtract them to fill the rest of the
+     viewport without hardcoding the numbers twice. */
+  --navbar-h: 72px;
+  --footer-h: 84px;
+
   /* Drawer slide. The JS close timer reads this same number (see
      navigation-drawer.tsx) so the panel can't vanish mid-animation. */
   --drawer-duration: 260ms;
