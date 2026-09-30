@@ -2,20 +2,22 @@
 .product-shell { display:flex; min-height:100vh; font-size:16px; line-height:1.5; }
 .product-shell *, .product-sign-in * { min-width:0; }
 .product-shell button, .product-shell input, .product-shell select { transition-property:opacity,transform; }
-.product-shell button, .product-shell select, .product-link-button { min-height:44px; }
-.product-shell h1, .product-sign-in h1 { font-size:28px; line-height:1.2; font-weight:600; letter-spacing:-.02em; }
-.product-shell h2 { font-size:20px; line-height:1.3; font-weight:600; letter-spacing:-.01em; }
-.product-shell h3 { font-size:16px; line-height:1.5; font-weight:600; }
+/* H2 (DESIGN.md). Was 28px, which is not on the scale. */
+.product-shell h1, .product-sign-in h1 { font-size:36px; line-height:1.15; font-weight:600; letter-spacing:-.02em; }
+/* H3. Was 20px. */
+.product-shell h2 { font-size:24px; line-height:1.25; font-weight:600; letter-spacing:-.01em; }
+/* H4. Was Body size, which gave a heading no weight of its own. */
+.product-shell h3 { font-size:18px; line-height:1.3; font-weight:600; }
 .product-main { flex:1; padding:32px 48px 64px; }
 .product-page { max-width:1440px; margin:0 auto; }
 .product-page-header { display:flex; gap:24px; justify-content:space-between; align-items:flex-start; margin-bottom:32px; flex-wrap:wrap; }
 .product-page-header p { color:var(--muted); margin-top:12px; max-width:680px; }
 .product-sidebar { width:240px; flex-shrink:0; position:sticky; top:0; height:100dvh; border-right:1px solid var(--border-subtle); padding:24px 16px; display:flex; flex-direction:column; gap:32px; }
-.product-wordmark { font-size:24px; font-weight:600; letter-spacing:-.035em; display:inline-flex; align-items:center; min-height:44px; }
+.product-wordmark { font-size:18px; font-weight:600; letter-spacing:-.035em; display:inline-flex; align-items:center; min-height:44px; }
 .sidebar-heading { padding:0 8px; display:flex; align-items:center; justify-content:space-between; }
 .sidebar-content { flex:1; display:flex; flex-direction:column; gap:28px; }
 .sidebar-content nav { display:grid; gap:4px; }
-.sidebar-content nav a { min-height:44px; display:flex; align-items:center; border-radius:var(--radius-chip); padding:12px; color:var(--muted); font-size:15px; }
+.sidebar-content nav a { min-height:48px; display:flex; align-items:center; border-radius:var(--radius-control); padding:0 14px; color:var(--muted); font-size:15px; }
 .sidebar-content nav a[aria-current], .sidebar-content nav a:hover { background:var(--surface-hover); color:var(--text); }
 .workspace-profile { display:flex; align-items:center; gap:12px; margin-top:auto; font-size:14px; padding:12px 4px; }
 .workspace-profile small { display:block; color:var(--muted); font-size:13px; margin-top:4px; }
@@ -23,8 +25,6 @@
 .product-sidebar .mobile-menu-toggle { display:none; }
 .product-skip { position:absolute; top:8px; left:16px; z-index:100; transform:translateY(-200%); background:var(--accent); color:var(--accent-ink); padding:12px 16px; }
 .product-skip:focus { transform:translateY(0); }
-.product-link-button { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:10px 20px; border:1px solid var(--border-strong); border-radius:var(--radius-control); font-size:14px; font-weight:500; }
-.product-link-button.primary { background:var(--accent); border-color:var(--accent); color:var(--accent-ink); font-weight:600; }
 .product-text-link { display:inline-flex; align-items:center; min-height:44px; text-decoration:underline; text-underline-offset:4px; font-size:14px; margin-right:16px; }
 .product-actions { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:20px; }
 .product-page-header > .product-actions { margin-top:0; }
@@ -68,8 +68,7 @@
 .wrap-anywhere { overflow-wrap:anywhere; }
 .product-sign-in { max-width:640px; margin:64px auto; font-size:16px; line-height:1.5; }
 .product-sign-in .product-wordmark { margin-bottom:32px; }
-.product-sign-in .product-link-button { margin-top:24px; }
-.library-toolbar { display:flex; justify-content:space-between; gap:24px; align-items:center; margin:28px 0; flex-wrap:wrap; }
+.product-sign-in .library-toolbar { display:flex; justify-content:space-between; gap:24px; align-items:center; margin:28px 0; flex-wrap:wrap; }
 .library-filters { display:flex; gap:8px; flex-wrap:wrap; }
 .library-filters button { border:1px solid var(--border); border-radius:var(--radius-chip); padding:8px 16px; color:var(--muted); font-size:14px; }
 .library-filters button[aria-pressed=true] { color:var(--text); background:var(--surface-2); border-color:var(--border-strong); }
@@ -120,8 +119,8 @@
 .action-checkbox { display:flex; min-width:44px; min-height:44px; align-items:flex-start; padding-top:4px; justify-content:center; }
 .action-checkbox input { width:20px; height:20px; accent-color:var(--accent); }
 .action-copy { flex:1; }
-.action-copy p { font-size:15px; }
-.action-copy small { display:block; margin-top:8px; color:var(--muted); font-size:12px; }
+.action-copy p { font-size:16px; line-height:1.55; }
+.action-copy small { display:block; margin-top:8px; color:var(--muted); font-size:11px; }
 .action-row[data-completed=true] .action-title { text-decoration:line-through; color:var(--muted); }
 .action-add-form { margin-top:24px; padding-top:24px; border-top:1px solid var(--border); display:grid; gap:16px; }
 .ask-form { display:grid; gap:12px; margin-top:20px; }
@@ -138,11 +137,11 @@
 .participants-panel { margin-top:24px; }
 .library-extra-filters { margin:0 0 24px; }
 .library-extra-filters summary, .action-add-form summary { cursor:pointer; min-height:44px; display:flex; align-items:center; font-size:14px; color:var(--muted); }
-.product-shell .panel-eyebrow { font-size:12px; line-height:1.5; letter-spacing:.1em; }
+.product-shell .panel-eyebrow { font-size:11px; line-height:1.5; letter-spacing:.1em; }
 .product-shell .transcript-list { position:relative; margin-top:20px; }
 .product-shell .transcript-row .script-text { display:block; }
 .product-shell .source-buttons:empty { display:none; }
 @media (max-width:1279px) { .product-main { padding:28px 24px 48px; } .meeting-columns { grid-template-columns:minmax(0,1.4fr) minmax(280px,1fr); gap:16px; } .transcript-row { grid-template-columns:52px minmax(0,1fr); } .transcript-text { grid-column:1 / -1; } .meeting-main-panel,.meeting-side-panel { padding:20px; } }
 @media (max-width:1023px) { .product-shell { display:block; } .product-sidebar { width:100%; height:auto; position:relative; border-right:0; border-bottom:1px solid var(--border); padding:12px 24px; gap:12px; } .product-sidebar .mobile-menu-toggle { display:inline-flex; } .sidebar-content { display:none; padding:12px 0; } .sidebar-content.menu-open { display:flex; } .workspace-profile { margin-top:0; } .meeting-columns { grid-template-columns:1fr; } .transcript-row { grid-template-columns:60px 100px minmax(0,1fr); } .transcript-text { grid-column:auto; } .join-entry-form { flex-wrap:wrap; } .join-input { flex-basis:100%; } .meeting-table .platform-column { display:none; } }
-@media (max-width:639px) { .product-main { padding:24px 16px 48px; } .product-sidebar { padding:12px 16px; } .product-page-header { gap:20px; margin-bottom:24px; } .product-shell h1 { font-size:28px; } .product-section { padding:20px; } .product-page-header > .product-search { width:100%; } .join-entry-form > button { flex:1; padding-left:12px; padding-right:12px; font-size:14px; } .join-input { flex-wrap:wrap; } .join-input input { font-size:13px; padding:8px; } .form-grid { grid-template-columns:1fr; } .meeting-table, .meeting-table tbody { display:block; } .meeting-table thead { display:none; } .meeting-table tr { display:flex; flex-wrap:wrap; gap:12px 20px; padding:20px 0; border-bottom:1px solid var(--border); } .meeting-table td, .meeting-table td:first-child { width:auto; border:0; padding:0; } .meeting-table td:first-child { flex-basis:100%; } .meeting-table td[data-label]::before { content:attr(data-label) ': '; color:var(--muted); font-size:12px; } .meeting-table tr:hover td { background:none; } .meeting-table .platform-column { display:block; } .transcript-row { grid-template-columns:56px minmax(0,1fr); padding:16px 8px; } .transcript-text { grid-column:1 / -1; } .meeting-main-panel,.meeting-side-panel { padding:20px 16px; } .transcript-timeline { padding:20px 16px; } .timeline-range { flex-wrap:wrap; } .timeline-range input { flex-basis:100%; } .capability-list > div { grid-template-columns:1fr; gap:8px; } .library-toolbar { margin:24px 0; gap:16px; } .product-page-header .product-actions { width:100%; gap:8px; } .product-page-header .product-actions button { padding:8px 12px; font-size:13px; } .product-sign-in { margin:40px 0; } }
+@media (max-width:639px) { .product-main { padding:24px 16px 48px; } .product-sidebar { padding:12px 16px; } .product-page-header { gap:20px; margin-bottom:24px; } .product-shell h1 { font-size:36px; } .product-section { padding:20px; } .product-page-header > .product-search { width:100%; } .join-entry-form > button { flex:1; padding-left:12px; padding-right:12px; font-size:14px; } .join-input { flex-wrap:wrap; } .join-input input { font-size:13px; padding:8px; } .form-grid { grid-template-columns:1fr; } .meeting-table, .meeting-table tbody { display:block; } .meeting-table thead { display:none; } .meeting-table tr { display:flex; flex-wrap:wrap; gap:12px 20px; padding:20px 0; border-bottom:1px solid var(--border); } .meeting-table td, .meeting-table td:first-child { width:auto; border:0; padding:0; } .meeting-table td:first-child { flex-basis:100%; } .meeting-table td[data-label]::before { content:attr(data-label) ': '; color:var(--muted); font-size:12px; } .meeting-table tr:hover td { background:none; } .meeting-table .platform-column { display:block; } .transcript-row { grid-template-columns:56px minmax(0,1fr); padding:16px 8px; } .transcript-text { grid-column:1 / -1; } .meeting-main-panel,.meeting-side-panel { padding:20px 16px; } .transcript-timeline { padding:20px 16px; } .timeline-range { flex-wrap:wrap; } .timeline-range input { flex-basis:100%; } .capability-list > div { grid-template-columns:1fr; gap:8px; } .library-toolbar { margin:24px 0; gap:16px; } .product-page-header .product-actions { width:100%; gap:8px; } .product-page-header .product-actions button { padding:8px 12px; font-size:13px; } .product-sign-in { margin:40px 0; } }
 @media (prefers-reduced-motion:no-preference) { .skeleton-lines span { animation:pulse-dot 1.6s var(--ease-out) infinite; } }

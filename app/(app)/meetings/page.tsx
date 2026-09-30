@@ -116,7 +116,7 @@ export default function MeetingsPage() {
   return (
     <div className="mx-auto w-full max-w-[1100px]">
       <header className="pb-6">
-        <h1 className="text-h1 text-text">Meetings</h1>
+        <h1 className="text-h2 text-text">Meetings</h1>
       </header>
 
       <AddMeetingBar />

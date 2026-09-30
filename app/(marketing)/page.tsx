@@ -4,7 +4,6 @@ import { Badge, Panel } from '@/components/ui'
 import { i18nText } from '@/lib/i18n-text'
 import { ActionLink } from '@/components/marketing/action-link'
 import { JoinDemo } from '@/components/marketing/join-demo'
-import { MarketingHeader } from '@/components/marketing/header'
 import { JoinForm } from '@/components/product/join-form'
 import { MeetingStory } from '@/components/marketing/meeting-story'
 import { atlas, languages } from '@/components/marketing/demo'
@@ -19,8 +18,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return <div className="landing">
     <a href="#main" className="skip-link">Skip to content</a>
-    <MarketingHeader />
-    <main id="main">
+    <div id="main">
       <section className="landing-hero" aria-labelledby="hero-heading">
         <Badge>Multilingual meeting notes</Badge>
         <h1 id="hero-heading">Every meeting,<br />understood in<br className="hero-mobile-break" /> every language.</h1>
@@ -51,7 +49,6 @@ export default function Home() {
       </section>
       <section className="landing-section privacy-section" aria-labelledby="privacy-heading"><div className="section-intro"><span className="eyebrow">Privacy</span><h2 id="privacy-heading">Clear to everyone.<br />Controlled by you.</h2></div><div className="privacy-list"><div><h3>No invisible notetakers.</h3><p>The joining experience requires a visible recording notice for everyone. Live recording is not connected here.</p></div><div><h3>Your notes. Your audience.</h3><p>Choose what to copy or export. This shared workspace does not yet offer private accounts or recipient access controls.</p></div><div><h3>A meeting can stay in the past.</h3><p>Delete a meeting and its saved transcript, translations and action items when you no longer need them.</p></div></div></section>
       <section className="landing-section final-cta" aria-labelledby="cta-heading"><h2 id="cta-heading">Bring every voice<br />into the conversation.</h2><p>Start with a transcript. Share the understanding.</p><ActionLink href="/meetings/new">Import a transcript <span aria-hidden="true">↗</span></ActionLink></section>
-    </main>
-    <footer className="landing-footer"><Link className="wordmark" href="/">NoteAI</Link><span>Every voice, understood.</span><nav aria-label="Footer navigation"><a href="#how-it-works">How it works</a><a href="https://github.com/sultan9723/fathom-clone">GitHub <span aria-hidden="true">↗</span></a></nav></footer>
+    </div>
   </div>
 }

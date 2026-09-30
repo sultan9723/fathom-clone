@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import type { ApiActionItem } from '@/lib/types'
 import { listMeetings, readActions } from '@/lib/product-api'
-import { Panel } from '@/components/ui'
+import { Panel, ButtonLink } from '@/components/ui'
 import { ActionList } from './action-list'
 import { LanguageSelect, useReadingLanguage } from './preferences'
 import { EmptyState, LoadingState, Notice } from './states'
@@ -32,7 +32,7 @@ export function ActionLibrary() {
   return <div className="product-page"><header className="product-page-header"><div><h1>Action items</h1><p>Follow-ups from your saved meetings, with their owners and completion state.</p></div><LanguageSelect value={language} onChange={setLanguage} /></header><div className="library-toolbar"><div className="library-filters" role="group" aria-label="Action-item filter">{['all', 'open', 'done'].map(value => <button key={value} type="button" aria-pressed={filter === value} onClick={() => setFilter(value)}>{value === 'all' ? 'All' : value === 'open' ? 'Open' : 'Done'}</button>)}</div></div>
     {result.loading ? <LoadingState label="Loading action items" onCancel={result.cancel} /> : result.error || result.canceled ? <Notice title={result.canceled ? 'Loading canceled' : 'Could not load action items'} warning={!!result.error} onRetry={result.retry}>{result.error}</Notice> : <>
       {!!failed.length && <Notice title={`${failed.length} meeting${failed.length === 1 ? '' : 's'} could not be loaded`} warning onRetry={result.retry}>Other action items are shown below.</Notice>}
-      {!visible.length && !failed.length && <EmptyState title="No action items to show" action={<Link href="/meetings" className="product-link-button">Open meetings</Link>}>Open a meeting to add follow-ups, or try another filter.</EmptyState>}
+      {!visible.length && !failed.length && <EmptyState title="No action items to show" action={<ButtonLink href="/meetings">Open meetings</ButtonLink>}>Open a meeting to add follow-ups, or try another filter.</EmptyState>}
       {visible.map(group => <Panel key={group.meeting.id} className="product-section"><h2><Link className="product-text-link" href={`/meetings/${encodeURIComponent(group.meeting.id)}`}>{group.meeting.title}</Link></h2><ActionList meetingId={group.meeting.id} items={group.items} source={group.meeting.languages?.split(',')[0]?.trim() || 'en'} allowAdd={false} onSaved={item => setSaved(current => ({ ...current, [item.id]: item }))} /></Panel>)}
     </>}
   </div>
