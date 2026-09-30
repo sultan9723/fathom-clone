@@ -1,0 +1,509 @@
+[
+  {
+    "title": "Sales Pipeline Review",
+    "description": "Monthly forecast and customer updates",
+    "languages": "en",
+    "speaker_count": 4,
+    "duration_seconds": 1800,
+    "transcripts": [
+      [
+        0,
+        "David",
+        "Let's review the monthly forecast, the three enterprise opportunities, and the renewals that need help. I want us to leave with owners and next steps, rather than treating every verbal yes as a committed deal."
+      ],
+      [
+        57,
+        "Jessica",
+        "The headline is encouraging: our qualified pipeline is up, but Northstar still has procurement work outstanding. I have removed their expansion from the committed column until we receive the purchase order. The forecast sheet is open for everyone."
+      ],
+      [
+        115,
+        "Marcus",
+        "West is tracking twelve percent ahead of target. Most of that comes from the Atlas renewal, which is already through security review. The risk is the payment schedule, not whether the customer wants to renew."
+      ],
+      [
+        172,
+        "Priya",
+        "Customer health supports that view. Atlas has adopted the reporting features across three teams, and support tickets are falling. Their operations lead asked for a named onboarding contact before adding the fourth team."
+      ],
+      [
+        229,
+        "David",
+        "Let's spend two minutes reviewing the account notes in the sheet. Flag anything where the close date reflects our quarter end instead of something the customer actually agreed to. Those dates should not survive this review unchanged."
+      ],
+      [
+        286,
+        "Jessica",
+        "I flagged Northstar. Legal returned two clauses yesterday: data retention and liability. Their counsel can meet Thursday, but our contact cannot sign until the revised terms are approved. I recommend moving the expected close into next month."
+      ],
+      [
+        344,
+        "Marcus",
+        "That makes sense. Could we separate the initial subscription from the services package? Procurement told me the services approval has a different threshold. We might be delaying both while waiting on the larger line item."
+      ],
+      [
+        401,
+        "Priya",
+        "We can separate them commercially, but implementation depends on the services team. If we promise a start date without checking capacity, the customer will experience that as a broken commitment even if the contract language is accurate."
+      ],
+      [
+        458,
+        "David",
+        "Agreed. Jessica, get a written timeline from legal and procurement. Priya, check implementation capacity before we revise the proposal. We will keep Northstar in upside for now and explain the change in the forecast notes."
+      ],
+      [
+        515,
+        "Jessica",
+        "The second opportunity is Beacon. The pilot met the agreed success criteria, and the sponsor has budget approval. Their remaining question is whether the audit export includes historical changes or just the latest configuration."
+      ],
+      [
+        573,
+        "Marcus",
+        "It includes the changes, but the default view hides archived entries. I can run a short demonstration with their analyst instead of sending another feature checklist. That should let us confirm the exact evidence they need."
+      ],
+      [
+        630,
+        "Priya",
+        "Please include support in that session. Beacon's analyst works in a different time zone, and previous replies landed after their workday. A single session with the right people will save several rounds of email."
+      ],
+      [
+        687,
+        "David",
+        "Let's look at the pilot report together. The adoption chart matters more than the number of invitations sent. Are the weekly active users the people who will actually approve the rollout, or mostly our internal champions?"
+      ],
+      [
+        744,
+        "Jessica",
+        "The weekly active users include two department managers and six analysts. The finance approver has only logged in once. I have requested a twenty-minute review with that approver so the business case does not depend entirely on the sponsor."
+      ],
+      [
+        802,
+        "Marcus",
+        "The third deal, Cedar, is less certain. Their team likes the product, but they have not agreed on an owner for implementation. I would not call this a procurement delay; they still need an internal decision."
+      ],
+      [
+        859,
+        "Priya",
+        "Cedar also has an unresolved data import question. We should offer a sample import with synthetic data, then ask their technical lead to approve the mapping. That would turn a vague concern into a concrete acceptance check."
+      ],
+      [
+        916,
+        "David",
+        "Good distinction. Keep Cedar out of commit until both the implementation owner and the import mapping are agreed. We can help them make the decision without manufacturing urgency around our reporting date."
+      ],
+      [
+        973,
+        "Jessica",
+        "I will update the opportunity stages while we are here. Northstar moves to upside, Beacon stays in best case pending the finance review, and Cedar moves back to evaluation. That lowers the headline but makes it defensible."
+      ],
+      [
+        1031,
+        "Marcus",
+        "On renewals, Atlas asked for quarterly invoicing. The annual value stays the same, but cash collection shifts. Finance needs to approve the schedule before I send the order form; I do not want to imply that approval is automatic."
+      ],
+      [
+        1088,
+        "Priya",
+        "The other renewal to watch is Harbor. Usage dipped during their reorganization. I spoke with the new administrator, who wants a refresher for team leads rather than a discount. We have a training slot available next Tuesday."
+      ],
+      [
+        1145,
+        "David",
+        "Let's pause on the renewal dashboard and review the usage trend by team. An account-wide average can hide one department dropping off completely. Please call out any team that needs direct follow-up after this meeting."
+      ],
+      [
+        1202,
+        "Marcus",
+        "Harbor's operations team is the one that dropped off. Finance usage is stable. I will change the account note to reflect that distinction and connect the new administrator with the operations manager for the training session."
+      ],
+      [
+        1260,
+        "Jessica",
+        "For the forecast summary, should I show the current committed amount and the upside separately? Last month's slide combined them, which made the regional total look like a promise when it was actually a range."
+      ],
+      [
+        1317,
+        "David",
+        "Yes. Use separate columns, with the customer event that unlocks each upside deal. Include the date we last confirmed that event. No weighted total on the executive slide unless the assumptions are visible alongside it."
+      ],
+      [
+        1374,
+        "Priya",
+        "I can add a customer-readiness column: onboarding capacity, technical sign-off, and named owner. That will make handoffs easier. It also gives us a reason to involve customer success before the final contract is signed."
+      ],
+      [
+        1431,
+        "Marcus",
+        "One concern: we have two account reviews and the Beacon demonstration on Thursday. I can cover Beacon, but I need Jessica to own Northstar's legal call. Otherwise both customers will expect me at the same time."
+      ],
+      [
+        1489,
+        "Jessica",
+        "That works. I will own the legal call and send a same-day written recap. If procurement changes the timeline again, I will update the forecast immediately instead of waiting for the weekly review."
+      ],
+      [
+        1546,
+        "Priya",
+        "I will confirm implementation capacity today, arrange Harbor's training, and join the Beacon demonstration. For Cedar, I will send the sample mapping with a clear request for the technical lead's approval."
+      ],
+      [
+        1603,
+        "David",
+        "Let's check the action list before we close. Jessica owns Northstar and the forecast revision. Marcus owns Beacon's demonstration and Atlas invoicing approval. Priya owns readiness checks, Cedar's mapping, and Harbor's training. Is anything missing?"
+      ],
+      [
+        1660,
+        "Marcus",
+        "Only the next review date. Let's reconvene next Wednesday with the customer responses, not just activity counts. I will attach the finance decision on Atlas so the renewal status is backed by the actual approval."
+      ],
+      [
+        1718,
+        "Jessica",
+        "I have captured that. The revised forecast goes out this afternoon with the three opportunities separated and the assumptions visible. I will link the account notes so reviewers can trace each number to the current customer conversation."
+      ],
+      [
+        1775,
+        "David",
+        "Thanks, everyone. We have a lower but more credible committed forecast and clear owners for the remaining work. Please flag a blocked customer decision in the shared thread as soon as it happens; we do not need to wait for Wednesday."
+      ]
+    ]
+  },
+  {
+    "title": "Q4 Engineering Roadmap",
+    "description": "Quarterly planning and team capacity review",
+    "languages": "en",
+    "speaker_count": 5,
+    "duration_seconds": 2700,
+    "transcripts": [
+      [
+        0,
+        "Aisha",
+        "Today we need to choose the Q4 priorities against actual capacity. The proposals are the authentication migration, API versioning, and the event pipeline rewrite. We also need room for mobile offline work and routine incident response."
+      ],
+      [
+        76,
+        "Tom",
+        "Platform can support two major efforts if we keep one engineer available for operations. That is based on the last three months of interruptions, not an ideal sprint. Taking all three migrations would create a schedule we cannot defend."
+      ],
+      [
+        153,
+        "Elena",
+        "I recommend authentication first. The current token refresh behavior blocks the mobile team, and we already have a tested replacement behind a feature flag. The remaining work is migration, observability, and a rollback path."
+      ],
+      [
+        229,
+        "Raj",
+        "Mobile agrees on the dependency, but offline mode also needs a decision about expired credentials. We should define what a user can read while disconnected and what must wait until the session is refreshed."
+      ],
+      [
+        306,
+        "Maya",
+        "From quality engineering, I need a stable compatibility matrix before we set the release date. Older clients, interrupted refreshes, and clock drift are the cases that usually get missed. I can own that matrix if the expected behavior is agreed today."
+      ],
+      [
+        382,
+        "Aisha",
+        "Let's take five minutes to review the dependency board. Please mark hard dependencies differently from work that would merely be easier if another team finished first. We will use that distinction to sequence the quarter."
+      ],
+      [
+        459,
+        "Tom",
+        "The board shows a hard dependency between token refresh and offline writes. Reading cached content can ship independently. That suggests we can stage the mobile release instead of waiting for the entire migration to finish."
+      ],
+      [
+        535,
+        "Raj",
+        "Yes, provided the UI clearly distinguishes cached data from a successful sync. We can release offline reading first, then queued edits after conflict resolution is tested. I do not want a green success state before the server accepts a change."
+      ],
+      [
+        611,
+        "Elena",
+        "For authentication, I propose a small internal cohort, then five percent of sessions, then wider rollout. Each stage needs an error-rate threshold and a minimum observation period. Rollback should be a configuration change, not a redeploy."
+      ],
+      [
+        688,
+        "Maya",
+        "The rollout checks should include refresh latency as well as failures. A slow refresh may never produce an error but still lock a user out of a workflow. I will add device sleep and network switching to the test plan."
+      ],
+      [
+        764,
+        "Aisha",
+        "Let's write down the exit criteria now. We need named owners for the dashboard, the rollback runbook, and the compatibility tests. A task is not finished just because its happy path works on a developer's laptop."
+      ],
+      [
+        841,
+        "Tom",
+        "I will own the dashboard and runbook. The metrics are already emitted, but their labels differ across services. I need two days to align them and verify that alerts point to the service causing the failure."
+      ],
+      [
+        917,
+        "Elena",
+        "I will own the migration code and the API contract. We should keep the old refresh endpoint during the transition and publish a retirement date only after we know how many older clients still use it."
+      ],
+      [
+        994,
+        "Raj",
+        "I will provide the client version distribution and an offline-reading prototype. The oldest supported mobile version cannot handle the new error payload yet, so the server must preserve the existing response shape for that client."
+      ],
+      [
+        1070,
+        "Maya",
+        "I will build a regression suite against both payload shapes. Let's make that a release gate. We have had compatibility checks documented before but not actually run against the artifact that was deployed."
+      ],
+      [
+        1146,
+        "Aisha",
+        "Next, API versioning. Spend a few minutes reading Elena's proposal and leave questions on the examples. I want us to settle the contract rules today; the migration schedule can follow once the rules are clear."
+      ],
+      [
+        1223,
+        "Elena",
+        "The proposal keeps additive fields compatible and requires a new version for changed meanings or removed fields. Clients must ignore unknown fields. We should not call a change additive if an existing value suddenly means something else."
+      ],
+      [
+        1299,
+        "Tom",
+        "Agreed. How do we handle pagination? The current endpoint returns a full list, and adding a cursor while silently limiting results would break callers even if the response still looks like the old shape."
+      ],
+      [
+        1376,
+        "Elena",
+        "That requires a new version. The old endpoint keeps its behavior during the deprecation period. The new version returns items plus a cursor, and the client examples must demonstrate retrieving every page rather than only the first."
+      ],
+      [
+        1452,
+        "Raj",
+        "Please publish those examples in the mobile integration guide too. We need stable ordering between pages, otherwise a background sync can miss an item or apply it twice when new records arrive during the request."
+      ],
+      [
+        1529,
+        "Maya",
+        "I can add contract tests for pagination under concurrent inserts. We should decide whether the cursor represents a snapshot or a moving feed. Those are different guarantees, and the tests need to match the documented choice."
+      ],
+      [
+        1605,
+        "Aisha",
+        "Use a stable snapshot for the export endpoint and a moving feed for incremental sync. Elena, capture that distinction in the proposal. Let's not force one pagination model onto workflows with different consistency needs."
+      ],
+      [
+        1681,
+        "Tom",
+        "That leaves the event pipeline rewrite. Its main benefit is simpler operations, but the current pipeline is meeting latency targets. I propose deferring the rewrite and scheduling a smaller effort to improve the existing dead-letter queue tooling."
+      ],
+      [
+        1758,
+        "Elena",
+        "I support that, as long as we address the retry behavior. A replay currently retries every event, including ones that already succeeded downstream. An idempotency key would reduce the operational risk without requiring the rewrite."
+      ],
+      [
+        1834,
+        "Maya",
+        "We should test replay with duplicate delivery and partial failure. I would rather have that narrow reliability improvement with evidence than a large replacement whose failure modes we have not exercised yet."
+      ],
+      [
+        1911,
+        "Raj",
+        "Deferring the rewrite also frees the platform support we need for offline sync. I can commit to the staged mobile plan if the authentication milestones remain protected. If those move, we should adjust the mobile dates openly."
+      ],
+      [
+        1987,
+        "Aisha",
+        "Let's revisit capacity with those choices. Everyone should check planned leave and support rotations in the calendar. We need a schedule that survives the normal work of running the product, including incidents and customer escalations."
+      ],
+      [
+        2064,
+        "Tom",
+        "With leave included, authentication has six weeks of work, not four. Versioning can proceed in parallel because Elena is defining contracts while another engineer handles the refresh service. I would reserve the final week for rollout observation."
+      ],
+      [
+        2140,
+        "Elena",
+        "That fits. The first contract draft will be ready Friday. I will ask the mobile and integrations teams to review concrete request and response examples, then freeze the initial version after their feedback is resolved."
+      ],
+      [
+        2216,
+        "Maya",
+        "I need the test environment to match production token settings before the rollout. Last time the refresh window was much longer in staging, which hid the issue. I will audit those settings with Tom this week."
+      ],
+      [
+        2293,
+        "Raj",
+        "Mobile will deliver offline reading before queued edits. I will update the roadmap with separate acceptance criteria so stakeholders do not assume the first release includes conflict resolution or background writes."
+      ],
+      [
+        2369,
+        "Aisha",
+        "The decisions are authentication first, API versioning second, and a narrow retry improvement instead of the pipeline rewrite. Offline reading ships separately from offline edits. I will publish the tradeoffs along with the dates."
+      ],
+      [
+        2446,
+        "Tom",
+        "The main risk is an authentication issue during rollout. If the error threshold is crossed, we stop expansion and revert the flag. We should not spend several days debating whether a regression is small enough to ignore."
+      ],
+      [
+        2522,
+        "Maya",
+        "I will include that stop condition in the release checklist and rehearse rollback with the internal cohort. The checklist will link to the actual test results and dashboard, so the on-call engineer has evidence at hand."
+      ],
+      [
+        2599,
+        "Elena",
+        "I have the owners and review dates. One final request: changes to the contract after Friday should include an example of the client behavior they affect. That will make scope discussions concrete and keep compatibility visible."
+      ],
+      [
+        2675,
+        "Aisha",
+        "Agreed. We will review progress in two weeks using the acceptance criteria, not percentage-complete estimates. Thank you. Please update your tasks today, and raise any new dependency before it turns into a surprise at the next review."
+      ]
+    ]
+  },
+  {
+    "title": "Product Atlas Kickoff",
+    "description": "New feature launch strategy",
+    "languages": "en",
+    "speaker_count": 3,
+    "duration_seconds": 1200,
+    "transcripts": [
+      [
+        0,
+        "Sofia",
+        "This is the kickoff for Atlas, our new mapping feature. Today I want to agree on the first release, the customer problem it solves, and what we are deliberately leaving out. We have twenty minutes, so let's keep decisions visible."
+      ],
+      [
+        44,
+        "Ben",
+        "For phase one, I propose read-only maps with live location markers. Editing routes would add permissions, validation, and conflict handling. We can deliver a useful view sooner if the existing scheduling tool remains the place to make changes."
+      ],
+      [
+        87,
+        "Nina",
+        "The research supports that scope. Dispatchers spend time asking where a vehicle was last seen, not designing routes. The map should answer that question immediately, and it should make stale location data visibly different from a current update."
+      ],
+      [
+        131,
+        "Sofia",
+        "Then our primary user is the dispatcher checking fleet status. Let's avoid presenting this as a navigation product. Success is less time spent finding a vehicle and fewer calls made just to ask for its location."
+      ],
+      [
+        174,
+        "Ben",
+        "Location events arrive with a timestamp, but some devices reconnect after being offline and send a batch. We must sort by the event time, not the time the server receives it, or markers can jump backward on the map."
+      ],
+      [
+        218,
+        "Nina",
+        "I want a last-updated label in the vehicle detail sheet. Color alone will not explain a stale marker. We should say when the location was recorded and keep that information available to screen-reader users too."
+      ],
+      [
+        261,
+        "Sofia",
+        "Let's look at the two mobile sketches for a minute. The key question is whether someone can open vehicle details and still understand where that vehicle sits relative to the rest of the fleet."
+      ],
+      [
+        305,
+        "Nina",
+        "The first sketch uses a full-screen detail page, which loses the map context. The second uses a bottom sheet. I favor the sheet, with a clear close button and enough space for the update time and vehicle status."
+      ],
+      [
+        348,
+        "Ben",
+        "The sheet works technically. On small screens we should stop the map from handling drag gestures that begin inside the sheet. Otherwise scrolling the details could move the map underneath and feel unpredictable."
+      ],
+      [
+        392,
+        "Sofia",
+        "Choose the sheet. What happens when location access is unavailable or the customer has no vehicles configured? I want those states designed now, rather than turning into a blank map at the end of the project."
+      ],
+      [
+        435,
+        "Nina",
+        "For an empty fleet, we can explain how to connect a data source and show a direct link to settings. For a connection problem, keep the last known positions with a clear notice. Those are different states and need different messages."
+      ],
+      [
+        479,
+        "Ben",
+        "I can expose both states from the API. We should not clear cached markers when a refresh fails. The client can retain the data and show the most recent successful update while offering a manual retry."
+      ],
+      [
+        522,
+        "Sofia",
+        "Good. Let's agree on the release boundary: read-only fleet status, details in a bottom sheet, clear stale-data handling, and meaningful empty and error states. No route editing, navigation, or historical playback in phase one."
+      ],
+      [
+        566,
+        "Ben",
+        "With that boundary, six weeks is realistic. Week one is the data contract and map integration, the middle weeks cover the UI and event handling, and the final week is reserved for customer testing and fixes."
+      ],
+      [
+        609,
+        "Nina",
+        "I can have the interaction prototype ready next week. I would like two dispatcher sessions before engineering locks the detail sheet. The question is whether our status labels match the terms people already use in their workflow."
+      ],
+      [
+        653,
+        "Sofia",
+        "I will recruit those sessions with customer success. Let's use a small pilot group with a mix of fleet sizes. A map that works with ten markers may be unusable with five hundred, so scale needs to be represented."
+      ],
+      [
+        696,
+        "Ben",
+        "For larger fleets, we need clustering at wider zoom levels. Clicking a cluster should zoom into its area, while a single marker opens the sheet. I will prototype the performance with a realistic event stream this week."
+      ],
+      [
+        740,
+        "Nina",
+        "Clustering needs a list alternative for keyboard navigation. A dispatcher should be able to search a vehicle name and open its details without precisely targeting a marker. The map can remain the overview while the list supports exact lookup."
+      ],
+      [
+        783,
+        "Sofia",
+        "That search is in scope because it serves the primary task. Let's keep it to vehicle name and identifier for now. Saved filters and advanced reporting can wait until the pilot tells us which ones matter."
+      ],
+      [
+        827,
+        "Ben",
+        "I will document the API fields today: vehicle identifier, display name, coordinates, status, and recorded timestamp. We also need an explicit permission check on the server; hiding a marker in the client is not access control."
+      ],
+      [
+        870,
+        "Nina",
+        "Please include the permission-denied response in the design handoff. I will add keyboard focus behavior for opening and closing the sheet, plus a loading state that preserves the surrounding map instead of flashing an empty screen."
+      ],
+      [
+        914,
+        "Sofia",
+        "Let's review the pilot acceptance checks. A dispatcher can find a vehicle, read when its location was recorded, distinguish stale data, and recover from a failed refresh. We should measure those tasks directly in the sessions."
+      ],
+      [
+        957,
+        "Ben",
+        "I will add performance measurements for the large fleet sample and a test where events arrive out of order. We will also simulate a connection drop so retaining the last known location is verified rather than assumed."
+      ],
+      [
+        1001,
+        "Nina",
+        "I will track task completion and where participants hesitate. If they mistake a stale position for a live one, that is a release blocker even if the timestamp is technically present somewhere in the interface."
+      ],
+      [
+        1044,
+        "Sofia",
+        "Agreed. We have three owners: Ben for the data contract and prototype, Nina for interactions and usability checks, and me for pilot recruitment and scope. I will publish the plan with the six-week target and its assumptions."
+      ],
+      [
+        1088,
+        "Ben",
+        "The main external dependency is map-provider configuration. I will confirm the production domain restrictions and usage allowance before we schedule the pilot. If that is blocked, I will flag it this week rather than at release time."
+      ],
+      [
+        1131,
+        "Nina",
+        "I will share the prototype next Thursday and include narrow mobile layouts. Please leave feedback against the agreed dispatcher tasks. That should keep us from adding unrelated features just because there is room on the desktop screen."
+      ],
+      [
+        1175,
+        "Sofia",
+        "Thanks. The first review is next Friday, focused on the contract, prototype, and pilot participants. Phase one stays read-only. We will revisit the next phase after observing real usage, with today's decisions written in the kickoff notes."
+      ]
+    ]
+  }
+]

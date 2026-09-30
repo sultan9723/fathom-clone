@@ -16,6 +16,7 @@ export interface SegmentedOption<T extends string> {
   label: string
   /** Renders the label in its own script and direction. */
   lang?: LanguageCode
+  busy?: boolean
 }
 
 export function SegmentedControl<T extends string>({
@@ -37,7 +38,7 @@ export function SegmentedControl<T extends string>({
       role="group"
       aria-label={label}
       className={cn(
-        'inline-flex items-center gap-1 rounded-control border border-border bg-bg p-1',
+        'inline-flex flex-wrap items-center gap-1 rounded-control border border-border bg-bg p-1',
         className
       )}
     >
@@ -50,11 +51,12 @@ export function SegmentedControl<T extends string>({
             key={option.value}
             type="button"
             aria-pressed={selected}
+            aria-busy={option.busy || undefined}
             onClick={() => onChange(option.value)}
             dir={script?.dir}
             lang={script?.lang}
             className={cn(
-              'rounded-chip px-3 py-1.5 text-small',
+              'inline-flex min-h-[44px] items-center justify-center gap-1 whitespace-nowrap rounded-chip px-3 py-1.5 text-small',
               'transition-[background-color,color] duration-base ease-out-design',
               script?.className,
               selected
@@ -63,6 +65,7 @@ export function SegmentedControl<T extends string>({
             )}
           >
             {option.label}
+            {option.busy && <span aria-hidden="true" className="h-2 w-2 rounded-full bg-current motion-safe:animate-pulse" />}
           </button>
         )
       })}

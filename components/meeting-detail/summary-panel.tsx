@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { askAI } from '@/lib/api'
 import { i18nText, type LanguageCode } from '@/lib/i18n-text'
 import { Button, Panel } from '@/components/ui'
+import { Markdown } from '@/components/ui/markdown'
 
 /**
  * The meeting summary.
@@ -11,7 +12,7 @@ import { Button, Panel } from '@/components/ui'
  * There is no summary column in the database, so nothing is shown until one
  * is generated — DESIGN.md forbids placeholder content, and inventing an
  * overview would be worse than an honest empty state. Generating goes through
- * the existing Ask route with a summarising question, in the language the
+ * the existing Ask route with a summarizing question, in the language the
  * transcript is being read in.
  */
 export function SummaryPanel({
@@ -32,7 +33,6 @@ export function SummaryPanel({
   const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
   const [message, setMessage] = useState<string | null>(null)
 
-  const target = i18nText(lang)
   const written = i18nText(summaryLang)
   const stale = summary !== null && summaryLang !== lang
 
@@ -43,7 +43,7 @@ export function SummaryPanel({
     try {
       const answer = await askAI(
         meetingId,
-        `Summarise this meeting in ${i18nText(requested).label}. Give a short overview, then the key points and any decisions. Answer only in ${i18nText(requested).label}.`
+        `Summarize this meeting in ${i18nText(requested).label}. Give a short overview, then the key points and any decisions. Answer only in ${i18nText(requested).label}.`
       )
       setSummary(answer)
       setSummaryLang(requested)
@@ -63,19 +63,19 @@ export function SummaryPanel({
         </h2>
         {summary && (
           <Button variant="secondary" onClick={generate} disabled={status === 'loading'}>
-            {stale ? `Rewrite in ${target.label}` : 'Regenerate'}
+            {status === 'loading' ? 'Writing…' : stale ? 'Summarize' : 'Regenerate'}
           </Button>
         )}
       </div>
 
+      <div aria-live="polite" aria-busy={status === 'loading'}>
       {summary ? (
-        <p
+        <Markdown
+          text={summary}
           dir={written.dir}
           lang={written.lang}
-          className={`${written.className} mt-4 whitespace-pre-wrap text-body-sm text-text-2 motion-safe:animate-enter`}
-        >
-          {summary}
-        </p>
+          className={`${written.className} mt-4 text-body-sm text-text-2 motion-safe:animate-enter`}
+        />
       ) : (
         <div className="mt-4">
           <p className="text-small text-muted">
@@ -87,10 +87,11 @@ export function SummaryPanel({
             disabled={status === 'loading'}
             className="mt-4"
           >
-            {status === 'loading' ? 'Writing…' : `Summarise in ${target.label}`}
+            {status === 'loading' ? 'Writing…' : 'Summarize'}
           </Button>
         </div>
       )}
+      </div>
 
       {status === 'error' && (
         <p role="alert" className="mt-3 text-small text-warn">

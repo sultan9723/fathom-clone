@@ -1,5 +1,6 @@
 import type { ApiActionItem, ApiMeeting, ApiTranscript } from './types'
 import { apiPath } from './api-base'
+import { aiErrorMessage } from './ai-error'
 
 export class ProductApiError extends Error {
   constructor(message: string, readonly status = 0) { super(message); this.name = 'ProductApiError' }
@@ -19,6 +20,9 @@ export async function productRequest<T>(path: string, options: RequestInit = {})
       headers: { ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...options.headers },
     })
     if (!response.ok) {
+      if (path.includes('/ai/') || path.includes('/translations')) {
+        throw new ProductApiError(await aiErrorMessage(response), response.status)
+      }
       const message = response.status === 404 ? 'This item is not available. It may have been removed.'
         : response.status === 503 ? 'This service is not available right now.'
           : response.status === 422 ? 'Check the information and try again.'

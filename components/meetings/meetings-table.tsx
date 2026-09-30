@@ -12,8 +12,8 @@ import { stagger } from '@/lib/motion'
  * carry the facts you scan by — title and description, languages, speakers,
  * length, date.
  *
- * Below md the columns stack into a card per row. The markup stays a table
- * either way so the header keeps naming the cells for screen readers.
+ * Below 640px a list of cards shows the title, date and duration.
+ * Larger screens use a semantic table.
  */
 
 /** Wraps every case-insensitive occurrence of `query` in a <mark>. */
@@ -81,22 +81,31 @@ export function MeetingsTable({
         busy ? 'opacity-60' : 'opacity-100'
       }`}
     >
-      <table className="w-full border-collapse text-left">
+      <ul className="space-y-3 sm:hidden" aria-label="Meetings">
+        {meetings.map(meeting => (
+          <li key={meeting.id} className="rounded-card border border-border bg-surface p-4">
+            <Link href={`/meetings/${meeting.id}`} className="block break-words text-body-sm font-semibold text-text hover:text-accent">
+              {highlight(meeting.title, query)}
+            </Link>
+            <dl className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-small text-muted">
+              <div><dt className="sr-only">Date</dt><dd>{formatMeetingDate(meeting.created_at)}</dd></div>
+              <div><dt className="sr-only">Duration</dt><dd>{formatDuration(meeting.duration_seconds)}</dd></div>
+            </dl>
+          </li>
+        ))}
+      </ul>
+      <table className="hidden w-full border-collapse text-left sm:table">
         <thead>
           <tr className="border-b border-border-subtle">
             {['Meeting', 'Languages', 'Speakers', 'Length', 'Date'].map((heading) => (
               <th
                 key={heading}
                 scope="col"
-                className="hidden py-3 pr-6 text-label-sm uppercase text-faint md:table-cell"
+                className="hidden py-3 pr-6 text-label-sm uppercase text-faint sm:table-cell"
               >
                 {heading}
               </th>
             ))}
-            {/* Below md the row becomes a card, so one header names the lot. */}
-            <th scope="col" className="py-3 text-label-sm uppercase text-faint md:hidden">
-              Meetings
-            </th>
           </tr>
         </thead>
         <tbody>
@@ -108,9 +117,9 @@ export function MeetingsTable({
                 // doesn't leave the last row waiting seconds to appear.
                 animationDelay: `${Math.min(index, 8) * stagger.tight}ms`,
               }}
-              className="group block border-b border-border-subtle motion-safe:animate-enter hover:bg-surface-hover md:table-row"
+              className="group block border-b border-border-subtle motion-safe:animate-enter hover:bg-surface-hover sm:table-row"
             >
-              <td className="block py-4 pr-6 align-top md:table-cell">
+              <td className="block py-4 pr-6 align-top sm:table-cell">
                 <Link
                   href={`/meetings/${meeting.id}`}
                   className="block rounded-chip text-title font-semibold text-text transition-colors duration-fast ease-out-design group-hover:text-accent"
@@ -122,42 +131,18 @@ export function MeetingsTable({
                     {highlight(meeting.description, query)}
                   </p>
                 )}
-                {/* The other columns, inlined as metadata on small screens. */}
-                <dl className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-small text-muted md:hidden">
-                  <div className="flex items-center gap-1.5">
-                    <dt className="sr-only">Languages</dt>
-                    <dd>
-                      <LanguageList languages={meeting.languages} />
-                    </dd>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <dt className="sr-only">Speakers</dt>
-                    <dd>
-                      {meeting.speaker_count}{' '}
-                      {meeting.speaker_count === 1 ? 'speaker' : 'speakers'}
-                    </dd>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <dt className="sr-only">Length</dt>
-                    <dd>{formatDuration(meeting.duration_seconds)}</dd>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <dt className="sr-only">Date</dt>
-                    <dd>{formatMeetingDate(meeting.created_at)}</dd>
-                  </div>
-                </dl>
               </td>
 
-              <td className="hidden py-4 pr-6 align-top md:table-cell">
+              <td className="hidden py-4 pr-6 align-top sm:table-cell">
                 <LanguageList languages={meeting.languages} />
               </td>
-              <td className="hidden py-4 pr-6 align-top text-small tabular-nums text-text-2 md:table-cell">
+              <td className="hidden py-4 pr-6 align-top text-small tabular-nums text-text-2 sm:table-cell">
                 {meeting.speaker_count}
               </td>
-              <td className="hidden py-4 pr-6 align-top text-small tabular-nums text-text-2 md:table-cell">
+              <td className="hidden py-4 pr-6 align-top text-small tabular-nums text-text-2 sm:table-cell">
                 {formatDuration(meeting.duration_seconds)}
               </td>
-              <td className="hidden whitespace-nowrap py-4 align-top text-small text-muted md:table-cell">
+              <td className="hidden whitespace-nowrap py-4 align-top text-small text-muted sm:table-cell">
                 {formatMeetingDate(meeting.created_at)}
               </td>
             </tr>

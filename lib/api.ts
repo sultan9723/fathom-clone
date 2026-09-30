@@ -20,6 +20,7 @@ import type {
   TranslateResponse,
 } from './types'
 import { apiPath } from './api-base'
+import { aiErrorMessage } from './ai-error'
 
 /** GET /api/v1/meetings — every meeting, newest first. */
 export async function getMeetings(): Promise<ApiMeeting[]> {
@@ -66,7 +67,7 @@ export async function askAI(meetingId: string, question: string): Promise<string
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ meeting_id: meetingId, question }),
   })
-  if (!res.ok) throw new Error('Failed to ask AI')
+  if (!res.ok) throw new Error(await aiErrorMessage(res))
   const data: AskResponse = await res.json()
   if (data.response === 'API key not configured' || data.response.startsWith('AI unavailable:')) {
     throw new Error('The assistant is temporarily unavailable. Please try again.')
@@ -110,7 +111,7 @@ export async function translateText(request: TranslateRequest): Promise<Translat
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(request),
   })
-  if (!res.ok) throw new Error('Failed to translate text')
+  if (!res.ok) throw new Error(await aiErrorMessage(res))
   return res.json()
 }
 
@@ -132,6 +133,7 @@ export async function getMeetingTranslations(
     { method: 'POST' },
   )
   if (!res.ok) {
+    if (res.status === 429 || res.status === 503) throw new Error(await aiErrorMessage(res))
     const detail = await res
       .json()
       .then((body) => (typeof body?.detail === 'string' ? body.detail : null))

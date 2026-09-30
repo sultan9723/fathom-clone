@@ -171,14 +171,15 @@ html:has(.landing), body:has(.landing) { overflow-x: clip; }
   .is-pinned .story-stage { position: static; height: auto; }
 }
 .landing .join-entry { max-width: 880px; margin: 40px auto 24px; text-align: left; }
-.landing .join-example { max-width: 880px; margin: 0 auto; text-align: left; color: var(--text-secondary); font-size: 13px; }
-.landing .join-example summary { min-height: 44px; cursor: pointer; padding: 12px 0; }
+.hero-import { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 32px; }
+.landing-hero .hero-import-help { font-size: 15px; margin-top: 20px; }
+.landing .join-example { max-width: 880px; margin: 32px auto 0; padding: 20px; border: 1px solid var(--accent-border); border-radius: var(--radius-card); background: var(--surface); text-align: left; color: var(--text-2); font-size: 16px; }
+.landing .join-example summary { min-height: 44px; cursor: pointer; padding: 12px 0; color: var(--text); font-weight: 600; }
 .landing .mobile-menu-toggle { display: none; }
 @media (max-width: 767px) {
   .landing .landing-header { flex-wrap: wrap; gap: 12px; }
   .landing .mobile-menu-toggle { display: inline-flex; margin-left: auto; }
   .landing .landing-header nav, .landing .landing-header .header-actions { display: none; }
-  .landing .landing-header[data-open="true"] nav { display: flex; flex-direction: column; align-items: stretch; width: 100%; order: 3; }
-  .landing .landing-header[data-open="true"] .header-actions { display: flex; width: 100%; order: 4; }
+  .landing .landing-header .drawer-links nav { display: flex; flex-direction: column; align-items: stretch; width: 100%; }
   .landing .landing-header nav a { min-height: 44px; display: flex; align-items: center; }
 }

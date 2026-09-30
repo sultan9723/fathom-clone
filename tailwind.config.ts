@@ -52,6 +52,9 @@ const config: Config = {
           2: 'var(--speaker-2)',
           '2-bg': 'var(--speaker-2-bg)',
           3: 'var(--speaker-3)',
+          4: 'var(--speaker-4)',
+          5: 'var(--speaker-5)',
+          6: 'var(--speaker-6)',
           '3-bg': 'var(--speaker-3-bg)',
         },
 

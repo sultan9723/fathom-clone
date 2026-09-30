@@ -1,0 +1,41 @@
+
+> fathom-clone@0.1.0 build
+> next build
+
+   ▲ Next.js 15.5.26
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 4.7s
+   Linting and checking validity of types ...
+
+ ⚠ The Next.js plugin was not detected in your ESLint configuration. See https://nextjs.org/docs/app/api-reference/config/eslint#migrating-existing-config
+   Collecting page data ...
+   Generating static pages (0/11) ...
+   Generating static pages (2/11) 
+   Generating static pages (5/11) 
+   Generating static pages (8/11) 
+ ✓ Generating static pages (11/11)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ○ /                                    6.81 kB         123 kB
+├ ○ /_not-found                            992 B         104 kB
+├ ○ /action-items                        3.83 kB         120 kB
+├ ○ /join                                1.45 kB         114 kB
+├ ○ /meetings                            3.88 kB         120 kB
+├ ƒ /meetings/[id]                       32.2 kB         148 kB
+├ ○ /meetings/new                        2.86 kB         119 kB
+├ ƒ /search                               1.4 kB         118 kB
+├ ○ /settings                            1.78 kB         115 kB
+└ ○ /sign-in                             1.47 kB         114 kB
++ First Load JS shared by all             103 kB
+  ├ chunks/255-2dbbf79f36f0dfa2.js       46.4 kB
+  ├ chunks/4bd1b696-c023c6e3521b1417.js  54.2 kB
+  └ other shared chunks (total)          2.04 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

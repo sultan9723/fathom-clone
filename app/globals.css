@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+.markdown-content { overflow-wrap: anywhere; }
+.markdown-content > * + * { margin-top: .75em; }
+.markdown-content :is(h1,h2,h3,h4,h5,h6) { font-size: 1em; font-weight: 600; }
+.markdown-content ul { list-style: disc; padding-inline-start: 1.5em; }
+.markdown-content ol { list-style: decimal; padding-inline-start: 1.5em; }
+.markdown-content li + li { margin-top: .3em; }
+.markdown-content a { color: var(--accent); text-decoration: underline; }
+.markdown-content blockquote { border-inline-start: 2px solid var(--border-strong); padding-inline-start: 1em; }
+.markdown-content pre, .markdown-content table { display: block; max-width: 100%; overflow-x: auto; }
+.markdown-content pre { white-space: pre-wrap; padding: .75em; background: var(--surface-2); }
+.markdown-content th, .markdown-content td { padding: .5em; border: 1px solid var(--border); }
+
 /**
  * DESIGN.md is the source of truth for every value below.
  *
@@ -42,12 +54,15 @@
   --warn-border: #3b2f22;
 
   /* Speakers, assigned in order of first appearance */
-  --speaker-1: #edeff2;
+  --speaker-1: #7dd3fc;
   --speaker-1-bg: #2a2f36;
   --speaker-2: #f5b971;
   --speaker-2-bg: #3a2f22;
   --speaker-3: #7db4ff;
   --speaker-3-bg: #1e2a3b;
+  --speaker-4: #c4b5fd;
+  --speaker-5: #f9a8d4;
+  --speaker-6: #5eead4;
 
   /* Radius — 999 is for status dots only */
   --radius-chip: 8px;

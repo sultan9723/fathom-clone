@@ -18,7 +18,7 @@ export default function AddMeetingPage() {
       <header className="border-b border-border-subtle pb-6">
         <h1 className="text-h1 text-text">Add a meeting</h1>
         <p className="mt-2 text-body-sm text-muted">
-          Bring a conversation into NoteAI so it can be searched, translated and summarised.
+          Bring a conversation into NoteAI so it can be searched, translated and summarized.
         </p>
       </header>
 

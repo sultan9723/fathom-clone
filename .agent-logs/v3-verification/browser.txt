@@ -1,0 +1,12 @@
+Real database API: 3 unique demos; 28/32/36 named transcript turns spanning 20/30/45 minutes.
+375px meetings: cards, title/date/duration, full-width search, pills below, no overflow; rapid typing/clear passed.
+375px transcript: separate language row, 44×44 targets, nonwrapping Chinese, proportional colored speaker bars. 2.6s cache-miss loading dot verified.
+Browser Markdown: English/Urdu/Chinese/Spanish, Summary/Regenerate/Ask; unsafe scripts/images/javascript URLs removed; polite live regions and RTL retained.
+REAL backend Summary 503: The daily limit for AI requests has been reached. Translations and summaries will be available again tomorrow.; UI: The daily AI limit has been reached. Translations, summaries, and answers will be available again tomorrow.
+REAL backend Summary 429: Too many requests. You have reached the limit for AI requests — please wait a moment and try again.; UI: Too many AI requests. Please wait a moment and try again.
+REAL backend Ask 503: friendly message displayed.
+REAL backend Ask 429: friendly message displayed.
+REAL backend Translation 503: friendly message displayed; original transcript retained.
+REAL backend Translation 429: friendly message displayed; original transcript retained.
+Homepage: import-first hero, prominent Coming soon preview, body-font input. Both navigation drawers overlay, trap/restore focus, close on backdrop/Escape, and lock scroll.
+PASS: v3 browser regression suite; no unhandled browser exceptions.
