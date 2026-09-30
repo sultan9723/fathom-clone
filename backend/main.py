@@ -7,25 +7,16 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-import cors
 import models  # noqa: F401  (imported so create_all sees every table)
 from database import Base, SessionLocal, engine
-from ratelimit import RateLimitMiddleware
-from routes import ai, health, meetings, transcripts, translations
+from routes import ai, health, meetings, transcripts
 from seed import seed_if_empty
 
 load_dotenv()
 
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
-# Off only when explicitly disabled, so a missing variable never silently
-# removes the limit.
-RATE_LIMIT_ENABLED = (os.getenv("RATE_LIMIT_ENABLED", "true").strip().lower()
-                      not in {"false", "0", "no", "off"})
-CORS_ORIGINS = cors.allowed_origins()
-# Vercel preview deployments get a new hostname each time, so they are matched
-# by a regex scoped to this project rather than by a wildcard. None when the
-# project and scope are not both configured.
-CORS_PREVIEW_REGEX = cors.preview_origin_regex()
+DEFAULT_ORIGINS = "http://localhost:3000,http://127.0.0.1:3000"
+CORS_ORIGINS = [o.strip() for o in os.getenv("CORS_ORIGINS", DEFAULT_ORIGINS).split(",") if o.strip()]
 
 
 @asynccontextmanager
@@ -49,15 +40,9 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Added before CORS so it runs after it: Starlette applies middleware in
-# reverse order, and a rejected caller should still receive CORS headers or
-# the browser reports an opaque network error instead of the 429.
-app.add_middleware(RateLimitMiddleware, enabled=RATE_LIMIT_ENABLED)
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ORIGINS,
-    allow_origin_regex=CORS_PREVIEW_REGEX,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -68,7 +53,6 @@ app.include_router(meetings.router)
 app.include_router(meetings.search_router)
 app.include_router(transcripts.router)
 app.include_router(ai.router)
-app.include_router(translations.router)
 
 
 @app.get("/", tags=["root"])

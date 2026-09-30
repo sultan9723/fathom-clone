@@ -1,12 +1,7 @@
-services:
+﻿services:
   - type: web
     name: noteai-backend
     env: python
-    # backend/main.py imports its siblings flatly (`import models`,
-    # `from database import ...`), so the service must run with backend/ as
-    # its root. Starting `backend.main:app` from the repo root fails on the
-    # first import.
-    rootDir: backend
     buildCommand: pip install -r requirements.txt
     # --proxy-headers is required, not optional: Render terminates TLS in
     # front of the app, so without it every request appears to come from the

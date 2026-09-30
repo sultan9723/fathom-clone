@@ -2,15 +2,8 @@
 
 Render's disk isn't persistent across deploys, so every restart starts from
 an empty database. seed_if_empty() runs once at app startup (see main.py's
-lifespan) and only inserts anything when the meetings table is empty.
-
-That table-level guard alone wasn't enough: production ended up with every
-meeting twice because auto-seed ran and a manual seed script ran too, each
-seeing a state the other's guard didn't cover. seed_meetings() is therefore
-idempotent per row — it checks each seed title against the table and inserts
-only what's missing — so seeding any number of times, by any route, can never
-create a duplicate. Use backend/scripts/dedupe_meetings.py to clean up a
-database that already has them.
+lifespan) and only inserts anything when the meetings table is empty, so it
+never duplicates data on a normal restart with an existing, non-empty DB.
 """
 
 from sqlalchemy.orm import Session
@@ -67,20 +60,11 @@ _MEETINGS: list[dict] = [
 ]
 
 
-def seed_meetings(db: Session) -> list[str]:
-    """Insert every seed meeting not already present, matched by title.
-
-    Safe to call repeatedly: titles already in the table are skipped, so this
-    adds missing seed rows without ever duplicating existing ones. Returns the
-    titles it inserted.
-    """
-    existing_titles = {title for (title,) in db.query(models.Meeting.title).all()}
-    inserted: list[str] = []
+def seed_if_empty(db: Session) -> None:
+    if db.query(models.Meeting).count() > 0:
+        return
 
     for entry in _MEETINGS:
-        if entry["title"] in existing_titles:
-            continue
-
         meeting = models.Meeting(
             title=entry["title"],
             description=entry["description"],
@@ -102,17 +86,4 @@ def seed_meetings(db: Session) -> list[str]:
                 )
             )
 
-        # Guard against the same title appearing twice in _MEETINGS itself.
-        existing_titles.add(entry["title"])
-        inserted.append(entry["title"])
-
-    if inserted:
-        db.commit()
-    return inserted
-
-
-def seed_if_empty(db: Session) -> None:
-    """Startup hook: seed only a completely empty meetings table."""
-    if db.query(models.Meeting).count() > 0:
-        return
-    seed_meetings(db)
+    db.commit()

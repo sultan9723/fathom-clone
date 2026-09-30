@@ -108,16 +108,3 @@ export interface TranslateResponse {
   source_lang: string
   target_lang: string
 }
-
-export interface ApiTranslationLine {
-  line_id: string
-  text: string
-}
-
-export interface ApiMeetingTranslations {
-  meeting_id: string
-  lang: string
-  lines: ApiTranslationLine[]
-  /** True when every line came from the cache and no provider call was made. */
-  cached: boolean
-}
