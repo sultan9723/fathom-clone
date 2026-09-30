@@ -4,14 +4,16 @@
  * Meeting list. Everything on this page comes from the API — there is no
  * seed or demo content behind it.
  *
- * Search hits GET /v1/search, debounced; the All / This week filter is
- * applied client-side over whatever that returned, so the two compose
- * instead of fighting.
+ * Keep the complete loaded list stable. Search and date filters are derived
+ * from query state, so network responses cannot resurrect stale results.
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import Link from 'next/link'
+import { X } from 'lucide-react'
 import type { ApiMeeting } from '@/lib/types'
-import { getMeetings, searchMeetings } from '@/lib/api'
+import { getMeetings } from '@/lib/api'
+import { filterMeetings } from '@/lib/meeting-filter'
 import { Input, SegmentedControl } from '@/components/ui'
 import { AddMeetingBar } from '@/components/meetings/add-meeting-bar'
 import { MeetingsTable } from '@/components/meetings/meetings-table'
@@ -46,11 +48,25 @@ function withinWeek(meeting: ApiMeeting): boolean {
 export default function MeetingsPage() {
   const [meetings, setMeetings] = useState<ApiMeeting[]>([])
   const [query, setQuery] = useState('')
+  const [debouncedQuery, setDebouncedQuery] = useState('')
   const [range, setRange] = useState<Range>('all')
   const [loading, setLoading] = useState(true)
   const [hasLoaded, setHasLoaded] = useState(false)
   const [error, setError] = useState(false)
   const [attempt, setAttempt] = useState(0)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQuery(query), 150)
+    return () => clearTimeout(timer)
+  }, [query])
+
+  // Native search clear and the explicit clear button both reset immediately.
+  const activeQuery = query.trim() ? debouncedQuery : ''
+  const clear = () => {
+    setQuery('')
+    setDebouncedQuery('')
+    setRange('all')
+  }
 
   useEffect(() => {
     // `cancelled` guards against out-of-order responses: clearing the timer
@@ -62,9 +78,7 @@ export default function MeetingsPage() {
       try {
         setLoading(true)
         setError(false)
-        const results = query.trim()
-          ? await searchMeetings(query)
-          : await getMeetings()
+        const results = await getMeetings()
         if (!cancelled) setMeetings(results)
       } catch {
         if (!cancelled) {
@@ -79,16 +93,15 @@ export default function MeetingsPage() {
       }
     }
 
-    const timer = setTimeout(load, 300)
+    void load()
     return () => {
       cancelled = true
-      clearTimeout(timer)
     }
-  }, [query, attempt])
+  }, [attempt])
 
   const visible = useMemo(
-    () => (range === 'week' ? meetings.filter(withinWeek) : meetings),
-    [meetings, range]
+    () => filterMeetings(range === 'week' ? meetings.filter(withinWeek) : meetings, activeQuery),
+    [meetings, range, activeQuery]
   )
 
   const retry = useCallback(() => {
@@ -109,7 +122,7 @@ export default function MeetingsPage() {
       <AddMeetingBar />
 
       <div className="flex flex-col gap-4 py-6 sm:flex-row sm:items-center sm:justify-between">
-        <div className="w-full sm:max-w-sm sm:flex-1">
+        <div className="relative w-full sm:max-w-sm sm:flex-1">
           <label htmlFor="meeting-search" className="sr-only">
             Search meetings
           </label>
@@ -118,8 +131,11 @@ export default function MeetingsPage() {
             type="search"
             placeholder="Search meetings"
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            className="pr-12 [&::-webkit-search-cancel-button]:appearance-none"
+            onChange={(event) => event.target.value ? setQuery(event.target.value) : clear()}
           />
+          {query && <button type="button" aria-label="Clear search" onClick={clear}
+            className="absolute right-0 top-0 flex h-11 w-11 items-center justify-center text-muted hover:text-text"><X aria-hidden="true" size={18} /></button>}
         </div>
 
         <SegmentedControl
@@ -130,6 +146,7 @@ export default function MeetingsPage() {
           onChange={setRange}
         />
       </div>
+      <Link className="mb-4 inline-flex min-h-[44px] items-center text-small text-muted underline" href={`/search?q=${encodeURIComponent(query.trim())}`}>Search transcript text</Link>
 
       {/* Announced for screen readers; the count on screen is the table itself. */}
       <p aria-live="polite" className="sr-only">
@@ -149,7 +166,7 @@ export default function MeetingsPage() {
         />
       )}
       {!showSkeleton && !error && visible.length > 0 && (
-        <MeetingsTable meetings={visible} query={query} busy={loading} />
+        <MeetingsTable meetings={visible} query={activeQuery} busy={loading} />
       )}
     </div>
   )
