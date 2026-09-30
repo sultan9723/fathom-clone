@@ -126,6 +126,18 @@
   0%, 100% { transform: translate(8%, 6%) scale(1.05); }
   50%      { transform: translate(-6%, -8%) scale(0.95); }
 }
+/* Third hero glow. Its period is coprime-ish with the other two so the three
+   never line up again within a visit. */
+@keyframes drift-c {
+  0%, 100% { transform: translate(-50%, 4%) scale(1.02); }
+  50%      { transform: translate(-46%, -6%) scale(0.92); }
+}
+/* Transcript rails drifting upward by exactly one line pitch, so the loop is
+   seamless — 22px matches the repeating-gradient period. */
+@keyframes rails {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(0, -22px, 0); }
+}
 
 /* DESIGN.md: no infinite motion except live indicators and skeletons. */
 @keyframes pulse-dot {

@@ -11,7 +11,7 @@ import { AmbientBackground } from '@/components/layout/ambient-background'
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative flex min-h-screen flex-col">
-      <AmbientBackground />
+      <AmbientBackground hero />
       <Navbar />
       <main className="mx-auto w-full max-w-landing flex-1 px-6 lg:px-8">{children}</main>
       <MarketingFooter />

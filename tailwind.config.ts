@@ -126,8 +126,12 @@ const config: Config = {
       animation: {
         // Ambient background glows. Paired with motion-safe: at the call site,
         // so prefers-reduced-motion leaves them static and still visible.
-        'drift-a': 'drift-a 18s ease-in-out infinite',
-        'drift-b': 'drift-b 22s ease-in-out infinite',
+        'drift-a': 'drift-a 19s ease-in-out infinite',
+        'drift-b': 'drift-b 23s ease-in-out infinite',
+        'drift-c': 'drift-c 29s ease-in-out infinite',
+        // Linear and seamless: one line pitch per cycle, so there is no
+        // visible reset. Slow enough to read as drift, not scrolling.
+        rails: 'rails 6s linear infinite',
         enter: 'enter 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both',
         'pulse-dot': 'pulse-dot 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) infinite',
       },
