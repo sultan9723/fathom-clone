@@ -1,49 +1,102 @@
-import { CircleCheck, Gavel } from 'lucide-react'
-import type { Meeting } from '@/lib/types'
+'use client'
 
-export function SummaryPanel({ summary }: { summary: Meeting['summary'] }) {
+import { useState } from 'react'
+import { askAI } from '@/lib/api'
+import { i18nText, type LanguageCode } from '@/lib/i18n-text'
+import { Button, Panel } from '@/components/ui'
+
+/**
+ * The meeting summary.
+ *
+ * There is no summary column in the database, so nothing is shown until one
+ * is generated — DESIGN.md forbids placeholder content, and inventing an
+ * overview would be worse than an honest empty state. Generating goes through
+ * the existing Ask route with a summarising question, in the language the
+ * transcript is being read in.
+ */
+export function SummaryPanel({
+  meetingId,
+  lang,
+  onSummaryChange,
+}: {
+  meetingId: string
+  lang: LanguageCode
+  /** Lets the page share the summary with Export and Share recap. */
+  onSummaryChange?: (summary: string) => void
+}) {
+  const [summary, setSummary] = useState<string | null>(null)
+  // The language the summary on screen was actually written in. Rendering it
+  // with the currently selected language instead would flip an English
+  // summary to RTL the moment someone switched the transcript to Urdu.
+  const [summaryLang, setSummaryLang] = useState<LanguageCode>(lang)
+  const [status, setStatus] = useState<'idle' | 'loading' | 'error'>('idle')
+  const [message, setMessage] = useState<string | null>(null)
+
+  const target = i18nText(lang)
+  const written = i18nText(summaryLang)
+  const stale = summary !== null && summaryLang !== lang
+
+  const generate = async () => {
+    const requested = lang
+    setStatus('loading')
+    setMessage(null)
+    try {
+      const answer = await askAI(
+        meetingId,
+        `Summarise this meeting in ${i18nText(requested).label}. Give a short overview, then the key points and any decisions. Answer only in ${i18nText(requested).label}.`
+      )
+      setSummary(answer)
+      setSummaryLang(requested)
+      onSummaryChange?.(answer)
+      setStatus('idle')
+    } catch (error) {
+      setStatus('error')
+      setMessage((error as Error).message)
+    }
+  }
+
   return (
-    <section aria-labelledby="summary-heading">
-      <h2 id="summary-heading" className="sr-only">
-        Summary
-      </h2>
+    <Panel as="section" aria-labelledby="summary-heading" className="p-5">
+      <div className="flex items-center justify-between gap-3">
+        <h2 id="summary-heading" className="text-label-sm uppercase text-faint">
+          Summary
+        </h2>
+        {summary && (
+          <Button variant="secondary" onClick={generate} disabled={status === 'loading'}>
+            {stale ? `Rewrite in ${target.label}` : 'Regenerate'}
+          </Button>
+        )}
+      </div>
 
-      <p className="text-[15px] font-light leading-6 text-fg-1">{summary.overview}</p>
-
-      <h3 className="mt-5 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-fg-3">
-        <CircleCheck className="h-3.5 w-3.5" aria-hidden="true" />
-        Key points
-      </h3>
-      <ul className="mt-2 space-y-2">
-        {summary.keyPoints.map((point, i) => (
-          <li key={i} className="flex gap-2.5 text-sm font-light leading-relaxed text-fg-2">
-            <span
-              className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-brand"
-              aria-hidden="true"
-            />
-            {point}
-          </li>
-        ))}
-      </ul>
-
-      {summary.decisions && summary.decisions.length > 0 && (
-        <>
-          <h3 className="mt-5 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-fg-3">
-            <Gavel className="h-3.5 w-3.5" aria-hidden="true" />
-            Decisions
-          </h3>
-          <ul className="mt-2 space-y-2">
-            {summary.decisions.map((decision, i) => (
-              <li
-                key={i}
-                className="rounded-md border border-success/30 bg-success/10 px-3 py-2 text-sm font-light leading-relaxed text-fg-1"
-              >
-                {decision}
-              </li>
-            ))}
-          </ul>
-        </>
+      {summary ? (
+        <p
+          dir={written.dir}
+          lang={written.lang}
+          className={`${written.className} mt-4 whitespace-pre-wrap text-body-sm text-text-2 motion-safe:animate-enter`}
+        >
+          {summary}
+        </p>
+      ) : (
+        <div className="mt-4">
+          <p className="text-small text-muted">
+            No summary yet. NoteAI can write one from the transcript.
+          </p>
+          <Button
+            variant="primary"
+            onClick={generate}
+            disabled={status === 'loading'}
+            className="mt-4"
+          >
+            {status === 'loading' ? 'Writing…' : `Summarise in ${target.label}`}
+          </Button>
+        </div>
       )}
-    </section>
+
+      {status === 'error' && (
+        <p role="alert" className="mt-3 text-small text-warn">
+          {message}
+        </p>
+      )}
+    </Panel>
   )
 }

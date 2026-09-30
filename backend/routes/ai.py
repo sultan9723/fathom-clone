@@ -10,10 +10,11 @@ import logging
 import os
 from typing import Callable
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+import budget
 import models
 import schemas
 from database import get_db
@@ -25,11 +26,56 @@ router = APIRouter(prefix="/api/v1/ai", tags=["ai"])
 
 NO_KEY_MESSAGE = "API key not configured"
 NO_KEY_TRANSLATE_MESSAGE = "Translation not configured. Add API key to use."
+
+# The assembled prompt context is ours, not the caller's: a genuinely long
+# meeting is legitimate, so the transcript we build is truncated rather than
+# refused. Caller-supplied text is different and is rejected outright below.
 MAX_CONTEXT_CHARS = 60_000
+
 # A transcript is translated in one call; 4096 output tokens is the ceiling
 # (the brief's 500 truncates anything past a few short lines).
 TRANSLATE_MAX_TOKENS = 4096
-TRANSLATE_MAX_CHARS = 20_000
+
+# Caps on caller-supplied text, in characters. Oversized input is rejected
+# with 413 rather than truncated: silently answering a different question
+# than the one asked, or returning a translation of part of the text without
+# saying so, is worse than refusing.
+DEFAULT_MAX_QUESTION_CHARS = 2_000
+DEFAULT_MAX_TRANSLATE_CHARS = 20_000
+
+
+def _char_cap(env_var: str, fallback: int) -> int:
+    """Read a character cap from the environment, falling back when unusable."""
+    raw = (os.getenv(env_var) or "").strip()
+    if not raw:
+        return fallback
+    try:
+        value = int(raw)
+    except ValueError:
+        return fallback
+    return value if value > 0 else fallback
+
+
+def max_question_chars() -> int:
+    return _char_cap("MAX_QUESTION_CHARS", DEFAULT_MAX_QUESTION_CHARS)
+
+
+def max_translate_chars() -> int:
+    return _char_cap("MAX_TRANSLATE_CHARS", DEFAULT_MAX_TRANSLATE_CHARS)
+
+
+def reject_if_too_long(text: str, limit: int, what: str) -> None:
+    """413 when caller-supplied text exceeds its cap."""
+    if len(text) > limit:
+        raise HTTPException(
+            status_code=413,
+            detail=(
+                f"That {what} is too long ({len(text):,} characters). "
+                f"The limit is {limit:,} characters."
+            ),
+        )
+
+
 # Values that look like a key but aren't one — treated as "not configured"
 # rather than sent to a provider to earn a 401.
 PLACEHOLDER_KEYS = {"sk-test", "your-api-key-here", "changeme"}
@@ -151,6 +197,7 @@ def _is_real_key(value: str | None) -> bool:
 
 @router.post("/ask", response_model=schemas.AskResponse)
 def ask(payload: schemas.AskRequest, db: Session = Depends(get_db)) -> schemas.AskResponse:
+    reject_if_too_long(payload.question, max_question_chars(), "question")
     meeting = get_meeting_or_404(db, payload.meeting_id)
 
     provider = _resolve_provider()
@@ -165,6 +212,10 @@ def ask(payload: schemas.AskRequest, db: Session = Depends(get_db)) -> schemas.A
     transcripts = list(db.scalars(stmt).all())
     prompt = _build_prompt(meeting, transcripts, payload.question)
 
+    # Claimed only once a call is actually about to happen: an unconfigured
+    # provider or an oversized question must not consume the day's budget.
+    budget.reserve_provider_call(db)
+
     try:
         return schemas.AskResponse(response=provider(SYSTEM_PROMPT, prompt, 4096))
     except ImportError:
@@ -172,11 +223,16 @@ def ask(payload: schemas.AskRequest, db: Session = Depends(get_db)) -> schemas.A
             response="AI unavailable: provider SDK is not installed (pip install -r requirements.txt)"
         )
     except Exception as exc:  # never fail the request because the AI provider is unhappy
-        return schemas.AskResponse(response=f"AI unavailable: {type(exc).__name__}: {exc}")
+        # Only the exception type, never str(exc): provider errors quote the
+        # API key back, and this string is rendered straight into the UI.
+        logger.error("Ask failed for meeting %s: %s", meeting.id, type(exc).__name__)
+        return schemas.AskResponse(response=f"AI unavailable: {type(exc).__name__}")
 
 
 @router.post("/translate", response_model=schemas.TranslateResponse)
-def translate(payload: schemas.TranslateRequest) -> schemas.TranslateResponse:
+def translate(
+    payload: schemas.TranslateRequest, db: Session = Depends(get_db)
+) -> schemas.TranslateResponse:
     """
     Translate a block of text between languages.
 
@@ -187,10 +243,11 @@ def translate(payload: schemas.TranslateRequest) -> schemas.TranslateResponse:
     rides back in `translated` so the UI can show a notice. The exception is
     logged server-side; only its type reaches the client, since provider errors
     quote the API key back at you.
+
+    `db` is here only for the daily budget; this endpoint reads nothing.
     """
+    reject_if_too_long(payload.text, max_translate_chars(), "text")
     text = payload.text.strip()
-    if len(text) > TRANSLATE_MAX_CHARS:
-        text = text[:TRANSLATE_MAX_CHARS] + "\n[text truncated]"
 
     def reply(translated: str) -> schemas.TranslateResponse:
         return schemas.TranslateResponse(
@@ -208,6 +265,8 @@ def translate(payload: schemas.TranslateRequest) -> schemas.TranslateResponse:
         f"Translate the following {payload.source_lang} text into {payload.target_lang}.\n\n{text}"
     )
 
+    budget.reserve_provider_call(db)
+
     try:
         return reply(provider(TRANSLATE_SYSTEM_PROMPT, prompt, TRANSLATE_MAX_TOKENS))
     except ImportError:
@@ -216,5 +275,12 @@ def translate(payload: schemas.TranslateRequest) -> schemas.TranslateResponse:
             "(pip install -r requirements.txt)"
         )
     except Exception as exc:
-        logger.exception("Translation failed (%s -> %s)", payload.source_lang, payload.target_lang)
+        # error(), not exception(): a traceback would carry the provider's
+        # message, and that message carries the key.
+        logger.error(
+            "Translation failed (%s -> %s): %s",
+            payload.source_lang,
+            payload.target_lang,
+            type(exc).__name__,
+        )
         return reply(f"Translation unavailable: {type(exc).__name__}")

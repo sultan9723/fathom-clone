@@ -3,8 +3,7 @@
  * to the API goes through here, so the route shapes are defined in exactly
  * one place. Each function maps 1:1 to a backend route in backend/routes/.
  *
- * Base URL comes from NEXT_PUBLIC_API_URL; paths are appended as `/v1/...`,
- * so the value must include the `/api` segment (e.g. http://localhost:8000/api).
+ * The base URL comes from lib/api-base.ts, shared with lib/product-api.ts.
  *
  * Errors: these throw plain Errors with generic messages — no backend URL or
  * response body is leaked to the UI. Callers decide how to surface them.
@@ -14,31 +13,31 @@
 import type {
   ApiActionItem,
   ApiMeeting,
+  ApiMeetingTranslations,
   ApiTranscript,
   AskResponse,
   TranslateRequest,
   TranslateResponse,
 } from './types'
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'
+import { apiPath } from './api-base'
 
 /** GET /api/v1/meetings — every meeting, newest first. */
 export async function getMeetings(): Promise<ApiMeeting[]> {
-  const res = await fetch(`${API_URL}/v1/meetings`)
+  const res = await fetch(apiPath(`/v1/meetings`))
   if (!res.ok) throw new Error('Failed to fetch meetings')
   return res.json()
 }
 
 /** GET /api/v1/meetings/{id} — one meeting. Throws if it doesn't exist. */
 export async function getMeeting(id: string): Promise<ApiMeeting> {
-  const res = await fetch(`${API_URL}/v1/meetings/${encodeURIComponent(id)}`)
+  const res = await fetch(apiPath(`/v1/meetings/${encodeURIComponent(id)}`))
   if (!res.ok) throw new Error('Failed to fetch meeting')
   return res.json()
 }
 
 /** GET /api/v1/meetings/{id}/transcripts — ordered by timestamp_seconds. */
 export async function getTranscripts(meetingId: string): Promise<ApiTranscript[]> {
-  const res = await fetch(`${API_URL}/v1/meetings/${encodeURIComponent(meetingId)}/transcripts`)
+  const res = await fetch(apiPath(`/v1/meetings/${encodeURIComponent(meetingId)}/transcripts`))
   if (!res.ok) throw new Error('Failed to fetch transcripts')
   return res.json()
 }
@@ -50,7 +49,7 @@ export async function getTranscripts(meetingId: string): Promise<ApiTranscript[]
  */
 export async function searchMeetings(query: string): Promise<ApiMeeting[]> {
   if (!query.trim()) return []
-  const res = await fetch(`${API_URL}/v1/search?q=${encodeURIComponent(query)}`)
+  const res = await fetch(apiPath(`/v1/search?q=${encodeURIComponent(query)}`))
   if (!res.ok) throw new Error('Failed to search meetings')
   return res.json()
 }
@@ -62,7 +61,7 @@ export async function searchMeetings(query: string): Promise<ApiMeeting[]> {
  * provider diagnostics (which can contain credentials).
  */
 export async function askAI(meetingId: string, question: string): Promise<string> {
-  const res = await fetch(`${API_URL}/v1/ai/ask`, {
+  const res = await fetch(apiPath(`/v1/ai/ask`), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ meeting_id: meetingId, question }),
@@ -77,7 +76,7 @@ export async function askAI(meetingId: string, question: string): Promise<string
 
 /** GET /api/v1/meetings/{id}/action-items — oldest first. */
 export async function getActionItems(meetingId: string): Promise<ApiActionItem[]> {
-  const res = await fetch(`${API_URL}/v1/meetings/${encodeURIComponent(meetingId)}/action-items`)
+  const res = await fetch(apiPath(`/v1/meetings/${encodeURIComponent(meetingId)}/action-items`))
   if (!res.ok) throw new Error('Failed to fetch action items')
   return res.json()
 }
@@ -89,7 +88,7 @@ export async function updateActionItem(
   completed: boolean,
 ): Promise<ApiActionItem> {
   const res = await fetch(
-    `${API_URL}/v1/meetings/${encodeURIComponent(meetingId)}/action-items/${encodeURIComponent(itemId)}`,
+    apiPath(`/v1/meetings/${encodeURIComponent(meetingId)}/action-items/${encodeURIComponent(itemId)}`),
     {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -106,11 +105,64 @@ export async function updateActionItem(
  * the notice in `translated`, so only transport failures throw here.
  */
 export async function translateText(request: TranslateRequest): Promise<TranslateResponse> {
-  const res = await fetch(`${API_URL}/v1/ai/translate`, {
+  const res = await fetch(apiPath(`/v1/ai/translate`), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(request),
   })
   if (!res.ok) throw new Error('Failed to translate text')
   return res.json()
+}
+
+/**
+ * POST /api/v1/meetings/{id}/translations?lang= — translate the whole
+ * transcript in one call, served from the backend's cache when it has one.
+ *
+ * Unlike translateText, this surfaces failure as a thrown error: the UI needs
+ * to tell a failed translation apart from a real one so it can keep showing
+ * the original and offer a retry. The backend's `detail` is a message written
+ * for people, so it is used when present.
+ */
+export async function getMeetingTranslations(
+  meetingId: string,
+  lang: string,
+): Promise<ApiMeetingTranslations> {
+  const res = await fetch(
+    apiPath(`/v1/meetings/${encodeURIComponent(meetingId)}/translations?lang=${encodeURIComponent(lang)}`),
+    { method: 'POST' },
+  )
+  if (!res.ok) {
+    const detail = await res
+      .json()
+      .then((body) => (typeof body?.detail === 'string' ? body.detail : null))
+      .catch(() => null)
+    throw new Error(detail ?? 'Translation failed. Please try again.')
+  }
+  return res.json()
+}
+
+/** PUT /api/v1/meetings/{id} — rename a meeting or change its description. */
+export async function updateMeeting(
+  id: string,
+  changes: { title: string; description: string },
+): Promise<ApiMeeting> {
+  const res = await fetch(apiPath(`/v1/meetings/${encodeURIComponent(id)}`), {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(changes),
+  })
+  if (!res.ok) throw new Error('Those changes could not be saved. Please try again.')
+  return res.json()
+}
+
+/**
+ * DELETE /api/v1/meetings/{id} — removes the meeting and, through the
+ * database's cascades, its transcript, action items, notes and cached
+ * translations. Returns 204, so there is no body to parse.
+ */
+export async function deleteMeeting(id: string): Promise<void> {
+  const res = await fetch(apiPath(`/v1/meetings/${encodeURIComponent(id)}`), {
+    method: 'DELETE',
+  })
+  if (!res.ok) throw new Error('This meeting could not be deleted. Please try again.')
 }

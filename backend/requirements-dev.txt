@@ -1,0 +1,8 @@
+# Development and test dependencies. Not installed on Render.
+-r requirements.txt
+
+pytest>=8.0
+
+# ASGI transport for middleware tests (TestClient is unusable on httpx 0.28)
+httpx>=0.27
+pytest-asyncio>=0.23
