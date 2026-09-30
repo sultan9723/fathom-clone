@@ -40,6 +40,7 @@ const config: Config = {
           ink: 'var(--accent-ink)',
           bg: 'var(--accent-bg)',
           'bg-2': 'var(--accent-bg-2)',
+          disabled: 'var(--accent-disabled)',
           border: 'var(--accent-border)',
         },
         warn: {
@@ -64,6 +65,7 @@ const config: Config = {
         chip: radius.chip,
         control: radius.control,
         card: radius.card,
+        'nav-control': '9px',
         section: radius.section,
       },
 
@@ -75,6 +77,11 @@ const config: Config = {
         'landing-x': layout.landingPaddingX,
         touch: layout.touchTarget,
         control: layout.controlHeight,
+        'nav-control': layout.navButtonHeight,
+        navbar: layout.navbarHeight,
+        footer: layout.footerHeight,
+        'footer-app': layout.footerHeightApp,
+        drawer: layout.drawerWidth,
         'control-lg': layout.controlHeightLg,
         input: layout.inputHeight,
         'input-lg': layout.inputHeightLg,
@@ -117,6 +124,10 @@ const config: Config = {
         },
       },
       animation: {
+        // Ambient background glows. Paired with motion-safe: at the call site,
+        // so prefers-reduced-motion leaves them static and still visible.
+        'drift-a': 'drift-a 18s ease-in-out infinite',
+        'drift-b': 'drift-b 22s ease-in-out infinite',
         enter: 'enter 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both',
         'pulse-dot': 'pulse-dot 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) infinite',
       },

@@ -1,17 +1,34 @@
 .navigation-drawer {
-  position: fixed; inset: 0 0 0 auto; margin: 0; width: min(340px, 88vw);
-  height: 100dvh; max-height: 100dvh; max-width: 100vw; padding: 24px;
-  background: var(--surface-2); color: var(--text); border: 0;
+  position: fixed; inset: 0 0 0 auto; margin: 0;
+  /* 300px per DESIGN.md, capped so it can never exceed a narrow viewport. */
+  width: min(300px, 88vw);
+  height: 100dvh; max-height: 100dvh; max-width: 100vw; padding: 24px 20px;
+  background: var(--surface); color: var(--text); border: 0;
   border-left: 1px solid var(--border); overflow-y: auto;
-  transform: translateX(100%); transition: transform 200ms ease-out;
+  box-shadow: -20px 0 40px rgb(0 0 0 / .4);
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform var(--drawer-duration) cubic-bezier(.2, .8, .2, 1);
 }
 .navigation-drawer[data-entered='true'] { transform: translateX(0); }
-.navigation-drawer::backdrop { background: rgb(0 0 0 / .6); }
+/* Full-inset, covering the header too: a modal whose header stays clickable
+   is not modal. The reference artboard draws the backdrop starting below the
+   header; DESIGN.md records this as the deliberate departure. */
+.navigation-drawer::backdrop {
+  background: rgb(0 0 0 / .55);
+  opacity: 0;
+  transition: opacity var(--drawer-duration) ease;
+}
+.navigation-drawer[data-entered='true']::backdrop { opacity: 1; }
 .drawer-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; font-weight: 600; margin-bottom: 24px; }
 .drawer-heading button { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; border-radius: var(--radius-control); }
 .drawer-heading button:hover { background: var(--surface-hover); }
-.drawer-links, .drawer-links nav { display: flex; flex-direction: column; gap: 12px; }
-.drawer-links a { display: flex; align-items: center; min-height: 44px; padding: 10px 12px; border-radius: var(--radius-control); }
+.drawer-links { display: flex; flex-direction: column; flex: 1 1 auto; }
+.drawer-links nav { display: flex; flex-direction: column; gap: 4px; }
+.drawer-links a { display: flex; align-items: center; min-height: 48px; padding: 0 14px; border-radius: var(--radius-control); font-size: 15px; color: var(--muted); }
 .drawer-links a:hover { background: var(--surface-hover); }
-.drawer-links a[aria-current] { color: var(--accent); }
-@media (prefers-reduced-motion: reduce) { .navigation-drawer { transition: none; } }
+.drawer-links a[aria-current] { background: var(--surface-hover); color: var(--text); font-weight: 500; }
+.drawer-version { margin-top: auto; padding-top: 24px; font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 11px; color: #5E6570; }
+@media (prefers-reduced-motion: reduce) {
+  .navigation-drawer, .navigation-drawer::backdrop { transition: none; }
+}

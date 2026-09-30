@@ -24,7 +24,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        'inline-flex h-badge items-center gap-1.5 rounded-chip px-2.5 text-small-xs',
+        'inline-flex h-badge items-center gap-1.5 rounded-chip px-2.5 text-small',
         variant === 'live'
           ? 'bg-accent-bg text-accent'
           : 'bg-surface-2 text-muted',

@@ -66,8 +66,8 @@ export function MeetingsEmpty({ reason, query }: { reason: EmptyReason; query?: 
 
   return (
     <Panel className="mt-6 px-6 py-12 text-center">
-      <h2 className="text-title font-semibold text-text">{heading}</h2>
-      <p className="mx-auto mt-2 max-w-sm text-body-sm text-muted">{body}</p>
+      <h2 className="text-h4 font-semibold text-text">{heading}</h2>
+      <p className="mx-auto mt-2 max-w-sm text-body text-muted">{body}</p>
     </Panel>
   )
 }
@@ -75,8 +75,8 @@ export function MeetingsEmpty({ reason, query }: { reason: EmptyReason; query?: 
 export function MeetingsError({ onRetry }: { onRetry: () => void }) {
   return (
     <Panel className="mt-6 border-warn-border px-6 py-12 text-center">
-      <h2 className="text-title font-semibold text-warn">We couldn&rsquo;t load your meetings</h2>
-      <p className="mx-auto mt-2 max-w-sm text-body-sm text-muted">
+      <h2 className="text-h4 font-semibold text-warn">We couldn&rsquo;t load your meetings</h2>
+      <p className="mx-auto mt-2 max-w-sm text-body text-muted">
         The connection to the server failed. Your meetings are safe.
       </p>
       <Button variant="secondary" onClick={onRetry} className="mt-6">

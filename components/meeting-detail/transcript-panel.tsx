@@ -107,7 +107,7 @@ export function TranscriptPanel({
   return (
     <Panel as="section" aria-labelledby="transcript-heading" className="p-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 id="transcript-heading" className="text-label-sm uppercase text-faint">
+        <h2 id="transcript-heading" className="text-caption uppercase text-faint">
           Transcript
         </h2>
         <div className="flex flex-wrap items-center gap-3">
@@ -134,7 +134,7 @@ export function TranscriptPanel({
           className="mt-4 flex flex-col gap-3 rounded-card border border-warn-border bg-surface-2 p-4 sm:flex-row sm:items-center sm:justify-between"
         >
           <div>
-            <p className="text-body-sm font-medium text-warn">Showing the original for now</p>
+            <p className="text-body font-medium text-warn">Showing the original for now</p>
             <p className="mt-1 text-small text-muted">{message}</p>
           </div>
           <Button
@@ -198,7 +198,7 @@ function TranscriptLine({
 
   return (
     <li className="grid grid-cols-[3.5rem_1fr] gap-3">
-      <span className="pt-0.5 font-mono text-label-sm tabular-nums text-faint">
+      <span className="pt-0.5 font-mono text-caption tabular-nums text-faint">
         {formatTimecode(line.timestamp_seconds)}
       </span>
 
@@ -212,7 +212,7 @@ function TranscriptLine({
         {translation ? (
           // Translation leads, original stays with it — muted and smaller.
           <div className="mt-1 grid gap-2 md:grid-cols-2 md:gap-6">
-            <p dir={target.dir} lang={target.lang} className={`${target.className} text-body-sm text-text`}>
+            <p dir={target.dir} lang={target.lang} className={`${target.className} text-body text-text`}>
               {shown}
             </p>
             <p
@@ -227,7 +227,7 @@ function TranscriptLine({
           <p
             dir={source.dir}
             lang={source.lang}
-            className={`${source.className} mt-1 text-body-sm text-text`}
+            className={`${source.className} mt-1 text-body text-text`}
           >
             {line.text}
           </p>

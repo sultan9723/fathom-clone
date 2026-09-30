@@ -61,7 +61,7 @@ export function AskPanel({ meetingId, lang }: { meetingId: string; lang: Languag
 
   return (
     <Panel as="section" aria-labelledby="ask-heading" className="p-5">
-      <h2 id="ask-heading" className="text-label-sm uppercase text-faint">
+      <h2 id="ask-heading" className="text-caption uppercase text-faint">
         Ask
       </h2>
       <p className="mt-2 text-small text-muted">
@@ -81,7 +81,7 @@ export function AskPanel({ meetingId, lang }: { meetingId: string; lang: Languag
                     text={exchange.answer}
                     dir={answerLang.dir}
                     lang={answerLang.lang}
-                    className={`${answerLang.className} mt-1 text-body-sm text-text`}
+                    className={`${answerLang.className} mt-1 text-body text-text`}
                   />
                 )}
                 {exchange.error && (
