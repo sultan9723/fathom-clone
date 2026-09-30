@@ -3,7 +3,7 @@
 import uuid
 from datetime import date, datetime, timezone
 
-from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database import Base
@@ -40,11 +40,6 @@ class Meeting(Base):
         passive_deletes=True,
     )
     notes: Mapped[list["Note"]] = relationship(
-        back_populates="meeting",
-        cascade="all, delete-orphan",
-        passive_deletes=True,
-    )
-    translations: Mapped[list["TranscriptTranslation"]] = relationship(
         back_populates="meeting",
         cascade="all, delete-orphan",
         passive_deletes=True,
@@ -95,49 +90,3 @@ class Note(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
 
     meeting: Mapped["Meeting"] = relationship(back_populates="notes")
-
-
-class TranscriptTranslation(Base):
-    """One transcript line rendered into one language.
-
-    A translation costs a provider call, so it is written once and read back
-    on every later request for the same line and language. The unique
-    constraint is what makes that safe under concurrent requests: two callers
-    asking for the same language at once cannot both insert.
-    """
-
-    __tablename__ = "transcript_translations"
-    __table_args__ = (
-        UniqueConstraint("line_id", "lang", name="uq_translation_line_lang"),
-    )
-
-    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
-    meeting_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("meetings.id", ondelete="CASCADE"), nullable=False, index=True
-    )
-    line_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("transcripts.id", ondelete="CASCADE"), nullable=False, index=True
-    )
-    # BCP 47 base code: "ur", "zh", "es", ...
-    lang: Mapped[str] = mapped_column(String(16), nullable=False, index=True)
-    text: Mapped[str] = mapped_column(Text, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
-
-    meeting: Mapped["Meeting"] = relationship(back_populates="translations")
-
-
-class ProviderUsage(Base):
-    """One row per UTC day, counting provider calls made that day.
-
-    This backs the global spend ceiling in budget.py. It lives in the
-    database rather than process memory because an in-memory counter would
-    reset on every restart and count separately per instance — neither
-    durable nor global, which is the whole point of a total budget.
-    """
-
-    __tablename__ = "provider_usage"
-
-    # YYYY-MM-DD in UTC. A string rather than a Date so the upsert's conflict
-    # target is trivially portable and the value reads the same everywhere.
-    day: Mapped[str] = mapped_column(String(10), primary_key=True)
-    calls: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
