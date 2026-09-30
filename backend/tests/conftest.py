@@ -91,7 +91,14 @@ def clean_tables(database):
 
     session = SessionLocal()
     try:
-        for model in (models.Note, models.ActionItem, models.Transcript, models.Meeting):
+        for model in (
+            models.ProviderUsage,
+            models.TranscriptTranslation,
+            models.Note,
+            models.ActionItem,
+            models.Transcript,
+            models.Meeting,
+        ):
             session.query(model).delete()
         session.commit()
     finally:

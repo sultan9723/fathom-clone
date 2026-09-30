@@ -124,3 +124,20 @@ class TranscriptTranslation(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=_utcnow, nullable=False)
 
     meeting: Mapped["Meeting"] = relationship(back_populates="translations")
+
+
+class ProviderUsage(Base):
+    """One row per UTC day, counting provider calls made that day.
+
+    This backs the global spend ceiling in budget.py. It lives in the
+    database rather than process memory because an in-memory counter would
+    reset on every restart and count separately per instance — neither
+    durable nor global, which is the whole point of a total budget.
+    """
+
+    __tablename__ = "provider_usage"
+
+    # YYYY-MM-DD in UTC. A string rather than a Date so the upsert's conflict
+    # target is trivially portable and the value reads the same everywhere.
+    day: Mapped[str] = mapped_column(String(10), primary_key=True)
+    calls: Mapped[int] = mapped_column(Integer, default=0, nullable=False)

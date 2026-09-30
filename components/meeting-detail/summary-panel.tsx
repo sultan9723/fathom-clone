@@ -17,9 +17,12 @@ import { Button, Panel } from '@/components/ui'
 export function SummaryPanel({
   meetingId,
   lang,
+  onSummaryChange,
 }: {
   meetingId: string
   lang: LanguageCode
+  /** Lets the page share the summary with Export and Share recap. */
+  onSummaryChange?: (summary: string) => void
 }) {
   const [summary, setSummary] = useState<string | null>(null)
   // The language the summary on screen was actually written in. Rendering it
@@ -44,6 +47,7 @@ export function SummaryPanel({
       )
       setSummary(answer)
       setSummaryLang(requested)
+      onSummaryChange?.(answer)
       setStatus('idle')
     } catch (error) {
       setStatus('error')

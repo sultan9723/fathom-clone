@@ -23,6 +23,7 @@ import { TranscriptPanel } from '@/components/meeting-detail/transcript-panel'
 import { SummaryPanel } from '@/components/meeting-detail/summary-panel'
 import { ActionItemsPanel } from '@/components/meeting-detail/action-items-panel'
 import { AskPanel } from '@/components/meeting-detail/ask-panel'
+import { MeetingTools } from '@/components/meeting-detail/meeting-tools'
 
 const IN_PROGRESS_WINDOW_MS = 2 * 60 * 60 * 1000
 
@@ -46,6 +47,9 @@ export default function MeetingDetailPage() {
   const [error, setError] = useState(false)
   const [attempt, setAttempt] = useState(0)
   const [lang, setLang] = useState<LanguageCode>('en')
+  // Held here rather than inside SummaryPanel so Export and Share recap can
+  // include whatever summary is currently on screen.
+  const [summary, setSummary] = useState('')
 
   useEffect(() => {
     if (!meetingId) return
@@ -164,13 +168,21 @@ export default function MeetingDetailPage() {
         </div>
 
         <div className="space-y-5 lg:sticky lg:top-7">
-          <SummaryPanel meetingId={meeting.id} lang={lang} />
+          <SummaryPanel meetingId={meeting.id} lang={lang} onSummaryChange={setSummary} />
           <ActionItemsPanel
             meetingId={meeting.id}
             items={actionItems}
             onItemsChange={setActionItems}
           />
           <AskPanel meetingId={meeting.id} lang={lang} />
+          <MeetingTools
+            meeting={meeting}
+            transcripts={transcripts}
+            actionItems={actionItems}
+            summary={summary}
+            ready={!loading}
+            onUpdated={setMeeting}
+          />
         </div>
       </div>
     </div>

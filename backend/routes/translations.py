@@ -19,6 +19,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+import budget
 import models
 import schemas
 from database import get_db
@@ -147,6 +148,10 @@ def translate_meeting(
             status_code=503, detail="Translation is not configured on this server."
         )
 
+    # Claimed only once a call is genuinely about to happen: a cache hit, an
+    # unsupported language or an unconfigured provider must not spend budget.
+    budget.reserve_provider_call(db)
+
     try:
         raw = provider(
             BATCH_SYSTEM_PROMPT,
@@ -155,7 +160,7 @@ def translate_meeting(
         )
         translated = _parse_batch_response(raw, len(missing))
     except ImportError:
-        logger.exception("Translation provider SDK is not installed")
+        logger.error("Translation provider SDK is not installed")
         raise HTTPException(
             status_code=503, detail="Translation is not available on this server."
         )
@@ -165,10 +170,11 @@ def translate_meeting(
         raise HTTPException(
             status_code=502, detail="Translation came back incomplete. Please try again."
         )
-    except Exception:
-        # Provider errors quote the API key back, so only the type is logged and
-        # nothing from the exception reaches the client.
-        logger.exception("Batch translation failed (-> %s)", target)
+    except Exception as exc:
+        # error(), not exception(): a traceback would carry the provider's
+        # message, and provider errors quote the API key back. Only the
+        # exception type is recorded, and nothing from it reaches the client.
+        logger.error("Batch translation failed (-> %s): %s", target, type(exc).__name__)
         raise HTTPException(status_code=502, detail="Translation failed. Please try again.")
 
     for line, text in zip(missing, translated):

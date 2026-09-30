@@ -1,11 +1,47 @@
-﻿services:
+services:
   - type: web
     name: noteai-backend
     env: python
+    # backend/main.py imports its siblings flatly (`import models`,
+    # `from database import ...`), so the service must run with backend/ as
+    # its root. Starting `backend.main:app` from the repo root fails on the
+    # first import.
+    rootDir: backend
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
+      # Set in the Render dashboard, or wire to a Render Postgres instance.
+      # Never SQLite: Render's disk is not persistent across deploys, so a
+      # SQLite file silently loses every meeting on each redeploy.
       - key: DATABASE_URL
-        value: sqlite:///./noteai.db
-      - key: ANTHROPIC_API_KEY
-        value: sk-test
+        sync: false
+      # Provider key, read by backend/routes/ai.py. Set in the dashboard so
+      # it never enters the repository.
+      - key: GROQ_API_KEY
+        sync: false
+      # Comma-separated origins allowed by CORS — the deployed frontend's
+      # URL. Without this the backend only accepts localhost.
+      - key: CORS_ORIGINS
+        sync: false
+      # Vercel previews get a new hostname each deploy, so they are matched by
+      # a regex scoped to this project and account rather than a wildcard.
+      # Both must be set or previews get no access at all.
+      - key: VERCEL_PROJECT
+        sync: false
+      - key: VERCEL_SCOPE
+        sync: false
+      # Per-IP limits on the endpoints that spend provider calls.
+      - key: RATE_LIMIT_AI
+        value: 20/minute
+      - key: RATE_LIMIT_TRANSLATIONS
+        value: 10/minute
+      # Global ceiling on provider calls per UTC day, shared across instances.
+      - key: GROQ_DAILY_CALL_BUDGET
+        value: "1000"
+      # Caps on caller-supplied text, in characters.
+      - key: MAX_QUESTION_CHARS
+        value: "2000"
+      - key: MAX_TRANSLATE_CHARS
+        value: "20000"
+      - key: ENVIRONMENT
+        value: production

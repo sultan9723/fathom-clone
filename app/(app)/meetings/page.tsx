@@ -13,7 +13,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { ApiMeeting } from '@/lib/types'
 import { getMeetings, searchMeetings } from '@/lib/api'
 import { Input, SegmentedControl } from '@/components/ui'
-import { JoinBar } from '@/components/meetings/join-bar'
+import { AddMeetingBar } from '@/components/meetings/add-meeting-bar'
 import { MeetingsTable } from '@/components/meetings/meetings-table'
 import {
   MeetingsEmpty,
@@ -106,7 +106,7 @@ export default function MeetingsPage() {
         <h1 className="text-h1 text-text">Meetings</h1>
       </header>
 
-      <JoinBar />
+      <AddMeetingBar />
 
       <div className="flex flex-col gap-4 py-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="sm:max-w-sm sm:flex-1">
