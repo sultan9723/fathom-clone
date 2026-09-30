@@ -3,9 +3,62 @@
     name: noteai-backend
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    # --proxy-headers is required, not optional: Render terminates TLS in
+    # front of the app, so without it every request appears to come from the
+    # proxy and backend/ratelimit.py's client_ip() would bucket the entire
+    # internet under one address — the per-IP limit would become a global one.
+    # --forwarded-allow-ips='*' trusts the hop in front, which is Render's
+    # own proxy. The quotes are stripped by the shell Render runs this in.
+    startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips='*'"
+
+    # Every value below is set in the Render dashboard on noteai-backend, not
+    # here. This file lists what the service needs; it deliberately supplies
+    # no values, so a deploy can never quietly overwrite what is configured.
     envVars:
+      # Postgres connection string. Already set on the service, pointing at
+      # the existing noteai-db instance — never a literal here, and never
+      # SQLite: Render's disk is not persistent across deploys, so a SQLite
+      # file would silently lose every meeting on each redeploy.
       - key: DATABASE_URL
-        value: sqlite:///./noteai.db
-      - key: ANTHROPIC_API_KEY
-        value: sk-test
+        sync: false
+
+      # Provider key, read by backend/routes/ai.py.
+      - key: GROQ_API_KEY
+        sync: false
+
+      # Comma-separated exact origins allowed by CORS — the deployed
+      # frontend's URL. Without it the backend only accepts localhost.
+      - key: CORS_ORIGINS
+        sync: false
+
+      # Vercel previews get a new hostname per deploy, so they are matched by
+      # a regex scoped to one project and one account rather than a wildcard
+      # (see backend/cors.py). Both must be set or previews get no access.
+      - key: VERCEL_PROJECT
+        sync: false
+      - key: VERCEL_SCOPE
+        sync: false
+
+      # Per-IP limits on the endpoints that spend provider calls, e.g.
+      # "20/minute" and "10/minute". backend/ratelimit.py falls back to its
+      # own defaults when these are unset or malformed.
+      - key: RATE_LIMIT_ENABLED
+        sync: false
+      - key: RATE_LIMIT_AI
+        sync: false
+      - key: RATE_LIMIT_TRANSLATIONS
+        sync: false
+
+      # Global ceiling on provider calls per UTC day, shared across instances
+      # through the provider_usage table (backend/budget.py).
+      - key: GROQ_DAILY_CALL_BUDGET
+        sync: false
+
+      # Caps on caller-supplied text, in characters (backend/routes/ai.py).
+      - key: MAX_QUESTION_CHARS
+        sync: false
+      - key: MAX_TRANSLATE_CHARS
+        sync: false
+
+      - key: ENVIRONMENT
+        value: production
