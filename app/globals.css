@@ -79,6 +79,11 @@
   --duration-slow: 520ms;
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
 
+  /* Chrome heights, so a page can subtract them to fill the rest of the
+     viewport without hardcoding the numbers twice. */
+  --navbar-h: 72px;
+  --footer-h: 84px;
+
   /* Drawer slide. The JS close timer reads this same number (see
      navigation-drawer.tsx) so the panel can't vanish mid-animation. */
   --drawer-duration: 260ms;
@@ -120,6 +125,18 @@
 @keyframes drift-b {
   0%, 100% { transform: translate(8%, 6%) scale(1.05); }
   50%      { transform: translate(-6%, -8%) scale(0.95); }
+}
+/* Third hero glow. Its period is coprime-ish with the other two so the three
+   never line up again within a visit. */
+@keyframes drift-c {
+  0%, 100% { transform: translate(-50%, 4%) scale(1.02); }
+  50%      { transform: translate(-46%, -6%) scale(0.92); }
+}
+/* Transcript rails drifting upward by exactly one line pitch, so the loop is
+   seamless — 22px matches the repeating-gradient period. */
+@keyframes rails {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(0, -22px, 0); }
 }
 
 /* DESIGN.md: no infinite motion except live indicators and skeletons. */
