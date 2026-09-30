@@ -52,7 +52,16 @@ html:has(.landing), body:has(.landing) { overflow-x: clip; }
 .connect-visual, .transcript-lines, .translations, .understand-visual, .ask-visual { padding: 24px; }
 .connected-link { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: var(--bg); padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-control); font-size: 12px; }
 .connected-link .mono { overflow-wrap: anywhere; }
+/* auto-fit so the row always spans the full container width and shares its
+   left/right edges with .connected-link and .recording-notice above and
+   below. The previous fixed column counts were set per breakpoint and had
+   inverted: 2 columns on a wide viewport, 4 on a narrow one. */
+/* Four tiles, so the column count must divide them exactly or the last
+   column is left empty and the row stops short of the card above it.
+   auto-fit does not work here: at 1440 it fits five columns for four
+   tiles. Two up on a phone, four from 640 up. */
 .participants { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 24px 0; }
+@media (min-width: 640px) { .participants { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 .participant { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; padding: 20px 12px; min-height: 128px; border-radius: var(--radius-control); background: var(--surface-2); font-size: 14px; }
 .avatar { width: 40px; height: 40px; display: inline-flex; flex-shrink: 0; justify-content: center; align-items: center; border-radius: var(--radius-control); background: var(--surface-2); color: var(--text); font-weight: 500; }
 .avatar-1 { background: var(--speaker-1-bg); color: var(--speaker-1); }
@@ -121,7 +130,6 @@ html:has(.landing), body:has(.landing) { overflow-x: clip; }
 @media (max-width: 1023px), (max-height: 759px) {
   .story-panel { min-height: 0; }
   .stacked-steps { max-width: 760px; }
-  .participants { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .reader-grid { gap: 12px; }
   .reader-card { padding: 20px; }
   .reader-header { gap: 8px; }
@@ -150,7 +158,6 @@ html:has(.landing), body:has(.landing) { overflow-x: clip; }
 
   .story-panel-header .eyebrow { font-size: 11px; }
   .connect-visual, .transcript-lines, .translations, .understand-visual, .ask-visual { padding: 20px 16px; }
-  .participants { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .connected-link { padding: 12px; font-size: 11px; }
   .reader-grid { grid-template-columns: 1fr; gap: 16px; }
   .reader-card { padding: 24px; }
