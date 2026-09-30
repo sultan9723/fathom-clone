@@ -7,6 +7,7 @@ import { formatTimecode } from '@/lib/utils'
 import { i18nText, normalizeLanguage, type LanguageCode } from '@/lib/i18n-text'
 import { useScramble } from '@/lib/scramble'
 import { Button, Panel, SegmentedControl } from '@/components/ui'
+import './transcript.css'
 import { speakerOrder, buildTurns } from './speaker-timeline'
 
 /**
@@ -89,11 +90,13 @@ export function TranscriptPanel({
 
   const choose = useCallback(
     (next: LanguageCode) => {
+      if (next === lang) return
       setLang(next)
+      setStatus(next === sourceLang ? 'idle' : 'loading')
       setTranslations({})
       onLanguageChange?.(next)
     },
-    [onLanguageChange]
+    [onLanguageChange, lang, sourceLang]
   )
 
   const speakers = speakerOrder(buildTurns(transcripts, durationSeconds))
@@ -107,11 +110,12 @@ export function TranscriptPanel({
         <h2 id="transcript-heading" className="text-label-sm uppercase text-faint">
           Transcript
         </h2>
-        <div className="flex items-center gap-3">
-          <span className="text-small text-muted">Read in</span>
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="hidden whitespace-nowrap text-small text-muted sm:inline">Read in</span>
           <SegmentedControl
+            className="language-tabs"
             label="Read the transcript in"
-            options={READ_IN.map((option) => ({ ...option, lang: option.value }))}
+            options={READ_IN.map((option) => ({ ...option, lang: option.value, busy: option.value === lang && status === 'loading' }))}
             value={lang}
             onChange={choose}
           />
