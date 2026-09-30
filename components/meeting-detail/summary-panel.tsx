@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { askAI } from '@/lib/api'
 import { i18nText, type LanguageCode } from '@/lib/i18n-text'
 import { Button, Panel } from '@/components/ui'
+import { Markdown } from '@/components/ui/markdown'
 
 /**
  * The meeting summary.
@@ -68,14 +69,14 @@ export function SummaryPanel({
         )}
       </div>
 
+      <div aria-live="polite" aria-busy={status === 'loading'}>
       {summary ? (
-        <p
+        <Markdown
+          text={summary}
           dir={written.dir}
           lang={written.lang}
-          className={`${written.className} mt-4 whitespace-pre-wrap text-body-sm text-text-2 motion-safe:animate-enter`}
-        >
-          {summary}
-        </p>
+          className={`${written.className} mt-4 text-body-sm text-text-2 motion-safe:animate-enter`}
+        />
       ) : (
         <div className="mt-4">
           <p className="text-small text-muted">
@@ -91,6 +92,7 @@ export function SummaryPanel({
           </Button>
         </div>
       )}
+      </div>
 
       {status === 'error' && (
         <p role="alert" className="mt-3 text-small text-warn">

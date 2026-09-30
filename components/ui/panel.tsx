@@ -1,4 +1,4 @@
-import type { ElementType, ReactNode } from 'react'
+import type { ElementType, HTMLAttributes, ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
 /**
@@ -10,13 +10,14 @@ export function Panel({
   as: Tag = 'div',
   children,
   className,
-}: {
+  ...props
+}: HTMLAttributes<HTMLElement> & {
   as?: ElementType
   children: ReactNode
   className?: string
 }) {
   return (
-    <Tag className={cn('rounded-card border border-border bg-surface', className)}>
+    <Tag {...props} className={cn('rounded-card border border-border bg-surface', className)}>
       {children}
     </Tag>
   )

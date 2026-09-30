@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import { askAI } from '@/lib/api'
 import { i18nText, type LanguageCode } from '@/lib/i18n-text'
 import { Button, Input, Panel } from '@/components/ui'
+import { Markdown } from '@/components/ui/markdown'
 
 /**
  * Ask a question about this meeting, answered from its transcript.
@@ -74,14 +75,14 @@ export function AskPanel({ meetingId, lang }: { meetingId: string; lang: Languag
             return (
               <li key={exchange.id} className="motion-safe:animate-enter">
                 <p className="text-small font-medium text-text-2">{exchange.question}</p>
+                <div aria-live="polite" aria-busy={exchange.answer === null && !exchange.error}>
                 {exchange.answer !== null && (
-                  <p
+                  <Markdown
+                    text={exchange.answer}
                     dir={answerLang.dir}
                     lang={answerLang.lang}
-                    className={`${answerLang.className} mt-1 whitespace-pre-wrap text-body-sm text-text`}
-                  >
-                    {exchange.answer}
-                  </p>
+                    className={`${answerLang.className} mt-1 text-body-sm text-text`}
+                  />
                 )}
                 {exchange.error && (
                   <p role="alert" className="mt-1 text-small text-warn">
@@ -93,6 +94,7 @@ export function AskPanel({ meetingId, lang }: { meetingId: string; lang: Languag
                     Reading the transcript…
                   </p>
                 )}
+                </div>
               </li>
             )
           })}
