@@ -109,20 +109,21 @@ export default function MeetingsPage() {
       <AddMeetingBar />
 
       <div className="flex flex-col gap-4 py-6 sm:flex-row sm:items-center sm:justify-between">
-        <div className="sm:max-w-sm sm:flex-1">
+        <div className="w-full sm:max-w-sm sm:flex-1">
           <label htmlFor="meeting-search" className="sr-only">
             Search meetings
           </label>
           <Input
             id="meeting-search"
             type="search"
-            placeholder="Search meetings and transcripts"
+            placeholder="Search meetings"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
         </div>
 
         <SegmentedControl
+          className="self-start"
           label="Filter meetings by date"
           options={RANGE_OPTIONS}
           value={range}
