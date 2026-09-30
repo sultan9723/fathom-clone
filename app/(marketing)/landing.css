@@ -180,7 +180,6 @@ html:has(.landing), body:has(.landing) { overflow-x: clip; }
   .landing .landing-header { flex-wrap: wrap; gap: 12px; }
   .landing .mobile-menu-toggle { display: inline-flex; margin-left: auto; }
   .landing .landing-header nav, .landing .landing-header .header-actions { display: none; }
-  .landing .landing-header[data-open="true"] nav { display: flex; flex-direction: column; align-items: stretch; width: 100%; order: 3; }
-  .landing .landing-header[data-open="true"] .header-actions { display: flex; width: 100%; order: 4; }
+  .landing .landing-header .drawer-links nav { display: flex; flex-direction: column; align-items: stretch; width: 100%; }
   .landing .landing-header nav a { min-height: 44px; display: flex; align-items: center; }
 }
