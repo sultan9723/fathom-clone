@@ -20,7 +20,8 @@ export function Wordmark({
       href={href}
       aria-label="NoteAI home"
       className={cn(
-        'inline-flex shrink-0 items-center gap-2.5 font-semibold text-text',
+        // A link, so it clears the 44px minimum touch target.
+        'inline-flex min-h-touch shrink-0 items-center gap-2.5 font-semibold text-text',
         size === 'sm' ? 'text-[15px]' : 'text-h4',
         className
       )}

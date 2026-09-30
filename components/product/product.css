@@ -58,7 +58,9 @@
 .join-input { display:flex; align-items:center; gap:8px; flex:1; }
 .join-input input { background:var(--surface); border:0; font-size:14px; }
 .platform-choices { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
-.platform-choices button { font-size:13px; padding:8px 12px; border:1px solid var(--border); border-radius:var(--radius-chip); color:var(--muted); }
+/* Interactive, so it must clear DESIGN.md's 44px minimum touch target —
+   these were 37px tall. */
+.platform-choices button { min-height:44px; font-size:13px; padding:8px 14px; border:1px solid var(--border); border-radius:var(--radius-chip); color:var(--muted); }
 .platform-choices button[aria-pressed=true] { border-color:var(--accent-border); color:var(--accent); background:var(--accent-bg); }
 .capability-list { margin-top:20px; }
 .capability-list > div { display:grid; grid-template-columns:minmax(120px,1fr) 2fr; padding:16px 0; gap:20px; border-bottom:1px solid var(--border-subtle); }
@@ -70,7 +72,8 @@
 .product-sign-in .product-wordmark { margin-bottom:32px; }
 .product-sign-in .library-toolbar { display:flex; justify-content:space-between; gap:24px; align-items:center; margin:28px 0; flex-wrap:wrap; }
 .library-filters { display:flex; gap:8px; flex-wrap:wrap; }
-.library-filters button { border:1px solid var(--border); border-radius:var(--radius-chip); padding:8px 16px; color:var(--muted); font-size:14px; }
+/* Interactive, so 44px minimum (DESIGN.md) — these were 38px. */
+.library-filters button { min-height:44px; border:1px solid var(--border); border-radius:var(--radius-chip); padding:8px 16px; color:var(--muted); font-size:14px; }
 .library-filters button[aria-pressed=true] { color:var(--text); background:var(--surface-2); border-color:var(--border-strong); }
 .library-count { color:var(--faint); font-size:13px; }
 .meeting-table { width:100%; border-collapse:collapse; font-size:14px; }

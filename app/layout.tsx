@@ -21,7 +21,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${fontVariables} max-w-full overflow-x-hidden`}>
-      <body className="min-h-screen max-w-full overflow-x-hidden bg-bg font-sans text-body text-text antialiased">
+      {/* No bg-* on body: <html> paints the page ground. An opaque body
+          background would paint over the ambient glows, which sit at a
+          negative z-index — a block's own background is painted after its
+          negative-z descendants. */}
+      <body className="min-h-screen max-w-full overflow-x-hidden font-sans text-body text-text antialiased">
         {children}
       </body>
     </html>

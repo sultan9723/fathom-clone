@@ -89,8 +89,11 @@
     background-color: var(--bg);
   }
 
+  /* No background-color here on purpose. html paints the page ground; giving
+     body an opaque background too would paint over the ambient glows, which
+     sit at a negative z-index. In CSS painting order a block's own background
+     comes after its negative-z descendants, so body's fill would hide them. */
   body {
-    background-color: var(--bg);
     color: var(--text);
   }
 

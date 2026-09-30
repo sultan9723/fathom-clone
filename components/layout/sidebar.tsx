@@ -18,7 +18,7 @@ export function Sidebar() {
   const { language } = useReadingLanguage()
   useEffect(() => setOpen(false), [pathname])
   return <aside className="product-sidebar">
-    <div className="sidebar-heading"><Link href="/" className="product-wordmark">NoteAI</Link><Button size="nav" className="mobile-menu-toggle" aria-expanded={open} aria-controls="product-drawer" onClick={() => setOpen(true)}>Menu</Button></div>
+    <div className="sidebar-heading"><Link href="/" className="product-wordmark">NoteAI</Link><Button className="mobile-menu-toggle" aria-expanded={open} aria-controls="product-drawer" onClick={() => setOpen(true)}>Menu</Button></div>
     <div id="product-navigation" className="sidebar-content">
       <ButtonLink href="/meetings/new" variant="primary" className="w-full">Add a meeting</ButtonLink>
       <nav aria-label="Product navigation">{navigation.map(item => <Link key={item.href} href={item.href} aria-current={pathname === item.href || pathname.startsWith(`${item.href}/`) ? 'page' : undefined}>{item.label}</Link>)}</nav>
@@ -29,8 +29,7 @@ export function Sidebar() {
     </div>
     <NavigationDrawer id="product-drawer" open={open} onClose={() => setOpen(false)} desktopAt={1024} version={APP_VERSION}>
       <ButtonLink href="/meetings/new" variant="primary" className="mb-3 w-full">Add a meeting</ButtonLink>
-      <nav aria-label="Mobile product navigation">{navigation.map(item => <Link key={item.href} href={item.href} aria-current={pathname === item.href || pathname.startsWith(`${item.href}/`) ? 'page' : undefined}>{item.label}</Link>)}</nav>
-      <Link href="/settings#profile">Shared workspace</Link>
+      <nav aria-label="Mobile product navigation">{navigation.map(item => <Link key={item.href} href={item.href} aria-current={pathname === item.href || pathname.startsWith(`${item.href}/`) ? 'page' : undefined}>{item.label}</Link>)}<Link href="/settings#profile">Shared workspace</Link></nav>
     </NavigationDrawer>
   </aside>
 }

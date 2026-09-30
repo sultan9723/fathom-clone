@@ -39,7 +39,7 @@ export function Navbar() {
             <a
               key={link.href}
               href={link.href}
-              className="text-[14px] text-muted transition-colors duration-fast ease-out-design hover:text-text"
+              className="inline-flex min-h-touch items-center text-[14px] text-muted transition-colors duration-fast ease-out-design hover:text-text"
             >
               {link.label}
             </a>
@@ -55,9 +55,10 @@ export function Navbar() {
           </ButtonLink>
         </div>
 
+        {/* Default 44px, not size="nav": the 40px exception is for the desktop
+            bar, and on mobile this is a touch target. */}
         <Button
           variant="secondary"
-          size="nav"
           className="md:hidden"
           aria-expanded={open}
           aria-controls="marketing-drawer"

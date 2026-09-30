@@ -29,7 +29,7 @@ export function MarketingFooter() {
                 key={link.label}
                 href={link.href}
                 {...(external ? { target: '_blank', rel: 'noreferrer' } : {})}
-                className="text-small text-muted transition-colors duration-fast ease-out-design hover:text-text"
+                className="inline-flex min-h-touch items-center text-small text-muted transition-colors duration-fast ease-out-design hover:text-text"
               >
                 {link.label}
               </Link>

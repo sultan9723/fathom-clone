@@ -25,9 +25,9 @@
 .drawer-heading button:hover { background: var(--surface-hover); }
 .drawer-links { display: flex; flex-direction: column; flex: 1 1 auto; }
 .drawer-links nav { display: flex; flex-direction: column; gap: 4px; }
-.drawer-links a { display: flex; align-items: center; min-height: 48px; padding: 0 14px; border-radius: var(--radius-control); font-size: 15px; color: var(--muted); }
-.drawer-links a:hover { background: var(--surface-hover); }
-.drawer-links a[aria-current] { background: var(--surface-hover); color: var(--text); font-weight: 500; }
+.drawer-links nav a { display: flex; align-items: center; min-height: 48px; padding: 0 14px; border-radius: var(--radius-control); font-size: 15px; color: var(--muted); }
+.drawer-links nav a:hover { background: var(--surface-hover); }
+.drawer-links nav a[aria-current] { background: var(--surface-hover); color: var(--text); font-weight: 500; }
 .drawer-version { margin-top: auto; padding-top: 24px; font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 11px; color: #5E6570; }
 @media (prefers-reduced-motion: reduce) {
   .navigation-drawer, .navigation-drawer::backdrop { transition: none; }
